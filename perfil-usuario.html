@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
     <style>
         :root {
             --game-primary: #6a11cb;
@@ -15,11 +18,13 @@
             --game-dark: #1a1a2e;
             --game-light: #f8f9fa;
         }
+
         body {
             background: linear-gradient(135deg, var(--game-primary), var(--game-secondary));
             color: white;
             font-family: 'Arial', sans-serif;
         }
+
         .game-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -27,22 +32,27 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: transform 0.3s;
         }
+
         .game-card:hover {
             transform: scale(1.03);
         }
+
         .progress {
             height: 20px;
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.2);
         }
+
         .progress-bar {
             background: linear-gradient(90deg, #ff8a00, #ff0058);
         }
+
         .badge-icon {
             font-size: 2rem;
             color: gold;
             margin-bottom: 10px;
         }
+
         .qr-scanner-btn {
             background: linear-gradient(90deg, #00b09b, #96c93d);
             border: none;
@@ -51,23 +61,58 @@
             padding: 10px 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
+
         .map-container {
             height: 300px;
             border-radius: 15px;
             overflow: hidden;
-            background: url('https://maps.googleapis.com/maps/api/staticmap?center=40.4168,-3.7038&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C40.4168,-3.7038&key=YOUR_API_KEY') no-repeat center center;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .map-fallback {
+            display: none;
+            height: 100%;
+            width: 100%;
+            background: url('https://maps.googleapis.com/maps/api/staticmap?center=36.7213,-4.4214&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7C36.7213,-4.4214&key=TU_API_KEY') no-repeat center center;
             background-size: cover;
         }
+
+        .map-error {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
         .nav-tabs .nav-link {
             color: rgba(255, 255, 255, 0.7);
             border: none;
             padding: 10px 15px;
         }
+
         .nav-tabs .nav-link.active {
             color: white;
             background: transparent;
             border-bottom: 2px solid white;
         }
+
         .route-card {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -75,14 +120,17 @@
             margin-bottom: 15px;
             transition: all 0.3s;
         }
+
         .route-card:hover {
             background: rgba(0, 0, 0, 0.3);
             transform: translateY(-3px);
         }
+
         .route-progress {
             height: 8px;
             border-radius: 4px;
         }
+
         .subscription-card {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
@@ -90,6 +138,7 @@
             margin-bottom: 15px;
             border-left: 4px solid #6a11cb;
         }
+
         .payment-method {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -98,11 +147,13 @@
             display: flex;
             align-items: center;
         }
+
         .payment-icon {
             font-size: 1.5rem;
             margin-right: 10px;
             color: #6a11cb;
         }
+
         .plan-card {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -111,14 +162,17 @@
             transition: all 0.3s;
             border: 1px solid transparent;
         }
+
         .plan-card:hover {
             border-color: #6a11cb;
             transform: translateY(-3px);
         }
+
         .plan-card.featured {
             border: 2px solid gold;
             position: relative;
         }
+
         .featured-badge {
             position: absolute;
             top: -10px;
@@ -132,6 +186,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Barra de Navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
@@ -155,23 +210,27 @@
                     <img src="https://via.placeholder.com/100" alt="Avatar" class="rounded-circle mb-3" width="100">
                     <h3>¡Hola, Cazador!</h3>
                     <p class="text-muted">Nivel 5 - Explorador Avanzado</p>
-                    
+
                     <!-- Pestañas de perfil -->
                     <ul class="nav nav-tabs justify-content-center mt-3" id="profileTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress" type="button" role="tab">Progreso</button>
+                            <button class="nav-link active" id="progress-tab" data-bs-toggle="tab"
+                                data-bs-target="#progress" type="button" role="tab">Progreso</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">Perfil</button>
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                                type="button" role="tab">Perfil</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="subscription-tab" data-bs-toggle="tab" data-bs-target="#subscription" type="button" role="tab">Suscripción</button>
+                            <button class="nav-link" id="subscription-tab" data-bs-toggle="tab"
+                                data-bs-target="#subscription" type="button" role="tab">Suscripción</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="routes-tab" data-bs-toggle="tab" data-bs-target="#routes" type="button" role="tab">Rutas</button>
+                            <button class="nav-link" id="routes-tab" data-bs-toggle="tab" data-bs-target="#routes"
+                                type="button" role="tab">Rutas</button>
                         </li>
                     </ul>
-                    
+
                     <div class="tab-content mt-3">
                         <!-- Pestaña de Progreso -->
                         <div class="tab-pane fade show active" id="progress" role="tabpanel">
@@ -181,10 +240,11 @@
                                     <span>1,250/2,000 pts</span>
                                 </div>
                                 <div class="progress">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 62.5%"></div>
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar" style="width: 62.5%"></div>
                                 </div>
                             </div>
-                            
+
                             <div class="my-4">
                                 <h5><i class="fas fa-trophy me-2"></i>Insignias</h5>
                                 <div class="d-flex justify-content-around mt-3">
@@ -194,7 +254,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Pestaña de Perfil -->
                         <div class="tab-pane fade" id="profile" role="tabpanel">
                             <div class="text-start mt-3">
@@ -217,12 +277,12 @@
                                 <button class="btn btn-sm btn-outline-light w-100">Editar Perfil</button>
                             </div>
                         </div>
-                        
+
                         <!-- Nueva Pestaña de Suscripción -->
                         <div class="tab-pane fade" id="subscription" role="tabpanel">
                             <div class="mt-3 text-start">
                                 <h5 class="mb-3">Tu Suscripción</h5>
-                                
+
                                 <div class="subscription-card">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -239,9 +299,9 @@
                                         <button class="btn btn-sm btn-outline-danger">Cancelar</button>
                                     </div>
                                 </div>
-                                
+
                                 <h5 class="mt-4 mb-3">Método de Pago</h5>
-                                
+
                                 <div class="payment-method">
                                     <i class="fab fa-cc-visa payment-icon"></i>
                                     <div class="flex-grow-1">
@@ -253,21 +313,23 @@
                                     </div>
                                     <button class="btn btn-sm btn-outline-light ms-2">Editar</button>
                                 </div>
-                                
+
                                 <button class="btn btn-sm btn-outline-light w-100 mt-2">
                                     <i class="fas fa-plus me-1"></i> Añadir método de pago
                                 </button>
-                                
+
                                 <h5 class="mt-4 mb-3">Historial de Pagos</h5>
                                 <div class="list-group">
-                                    <div class="list-group-item bg-transparent text-white d-flex justify-content-between">
+                                    <div
+                                        class="list-group-item bg-transparent text-white d-flex justify-content-between">
                                         <div>
                                             <small>15/10/2023</small>
                                             <div>Plan Premium</div>
                                         </div>
                                         <span>$9.99</span>
                                     </div>
-                                    <div class="list-group-item bg-transparent text-white d-flex justify-content-between">
+                                    <div
+                                        class="list-group-item bg-transparent text-white d-flex justify-content-between">
                                         <div>
                                             <small>15/09/2023</small>
                                             <div>Plan Premium</div>
@@ -277,12 +339,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Pestaña de Rutas -->
                         <div class="tab-pane fade" id="routes" role="tabpanel">
                             <div class="mt-3 text-start">
                                 <h5 class="mb-3">Tus Rutas</h5>
-                                
+
                                 <div class="route-card">
                                     <div class="d-flex justify-content-between">
                                         <h6>Ruta Histórica</h6>
@@ -296,7 +358,7 @@
                                         <div class="progress-bar bg-info" role="progressbar" style="width: 37.5%"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="route-card">
                                     <div class="d-flex justify-content-between">
                                         <h6>Gastronomía Local</h6>
@@ -310,7 +372,7 @@
                                         <div class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="route-card">
                                     <div class="d-flex justify-content-between">
                                         <h6>Arte Urbano</h6>
@@ -324,7 +386,7 @@
                                         <div class="progress-bar bg-info" role="progressbar" style="width: 87.5%"></div>
                                     </div>
                                 </div>
-                                
+
                                 <button class="btn btn-sm btn-outline-light w-100 mt-2">
                                     <i class="fas fa-plus me-1"></i> Nueva Ruta
                                 </button>
@@ -339,61 +401,68 @@
                 <div class="game-card p-4 mb-4">
                     <h2><i class="fas fa-map-marked-alt me-2"></i>Mapa de Caza</h2>
                     <p class="text-muted">Encuentra QR cerca de ti y gana puntos.</p>
-                    
+
                     <div class="map-container my-3">
-                        <!-- Mapa interactivo (integrado con JS/API Google Maps) -->
+                        <div id="map"></div>
+                        <div id="map-fallback" class="map-fallback"></div>
+                        <div id="map-error" class="map-error">
+                            <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                            <h4>No se pudo cargar el mapa</h4>
+                            <img src="MapaMalaga.png" alt="Bienvenido a Málaga" width="500">
+                        </div>
                     </div>
-                    
+
                     <div class="text-center mt-4">
                         <button class="btn qr-scanner-btn btn-lg">
                             <i class="fas fa-qrcode me-2"></i>Escanear QR
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Ranking y Desafíos -->
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="game-card p-4 h-100">
-                            <h4><i class="fas fa-crown me-2"></i>Ranking</h4>
-                            <ol class="list-group list-group-numbered mt-3">
-                                <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                    <span>Ana_Exploradora</span>
-                                    <span>3,450 pts</span>
-                                </li>
-                                <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                    <span>CarlosQR</span>
-                                    <span>2,780 pts</span>
-                                </li>
-                                <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                    <span>Tú</span>
-                                    <span class="fw-bold">1,250 pts</span>
-                                </li>
-                            </ol>
-                        </div>
+            <!-- Ranking y Desafíos -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="game-card p-4 h-100">
+                        <h4><i class="fas fa-crown me-2"></i>Ranking</h4>
+                        <ol class="list-group list-group-numbered mt-3">
+                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+                                <span>Ana_Exploradora</span>
+                                <span>3,450 pts</span>
+                            </li>
+                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+                                <span>CarlosQR</span>
+                                <span>2,780 pts</span>
+                            </li>
+                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+                                <span>Tú</span>
+                                <span class="fw-bold">1,250 pts</span>
+                            </li>
+                        </ol>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <div class="game-card p-4 h-100">
-                            <h4><i class="fas fa-flag me-2"></i>Desafíos Activos</h4>
-                            <div class="mt-3">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Escanea 5 QR en 24h</span>
-                                    <span class="badge bg-warning">50 pts</span>
-                                </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Visita 3 locales</span>
-                                    <span class="badge bg-danger">100 pts</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Primer escaneo del día</span>
-                                    <span class="badge bg-success">20 pts</span>
-                                </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="game-card p-4 h-100">
+                        <h4><i class="fas fa-flag me-2"></i>Desafíos Activos</h4>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Escanea 5 QR en 24h</span>
+                                <span class="badge bg-warning">50 pts</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Visita 3 locales</span>
+                                <span class="badge bg-danger">100 pts</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Primer escaneo del día</span>
+                                <span class="badge bg-success">20 pts</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Footer -->
@@ -405,5 +474,119 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para Google Maps -->
+    <script>
+        function initMap() {
+            // Coordenadas del centro de Málaga
+            const malaga = { lat: 36.7213, lng: -4.4214 };
+
+            // Crear mapa centrado en Málaga
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 13,
+                center: malaga,
+                styles: [
+                    {
+                        "featureType": "all",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                            {
+                                "color": "#ffffff"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "all",
+                        "elementType": "labels.text.stroke",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            },
+                            {
+                                "color": "#3d3d3d"
+                            },
+                            {
+                                "weight": 2
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "all",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "administrative",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#4d4d4d"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#2d2d2d"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#3d3d3d"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#3d3d3d"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#3d3d3d"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#1a1a2e"
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            // Añadir marcador en el centro de Málaga
+            new google.maps.Marker({
+                position: malaga,
+                map: map,
+                title: "Málaga, España",
+                icon: {
+                    url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                }
+            });
+        }
+    </script>
 </body>
+
 </html>
