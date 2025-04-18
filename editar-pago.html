@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Método de Pago - Trady</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --game-primary: #6a11cb;
+            --game-secondary: #2575fc;
+            --game-dark: #1a1a2e;
+            --game-light: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--game-primary), var(--game-secondary));
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+
+        .payment-container {
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+
+        .payment-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-save {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .nav-back {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .payment-icon-large {
+            font-size: 2rem;
+            margin-right: 15px;
+            color: var(--game-primary);
+        }
+
+        .card-preview {
+            background: linear-gradient(135deg, #434343, #1a1a2e);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd700, #c0c0c0);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .card-chip i {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .card-number {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-expiry, .card-name {
+            font-size: 0.9rem;
+        }
+
+        .card-brand {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i></i>TRADY
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Puntos: <strong>1,250</strong></span>
+                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container payment-container">
+        <div class="payment-card">
+            <div class="nav-back" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            
+            <h2 class="mb-4"><i class="fas fa-credit-card me-2"></i>Editar Método de Pago</h2>
+            
+            <!-- Tarjeta de preview -->
+            <div class="card-preview">
+                <div class="card-chip">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="card-number" id="card-number-preview">•••• •••• •••• 4242</div>
+                <div class="card-details">
+                    <div class="card-name">JUAN PÉREZ</div>
+                    <div class="card-expiry">05/25</div>
+                </div>
+                <div class="card-brand">
+                    <i class="fab fa-cc-visa"></i>
+                </div>
+            </div>
+            
+            <form>
+                <div class="mb-3">
+                    <label for="card-number" class="form-label">Número de Tarjeta</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                        <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" value="4242 4242 4242 4242">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="card-name" class="form-label">Nombre en la Tarjeta</label>
+                    <input type="text" class="form-control" id="card-name" value="JUAN PÉREZ">
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="card-expiry" class="form-label">Fecha de Expiración</label>
+                        <input type="text" class="form-control" id="card-expiry" placeholder="MM/AA" maxlength="5" value="05/25">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="card-cvv" class="form-label">CVV</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="card-cvv" placeholder="123" maxlength="3">
+                            <span class="input-group-text"><i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="Los 3 dígitos en la parte posterior de tu tarjeta"></i></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="card-type" class="form-label">Tipo de Tarjeta</label>
+                    <select class="form-select" id="card-type">
+                        <option value="visa" selected><i class="fab fa-cc-visa me-2"></i>Visa</option>
+                        <option value="mastercard"><i class="fab fa-cc-mastercard me-2"></i>Mastercard</option>
+                        <option value="amex"><i class="fab fa-cc-amex me-2"></i>American Express</option>
+                        <option value="discover"><i class="fab fa-cc-discover me-2"></i>Discover</option>
+                    </select>
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="default-payment" checked>
+                    <label class="form-check-label" for="default-payment">
+                        Usar como método de pago principal
+                    </label>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-danger me-md-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash me-1"></i> Eliminar
+                    </button>
+                    <button type="button" class="btn btn-cancel me-md-2" onclick="window.history.back()">Cancelar</button>
+                    <button type="submit" class="btn btn-save">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar este método de pago?</p>
+                    <p class="text-muted">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark bg-opacity-75 text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Trady - ¡Encuentra, Escanea, Gana!</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para la tarjeta de crédito -->
+    <script>
+        // Formatear número de tarjeta
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formatted = value.replace(/(\d{4})/g, '$1 ').trim();
+            e.target.value = formatted;
+            document.getElementById('card-number-preview').textContent = '•••• •••• •••• ' + value.slice(-4);
+        });
+
+        // Formatear fecha de expiración
+        document.getElementById('card-expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Actualizar icono de tarjeta al cambiar tipo
+        document.getElementById('card-type').addEventListener('change', function(e) {
+            const cardBrand = document.querySelector('.card-brand i');
+            cardBrand.className = 'fab fa-cc-' + e.target.value;
+        });
+
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+
+</html>

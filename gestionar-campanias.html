@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trady Partners - Gestión de Campañas</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --partner-primary: #2575fc;
+            --partner-secondary: #6a11cb;
+            --partner-dark: #1a1a2e;
+            --partner-light: #f8f9fa;
+            --partner-success: #00b09b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--partner-primary), var(--partner-secondary));
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+
+        .partner-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .partner-card:hover {
+            transform: scale(1.03);
+        }
+
+        .campaign-management-header {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .campaign-card-lg {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .campaign-card-lg:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .campaign-card-lg.selected {
+            border-color: var(--partner-success);
+            background: rgba(0, 176, 155, 0.15);
+        }
+
+        .campaign-progress {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .campaign-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-campaign {
+            border-radius: 50px;
+            font-weight: bold;
+            padding: 8px 20px;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-campaign-primary {
+            background: linear-gradient(90deg, var(--partner-success), #96c93d);
+            color: white;
+        }
+
+        .btn-campaign-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-campaign-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+        }
+
+        .btn-campaign-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .campaign-status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .status-active {
+            background: rgba(0, 176, 155, 0.2);
+            color: var(--partner-success);
+        }
+
+        .status-paused {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-ended {
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+        }
+
+        .status-draft {
+            background: rgba(13, 110, 253, 0.2);
+            color: #0d6efd;
+        }
+
+        .campaign-type-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .discount-icon {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .happyhour-icon {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .menu-icon {
+            background: rgba(25, 135, 84, 0.2);
+            color: #198754;
+        }
+
+        .event-icon {
+            background: rgba(111, 66, 193, 0.2);
+            color: #6f42c1;
+        }
+
+        .filter-buttons .btn {
+            border-radius: 20px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .new-campaign-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .new-campaign-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .new-campaign-card i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--partner-success);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Nivel: <strong>Partner Oro</strong></span>
+                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container my-5">
+        <!-- Header de Gestión de Campañas -->
+        <div class="campaign-management-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-bullhorn me-2"></i>Gestión de Campañas</h2>
+                    <p class="mb-0">Administra y crea nuevas campañas promocionales</p>
+                </div>
+                <div>
+                    <button class="btn btn-campaign btn-campaign-primary">
+                        <i class="fas fa-plus me-1"></i> Nueva Campaña
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="filter-buttons">
+                    <button class="btn btn-outline-light active">Todas</button>
+                    <button class="btn btn-outline-light">Activas</button>
+                    <button class="btn btn-outline-light">Pausadas</button>
+                    <button class="btn btn-outline-light">Finalizadas</button>
+                    <button class="btn btn-outline-light">Borradores</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="partner-card py-2 px-3 d-inline-block">
+                    <small class="me-2">Campañas activas: <strong>2/5</strong></small>
+                    <small>Límite: <strong>5</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listado de Campañas -->
+        <div class="row">
+            <!-- Campaña 1 -->
+            <div class="col-md-6 mb-4">
+                <div class="campaign-card-lg selected">
+                    <div class="d-flex align-items-start">
+                        <div class="campaign-type-icon happyhour-icon">
+                            <i class="fas fa-glass-cheers"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">Happy Hour - 2x1 en Cócteles</h4>
+                                <span class="campaign-status-badge status-active">Activa</span>
+                            </div>
+                            <p class="text-muted mb-3">De 18:00 a 20:00, todos los días</p>
+                            
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>15/50 reclamaciones</span>
+                                <span>30% completado</span>
+                            </div>
+                            <div class="progress campaign-progress mb-3">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 30%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>Válido hasta: 30/11/2023</small>
+                                <div class="campaign-actions">
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaña 2 -->
+            <div class="col-md-6 mb-4">
+                <div class="campaign-card-lg">
+                    <div class="d-flex align-items-start">
+                        <div class="campaign-type-icon discount-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">Descuento 10% Primera Visita</h4>
+                                <span class="campaign-status-badge status-active">Activa</span>
+                            </div>
+                            <p class="text-muted mb-3">Para nuevos clientes que escaneen el QR</p>
+                            
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>8/100 reclamaciones</span>
+                                <span>8% completado</span>
+                            </div>
+                            <div class="progress campaign-progress mb-3">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 8%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>Válido hasta: 15/12/2023</small>
+                                <div class="campaign-actions">
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaña 3 -->
+            <div class="col-md-6 mb-4">
+                <div class="campaign-card-lg">
+                    <div class="d-flex align-items-start">
+                        <div class="campaign-type-icon menu-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">Menú Degustación Especial</h4>
+                                <span class="campaign-status-badge status-ended">Finalizada</span>
+                            </div>
+                            <p class="text-muted mb-3">Menú especial de temporada</p>
+                            
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>42/40 reclamaciones</span>
+                                <span>105% completado</span>
+                            </div>
+                            <div class="progress campaign-progress mb-3">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>Finalizó: 31/10/2023</small>
+                                <div class="campaign-actions">
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaña 4 -->
+            <div class="col-md-6 mb-4">
+                <div class="campaign-card-lg">
+                    <div class="d-flex align-items-start">
+                        <div class="campaign-type-icon event-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">Noche de Flamenco</h4>
+                                <span class="campaign-status-badge status-paused">Pausada</span>
+                            </div>
+                            <p class="text-muted mb-3">Evento especial cada jueves</p>
+                            
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>18/50 reservas</span>
+                                <span>36% completado</span>
+                            </div>
+                            <div class="progress campaign-progress mb-3">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 36%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>Próximo evento: 23/11/2023</small>
+                                <div class="campaign-actions">
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaña 5 (Borrador) -->
+            <div class="col-md-6 mb-4">
+                <div class="campaign-card-lg">
+                    <div class="d-flex align-items-start">
+                        <div class="campaign-type-icon discount-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="mb-0">Navidad - Regalo Especial</h4>
+                                <span class="campaign-status-badge status-draft">Borrador</span>
+                            </div>
+                            <p class="text-muted mb-3">Campaña navideña para clientes frecuentes</p>
+                            
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span>0/100 reclamaciones</span>
+                                <span>0% completado</span>
+                            </div>
+                            <div class="progress campaign-progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>Programada: 15/12/2023</small>
+                                <div class="campaign-actions">
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-campaign btn-campaign-secondary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nueva Campaña -->
+            <div class="col-md-6 mb-4">
+                <div class="new-campaign-card">
+                    <i class="fas fa-plus-circle"></i>
+                    <h4>Crear Nueva Campaña</h4>
+                    <p class="small">Diseña una promoción especial para tus clientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Masivas -->
+        <div class="partner-card p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Acciones Masivas</h5>
+                    <small class="text-muted">Aplica acciones a las campañas seleccionadas</small>
+                </div>
+                <div class="campaign-actions">
+                    <button class="btn btn-campaign btn-campaign-secondary">
+                        <i class="fas fa-play me-1"></i> Activar
+                    </button>
+                    <button class="btn btn-campaign btn-campaign-secondary">
+                        <i class="fas fa-pause me-1"></i> Pausar
+                    </button>
+                    <button class="btn btn-campaign btn-campaign-secondary">
+                        <i class="fas fa-trash-alt me-1"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark bg-opacity-75 text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Trady Partners - Panel de Control para Negocios</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para selección de campañas -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selección de campañas
+            const campaignCards = document.querySelectorAll('.campaign-card-lg');
+            
+            campaignCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Evitar la selección si se hace clic en un botón de acción
+                    if (e.target.closest('.btn-campaign')) {
+                        return;
+                    }
+                    
+                    this.classList.toggle('selected');
+                });
+            });
+
+            // Simular clic en "Nueva Campaña"
+            document.querySelector('.new-campaign-card').addEventListener('click', function() {
+                alert('Redirigiendo al creador de campañas...');
+                // Aquí iría la lógica para redirigir al formulario de creación de campañas
+            });
+        });
+    </script>
+</body>
+
+</html>

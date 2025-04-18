@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trady - Cambiar Suscripción</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mismo estilo que el archivo original -->
+    <style>
+        :root {
+            --game-primary: #6a11cb;
+            --game-secondary: #2575fc;
+            --game-dark: #1a1a2e;
+            --game-light: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--game-primary), var(--game-secondary));
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-custom {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            padding: 10px 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .btn-custom-secondary {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            padding: 10px 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .plan-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .plan-card.featured {
+            border-color: gold;
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: gold;
+            color: #1a1a2e;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li i {
+            margin-right: 10px;
+            color: var(--game-primary);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            font-weight: normal;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .comparison-table td {
+            font-weight: bold;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .feature-available {
+            color: #00c853;
+        }
+
+        .feature-unavailable {
+            color: #ff3d00;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Barra de Navegación (igual que en el original) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Puntos: <strong>1,250</strong></span>
+                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="game-card p-4">
+                    <!-- Botón de volver atrás -->
+                    <a href="perfil-usuario.html" class="btn btn-sm btn-outline-light mb-4">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+
+                    <h2 class="text-center mb-4"><i class="fas fa-crown me-2"></i>Elige tu Suscripción</h2>
+                    <p class="text-center text-muted mb-5">Selecciona el plan que mejor se adapte a tus necesidades como cazador de QR</p>
+
+                    <!-- Planes de suscripción -->
+                    <div class="row">
+                        <!-- Plan Básico -->
+                        <div class="col-md-4">
+                            <div class="plan-card text-center h-100">
+                                <h4>Básico</h4>
+                                <div class="plan-price">Gratis<span class="fs-6">/mes</span></div>
+                                <ul class="plan-features text-start">
+                                    <li><i class="fas fa-check"></i> Hasta 5 rutas activas</li>
+                                    <li><i class="fas fa-check"></i> 100 puntos bonus mensuales</li>
+                                    <li><i class="fas fa-check"></i> Acceso a rutas básicas</li>
+                                    <li><i class="fas fa-times"></i> Estadísticas avanzadas</li>
+                                    <li><i class="fas fa-times"></i> Desafíos exclusivos</li>
+                                    <li><i class="fas fa-times"></i> Soporte prioritario</li>
+                                </ul>
+                                <button class="btn btn-outline-light w-100">
+                                    Seleccionar Plan
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Plan Premium (destacado) -->
+                        <div class="col-md-4">
+                            <div class="plan-card featured text-center h-100">
+                                <div class="featured-badge">RECOMENDADO</div>
+                                <h4>Premium</h4>
+                                <div class="plan-price">$4.99<span class="fs-6">/mes</span></div>
+                                <ul class="plan-features text-start">
+                                    <li><i class="fas fa-check"></i> Rutas ilimitadas</li>
+                                    <li><i class="fas fa-check"></i> 300 puntos bonus mensuales</li>
+                                    <li><i class="fas fa-check"></i> Acceso a todas las rutas</li>
+                                    <li><i class="fas fa-check"></i> Estadísticas avanzadas</li>
+                                    <li><i class="fas fa-check"></i> Desafíos exclusivos</li>
+                                    <li><i class="fas fa-times"></i> Soporte prioritario</li>
+                                </ul>
+                                <button class="btn btn-custom w-100">
+                                    <i class="fas fa-crown me-1"></i> Tu Plan Actual
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Plan VIP -->
+                        <div class="col-md-4">
+                            <div class="plan-card text-center h-100">
+                                <h4>VIP</h4>
+                                <div class="plan-price">$49.99<span class="fs-6">/año</span></div>
+                                <ul class="plan-features text-start">
+                                    <li><i class="fas fa-check"></i> Rutas ilimitadas</li>
+                                    <li><i class="fas fa-check"></i> 500 puntos bonus mensuales</li>
+                                    <li><i class="fas fa-check"></i> Acceso premium a todas las rutas</li>
+                                    <li><i class="fas fa-check"></i> Estadísticas avanzadas</li>
+                                    <li><i class="fas fa-check"></i> Desafíos exclusivos</li>
+                                    <li><i class="fas fa-check"></i> Soporte prioritario 24/7</li>
+                                </ul>
+                                <button class="btn btn-outline-light w-100">
+                                    Seleccionar Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparación de planes -->
+                    <div class="game-card p-4 mt-5">
+                        <h4 class="text-center mb-4"><i class="fas fa-chart-bar me-2"></i>Comparación de Planes</h4>
+                        
+                        <div class="table-responsive">
+                            <table class="comparison-table">
+                                <tr>
+                                    <th>Característica</th>
+                                    <th>Básico</th>
+                                    <th>Premium</th>
+                                    <th>VIP</th>
+                                </tr>
+                                <tr>
+                                    <td>Precio mensual</td>
+                                    <td>$4.99</td>
+                                    <td>$9.99</td>
+                                    <td>$14.99</td>
+                                </tr>
+                                <tr>
+                                    <td>Rutas simultáneas</td>
+                                    <td>5</td>
+                                    <td>Ilimitadas</td>
+                                    <td>Ilimitadas</td>
+                                </tr>
+                                <tr>
+                                    <td>Puntos bonus/mes</td>
+                                    <td>100</td>
+                                    <td>300</td>
+                                    <td>500</td>
+                                </tr>
+                                <tr>
+                                    <td>Acceso a rutas exclusivas</td>
+                                    <td><i class="fas fa-times feature-unavailable"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Estadísticas avanzadas</td>
+                                    <td><i class="fas fa-times feature-unavailable"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Desafíos exclusivos</td>
+                                    <td><i class="fas fa-times feature-unavailable"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Soporte prioritario</td>
+                                    <td><i class="fas fa-times feature-unavailable"></i></td>
+                                    <td><i class="fas fa-times feature-unavailable"></i></td>
+                                    <td><i class="fas fa-check feature-available"></i></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Preguntas frecuentes -->
+                    <div class="game-card p-4 mt-4">
+                        <h4 class="text-center mb-4"><i class="fas fa-question-circle me-2"></i>Preguntas Frecuentes</h4>
+                        
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item bg-transparent border-0 mb-2">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                        ¿Puedo cambiar de plan en cualquier momento?
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Sí, puedes cambiar entre planes en cualquier momento. El cambio será efectivo en tu próximo ciclo de facturación.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item bg-transparent border-0 mb-2">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                        ¿Hay un período de compromiso?
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        No, todos nuestros planes son mensuales sin compromiso. Puedes cancelar en cualquier momento.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item bg-transparent border-0">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed bg-transparent text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                        ¿Qué métodos de pago aceptan?
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Aceptamos todas las tarjetas de crédito/débito principales (Visa, MasterCard, American Express) y PayPal.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark bg-opacity-75 text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Trady - ¡Encuentra, Escanea, Gana!</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para funcionalidad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular selección de plan
+            const planButtons = document.querySelectorAll('.plan-card .btn:not(.btn-custom)');
+            
+            planButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const planName = this.closest('.plan-card').querySelector('h4').textContent;
+                    
+                    // Simular cambio de plan
+                    alert(`¡Has seleccionado el plan ${planName}! Serás redirigido para confirmar el cambio.`);
+                    
+                    // Aquí iría la lógica real para cambiar de plan
+                    // window.location.href = 'confirmar-cambio.html?plan=' + encodeURIComponent(planName);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

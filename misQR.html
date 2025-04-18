@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trady Partners - Mis Códigos QR</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mismo estilo que el archivo original -->
+    <style>
+        :root {
+            --partner-primary: #2575fc;
+            --partner-secondary: #6a11cb;
+            --partner-dark: #1a1a2e;
+            --partner-light: #f8f9fa;
+            --partner-success: #00b09b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--partner-primary), var(--partner-secondary));
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+
+        .partner-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .partner-card:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-new-qr {
+            background: linear-gradient(90deg, var(--partner-success), #96c93d);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            padding: 10px 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .qr-card:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .qr-image-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .qr-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+        }
+
+        .qr-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .qr-stat {
+            display: flex;
+            align-items: center;
+        }
+
+        .qr-stat i {
+            margin-right: 5px;
+        }
+
+        .qr-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .qr-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: var(--partner-success);
+            color: white;
+        }
+
+        .status-inactive {
+            background: #ff3d00;
+            color: white;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container input {
+            padding-left: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--partner-primary);
+            border-color: var(--partner-primary);
+        }
+
+        .qr-preview {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Barra de Navegación (igual que en el original) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Nivel: <strong>Partner Oro</strong></span>
+                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="partner-card p-4">
+                    <!-- Botón de volver atrás -->
+                    <a href="perfil-partner.html" class="btn btn-sm btn-outline-light mb-4">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-qrcode me-2"></i>Tus Códigos QR</h2>
+                        <button class="btn btn-new-qr btn-sm">
+                            <i class="fas fa-plus me-1"></i> Nuevo QR
+                        </button>
+                    </div>
+
+                    <!-- Filtros y búsqueda -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" placeholder="Buscar QR por nombre o ubicación...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex flex-wrap">
+                                <button class="filter-btn active">Todos</button>
+                                <button class="filter-btn">Activos</button>
+                                <button class="filter-btn">Inactivos</button>
+                                <button class="filter-btn">Más escaneados</button>
+                                <button class="filter-btn">Recientes</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Listado de QR -->
+                    <div class="row">
+                        <!-- QR 1 -->
+                        <div class="col-md-4">
+                            <div class="qr-card">
+                                <div class="qr-image-container">
+                                    <img src="https://via.placeholder.com/300x150?text=QR+Bar" alt="QR Barra" class="qr-image">
+                                    <div class="qr-overlay">
+                                        <h6 class="mb-0">QR Barra</h6>
+                                    </div>
+                                    <span class="qr-status status-active">Activo</span>
+                                </div>
+                                <div class="qr-stats">
+                                    <div class="qr-stat">
+                                        <i class="fas fa-eye"></i> 32 escaneos
+                                    </div>
+                                    <div class="qr-stat">
+                                        <i class="fas fa-star"></i> 4.5/5
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-chart-line"></i> Estadísticas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR 2 -->
+                        <div class="col-md-4">
+                            <div class="qr-card">
+                                <div class="qr-image-container">
+                                    <img src="https://via.placeholder.com/300x150?text=QR+Entrada" alt="QR Entrada" class="qr-image">
+                                    <div class="qr-overlay">
+                                        <h6 class="mb-0">QR Entrada</h6>
+                                    </div>
+                                    <span class="qr-status status-active">Activo</span>
+                                </div>
+                                <div class="qr-stats">
+                                    <div class="qr-stat">
+                                        <i class="fas fa-eye"></i> 55 escaneos
+                                    </div>
+                                    <div class="qr-stat">
+                                        <i class="fas fa-star"></i> 4.2/5
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-chart-line"></i> Estadísticas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR 3 -->
+                        <div class="col-md-4">
+                            <div class="qr-card">
+                                <div class="qr-image-container">
+                                    <img src="https://via.placeholder.com/300x150?text=QR+Terrazza" alt="QR Terraza" class="qr-image">
+                                    <div class="qr-overlay">
+                                        <h6 class="mb-0">QR Terraza</h6>
+                                    </div>
+                                    <span class="qr-status status-active">Activo</span>
+                                </div>
+                                <div class="qr-stats">
+                                    <div class="qr-stat">
+                                        <i class="fas fa-eye"></i> 23 escaneos
+                                    </div>
+                                    <div class="qr-stat">
+                                        <i class="fas fa-star"></i> 4.7/5
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-chart-line"></i> Estadísticas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR 4 -->
+                        <div class="col-md-4">
+                            <div class="qr-card">
+                                <div class="qr-image-container">
+                                    <img src="https://via.placeholder.com/300x150?text=QR+Baños" alt="QR Baños" class="qr-image">
+                                    <div class="qr-overlay">
+                                        <h6 class="mb-0">QR Baños</h6>
+                                    </div>
+                                    <span class="qr-status status-inactive">Inactivo</span>
+                                </div>
+                                <div class="qr-stats">
+                                    <div class="qr-stat">
+                                        <i class="fas fa-eye"></i> 12 escaneos
+                                    </div>
+                                    <div class="qr-stat">
+                                        <i class="fas fa-star"></i> 3.8/5
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-chart-line"></i> Estadísticas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR 5 -->
+                        <div class="col-md-4">
+                            <div class="qr-card">
+                                <div class="qr-image-container">
+                                    <img src="https://via.placeholder.com/300x150?text=QR+Carta" alt="QR Carta" class="qr-image">
+                                    <div class="qr-overlay">
+                                        <h6 class="mb-0">QR Carta Digital</h6>
+                                    </div>
+                                    <span class="qr-status status-active">Activo</span>
+                                </div>
+                                <div class="qr-stats">
+                                    <div class="qr-stat">
+                                        <i class="fas fa-eye"></i> 45 escaneos
+                                    </div>
+                                    <div class="qr-stat">
+                                        <i class="fas fa-star"></i> 4.9/5
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-chart-line"></i> Estadísticas
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Espacio para nuevo QR -->
+                        <div class="col-md-4">
+                            <div class="qr-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; min-height: 300px; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.3);">
+                                <div class="qr-preview">
+                                    <i class="fas fa-plus" style="font-size: 2rem; color: var(--partner-primary);"></i>
+                                </div>
+                                <h5 class="text-center">Añadir nuevo QR</h5>
+                                <button class="btn btn-new-qr btn-sm mt-2">
+                                    <i class="fas fa-plus me-1"></i> Crear QR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paginación -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark bg-opacity-75 text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Trady Partners - Panel de Control para Negocios</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para funcionalidad -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filtros
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // Aquí iría la lógica para filtrar los QR
+                });
+            });
+
+            // Botón para crear nuevo QR
+            const newQrBtns = document.querySelectorAll('.btn-new-qr');
+            newQrBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Simular creación de nuevo QR
+                    alert('Redirigiendo a la creación de nuevo QR');
+                    // window.location.href = 'nuevo-qr.html';
+                });
+            });
+
+            // Hover en tarjetas de QR
+            const qrCards = document.querySelectorAll('.qr-card');
+            qrCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.btn')) {
+                        // Simular ver detalles del QR
+                        const qrName = this.querySelector('h6').textContent;
+                        alert(`Mostrando detalles de: ${qrName}`);
+                        // window.location.href = `detalle-qr.html?id=${qrId}`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
