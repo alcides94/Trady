@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRADY - Descubre y Gana</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --game-primary: #6a11cb;
+            --game-secondary: #2575fc;
+            --game-dark: #1a1a2e;
+        }
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slideshow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(106, 17, 203, 0.7), rgba(37, 117, 252, 0.7));
+            z-index: 1;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .logo-container img {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .slogan {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        .start-btn {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            padding: 15px 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-size: 1.2rem;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: pulse 2s infinite;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+        
+        .features {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+        
+        .feature i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <!-- Slideshow de imágenes de turismo -->
+        <div class="slideshow">
+            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80');"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1503917988258-f87a78e3c995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80');"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');"></div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');"></div>
+        </div>
+        
+        <!-- Overlay de color -->
+        <div class="overlay"></div>
+        
+        <!-- Contenido principal -->
+        <div class="content">
+            <div class="logo-container">
+                <img src="trady_sinFondo.png" alt="TRADY Logo">
+                <h1 class="display-4 fw-bold">TRADY</h1>
+            </div>
+            
+            <p class="slogan">Descubre lugares increíbles, escanea códigos QR y gana recompensas</p>
+            
+            <a href="login.html" class="start-btn">
+                <i class="fas fa-play me-2"></i>EMPEZAR
+            </a>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Explora rutas turísticas</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Escanea y descubre</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-gift"></i>
+                    <span>Gana premios</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para el slideshow -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            
+            function nextSlide() {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+            
+            // Cambiar de slide cada 5 segundos
+            setInterval(nextSlide, 5000);
+            
+            // Opcional: Permitir el clic en cualquier parte para ir al login
+            document.querySelector('.hero-section').addEventListener('click', function(e) {
+                if (!e.target.closest('a')) {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
