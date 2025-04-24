@@ -68,7 +68,7 @@
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->
             <div class="text-center mb-4">
-                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
+                <i class="qr-icon"><img src="../fotos/trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
                 <h1 class="fw-bold">TRADY</h1>
                 <p class="mb-4">¡Encuentra, Escanea, Gana!</p>
             </div>
@@ -76,10 +76,10 @@
             <!-- Pestañas Login/Registro -->
             <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab">Iniciar Sesión</button>
+                    <button class="nav-link active text-white" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab">Iniciar Sesión</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-register-tab" data-bs-toggle="pill" data-bs-target="#pills-register" type="button" role="tab">Registrarse</button>
+                    <button class="nav-link text-white" id="pills-register-tab" data-bs-toggle="pill" data-bs-target="#pills-register" type="button" role="tab">Registrarse</button>
                 </li>
             </ul>
 
@@ -87,7 +87,7 @@
             <div class="tab-content" id="pills-tabContent">
                 <!-- Login -->
                 <div class="tab-pane fade show active" id="pills-login" role="tabpanel">
-                    <form action="login.php" method="POST">
+                    <form action="" method="POST">
                         <div class="mb-3">
                             <label for="login-email" class="form-label">Email</label>
                             <div class="input-group">
