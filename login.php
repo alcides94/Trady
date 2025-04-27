@@ -68,7 +68,7 @@
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->
             <div class="text-center mb-4">
-                <i class="qr-icon"><img src="../fotos/trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
+                <i class="qr-icon"><img src="./trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
                 <h1 class="fw-bold">TRADY</h1>
                 <p class="mb-4">¡Encuentra, Escanea, Gana!</p>
             </div>
