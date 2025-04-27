@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trady Admin - Panel de Administración</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --admin-primary: #2c3e50;
+            --admin-secondary: #34495e;
+            --admin-dark: #1a1a2e;
+            --admin-light: #f8f9fa;
+            --admin-success: #27ae60;
+            --admin-danger: #e74c3c;
+            --admin-warning: #f39c12;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .admin-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--admin-secondary);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--admin-primary);
+            border-bottom: 3px solid var(--admin-primary);
+            background: transparent;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-blocked {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 20px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            color: #6c757d;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h5 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .map-container {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #route-map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .admin-navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-menu img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .stat-card {
+            border-left: 4px solid;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.users {
+            border-left-color: #3498db;
+        }
+
+        .stat-card.partners {
+            border-left-color: #2ecc71;
+        }
+
+        .stat-card.routes {
+            border-left-color: #9b59b6;
+        }
+
+        .stat-card.sites {
+            border-left-color: #f39c12;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark admin-header">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <img src="../util/img/trady_sinFondo.png" alt="Trady Logo" width="40" class="me-2">Trady Admin
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="user-menu d-flex align-items-center text-white">
+                    <img src="https://via.placeholder.com/40" alt="Admin Avatar">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-3">
+        <!-- Pestañas de Administración -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button" role="tab">
+                    <i class="fas fa-users me-2"></i>Usuarios
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">
+                    <i class="fas fa-store me-2"></i>Partners
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rutas-tab" data-bs-toggle="tab" data-bs-target="#rutas" type="button" role="tab">
+                    <i class="fas fa-route me-2"></i>Rutas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sitios-tab" data-bs-toggle="tab" data-bs-target="#sitios" type="button" role="tab">
+                    <i class="fas fa-map-marker-alt me-2"></i>Sitios de Interés
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes" type="button" role="tab">
+                    <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="configuracion-tab" data-bs-toggle="tab" data-bs-target="#configuracion" type="button" role="tab">
+                    <i class="fas fa-cog me-2"></i>Configuración
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Pestaña de Usuarios -->
+            <div class="tab-pane fade show active" id="usuarios" role="tabpanel">
+                <div class="admin-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4><i class="fas fa-users me-2"></i>Gestión de Usuarios</h4>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" placeholder="Buscar usuarios...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Registro</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1001</td>
+                                    <td>Juan Pérez</td>
+                                    <td>juan@example.com</td>
+                                    <td>15/03/2023</td>
+                                    <td><span class="status-badge status-active">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning action-btn">Bloquear</button>
+                                        <button class="btn btn-sm btn-info action-btn">Detalles</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1002</td>
+                                    <td>Ana García</td>
+                                    <td>ana@example.com</td>
+                                    <td>22/05/2023</td>
+                                    <td><span class="status-badge status-pending">Pendiente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success action-btn">Validar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Rechazar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1003</td>
+                                    <td>Carlos López</td>
+                                    <td>carlos@example.com</td>
+                                    <td>10/06/2023</td>
+                                    <td><span class="status-badge status-blocked">Bloqueado</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success action-btn">Activar</button>
+                                        <button class="btn btn-sm btn-info action-btn">Detalles</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Pestaña de Partners -->
+            <div class="tab-pane fade" id="partners" role="tabpanel">
+                <div class="admin-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4><i class="fas fa-store me-2"></i>Gestión de Partners</h4>
+                        <div>
+                            <button class="btn btn-primary me-2">
+                                <i class="fas fa-plus me-1"></i> Nuevo Partner
+                            </button>
+                            <div class="search-box d-inline-block">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" placeholder="Buscar partners...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2001</td>
+                                    <td>Café Central</td>
+                                    <td>Cafetería</td>
+                                    <td>Calle Principal, 123</td>
+                                    <td><span class="status-badge status-active">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Bloquear</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2002</td>
+                                    <td>Libros & Más</td>
+                                    <td>Librería</td>
+                                    <td>Avenida Libros, 45</td>
+                                    <td><span class="status-badge status-pending">Pendiente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success action-btn">Aprobar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Rechazar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2003</td>
+                                    <td>Tech Solutions</td>
+                                    <td>Electrónica</td>
+                                    <td>Plaza Tecnología, 7</td>
+                                    <td><span class="status-badge status-blocked">Bloqueado</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success action-btn">Activar</button>
+                                        <button class="btn btn-sm btn-info action-btn">Detalles</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Pestaña de Rutas -->
+            <div class="tab-pane fade" id="rutas" role="tabpanel">
+                <div class="admin-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4><i class="fas fa-route me-2"></i>Gestión de Rutas</h4>
+                        <div>
+                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#nuevaRutaModal">
+                                <i class="fas fa-plus me-1"></i> Nueva Ruta
+                            </button>
+                            <div class="search-box d-inline-block">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" placeholder="Buscar rutas...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Lista de Rutas -->
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action active">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Ruta Histórica</h5>
+                                        <small>Activa</small>
+                                    </div>
+                                    <p class="mb-1">8 lugares históricos en el centro de la ciudad.</p>
+                                    <small>400 puntos totales</small>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Gastronomía Local</h5>
+                                        <small>Activa</small>
+                                    </div>
+                                    <p class="mb-1">5 establecimientos con comida tradicional.</p>
+                                    <small>300 puntos totales</small>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">Arte Urbano</h5>
+                                        <small>Inactiva</small>
+                                    </div>
+                                    <p class="mb-1">6 murales y obras de arte callejero.</p>
+                                    <small>400 puntos totales</small>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Detalles de Ruta -->
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h5>Editar Ruta</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="rutaNombre" class="form-label">Nombre de la Ruta</label>
+                                        <input type="text" class="form-control" id="rutaNombre" value="Ruta Histórica">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="rutaDescripcion" class="form-label">Descripción</label>
+                                        <textarea class="form-control" id="rutaDescripcion" rows="3">8 lugares históricos en el centro de la ciudad.</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="rutaPuntos" class="form-label">Puntos Totales</label>
+                                        <input type="number" class="form-control" id="rutaPuntos" value="400">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Estado</label>
+                                        <select class="form-select">
+                                            <option selected>Activa</option>
+                                            <option>Inactiva</option>
+                                            <option>En revisión</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ubicaciones en la Ruta</label>
+                                        <div class="map-container">
+                                            <div id="route-map"></div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                    <button type="button" class="btn btn-danger">Eliminar Ruta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Sitios de Interés -->
+            <div class="tab-pane fade" id="sitios" role="tabpanel">
+                <div class="admin-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4><i class="fas fa-map-marker-alt me-2"></i>Sitios de Interés</h4>
+                        <div>
+                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#nuevoSitioModal">
+                                <i class="fas fa-plus me-1"></i> Nuevo Sitio
+                            </button>
+                            <div class="search-box d-inline-block">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" placeholder="Buscar sitios...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Ubicación</th>
+                                    <th>Rutas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>3001</td>
+                                    <td>Catedral de la Ciudad</td>
+                                    <td>Monumento</td>
+                                    <td>Plaza Central, 1</td>
+                                    <td>Ruta Histórica</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Eliminar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3002</td>
+                                    <td>Puente Antiguo</td>
+                                    <td>Monumento</td>
+                                    <td>Río Ciudad</td>
+                                    <td>Ruta Histórica</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Eliminar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3003</td>
+                                    <td>Mural Comunitario</td>
+                                    <td>Arte Urbano</td>
+                                    <td>Calle Arte, 15</td>
+                                    <td>Arte Urbano</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Pestaña de Estadísticas -->
+            <div class="tab-pane fade" id="reportes" role="tabpanel">
+                <div class="admin-card p-4">
+                    <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Estadísticas y Reportes</h4>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="admin-card p-3 stat-card users">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted">Usuarios</h6>
+                                        <h3 class="mb-0">1,245</h3>
+                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>12.5%</small>
+                                    </div>
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                        <i class="fas fa-users text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="admin-card p-3 stat-card partners">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted">Partners</h6>
+                                        <h3 class="mb-0">87</h3>
+                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>5.2%</small>
+                                    </div>
+                                    <div class="bg-success bg-opacity-10 p-3 rounded">
+                                        <i class="fas fa-store text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="admin-card p-3 stat-card routes">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted">Rutas Activas</h6>
+                                        <h3 class="mb-0">12</h3>
+                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>3.8%</small>
+                                    </div>
+                                    <div class="bg-purple bg-opacity-10 p-3 rounded">
+                                        <i class="fas fa-route text-purple"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="admin-card p-3 stat-card sites">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted">Sitios de Interés</h6>
+                                        <h3 class="mb-0">45</h3>
+                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>8.1%</small>
+                                    </div>
+                                    <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                        <i class="fas fa-map-marker-alt text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="admin-card p-3">
+                                <h5 class="mb-3">Registro de Usuarios</h5>
+                                <div class="chart-container">
+                                    <canvas id="usuariosChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="admin-card p-3">
+                                <h5 class="mb-3">Actividad por Categoría</h5>
+                                <div class="chart-container">
+                                    <canvas id="categoriasChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="admin-card p-3">
+                                <h5 class="mb-3">Escaneos de QR por Mes</h5>
+                                <div class="chart-container" style="height: 400px;">
+                                    <canvas id="qrChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Configuración -->
+            <div class="tab-pane fade" id="configuracion" role="tabpanel">
+                <div class="admin-card p-4">
+                    <h4 class="mb-4"><i class="fas fa-cog me-2"></i>Configuración del Administrador</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h5><i class="fas fa-user-shield me-2"></i>Perfil de Administrador</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="adminNombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="adminNombre" value="Administrador Principal">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="adminEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="adminEmail" value="admin@trady.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="adminFoto" class="form-label">Foto de Perfil</label>
+                                        <input class="form-control" type="file" id="adminFoto">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h5><i class="fas fa-lock me-2"></i>Seguridad</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                                        <input type="password" class="form-control" id="currentPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                                        <input type="password" class="form-control" id="newPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="form-section">
+                                <h5><i class="fas fa-bell me-2"></i>Notificaciones</h5>
+                                <form>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifUsuarios" checked>
+                                        <label class="form-check-label" for="notifUsuarios">Nuevos usuarios registrados</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifPartners" checked>
+                                        <label class="form-check-label" for="notifPartners">Solicitudes de partners</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifReportes">
+                                        <label class="form-check-label" for="notifReportes">Reportes semanales</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notifErrores" checked>
+                                        <label class="form-check-label" for="notifErrores">Errores del sistema</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="form-section">
+                                <h5><i class="fas fa-sliders-h me-2"></i>Configuración del Sistema</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="sistemaTema" class="form-label">Tema del Panel</label>
+                                        <select class="form-select" id="sistemaTema">
+                                            <option selected>Claro</option>
+                                            <option>Oscuro</option>
+                                            <option>Azul</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sistemaIdioma" class="form-label">Idioma</label>
+                                        <select class="form-select" id="sistemaIdioma">
+                                            <option selected>Español</option>
+                                            <option>Inglés</option>
+                                            <option>Francés</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sistemaRegistros" class="form-label">Registros por página</label>
+                                        <input type="number" class="form-control" id="sistemaRegistros" value="10">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Ruta -->
+    <div class="modal fade" id="nuevaRutaModal" tabindex="-1" aria-labelledby="nuevaRutaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nuevaRutaModalLabel">Crear Nueva Ruta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nuevaRutaNombre" class="form-label">Nombre de la Ruta</label>
+                            <input type="text" class="form-control" id="nuevaRutaNombre" placeholder="Ej: Ruta Histórica">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nuevaRutaDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="nuevaRutaDescripcion" rows="3" placeholder="Descripción detallada de la ruta"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nuevaRutaPuntos" class="form-label">Puntos Totales</label>
+                            <input type="number" class="form-control" id="nuevaRutaPuntos" placeholder="Ej: 400">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sitios de Interés</label>
+                            <select class="form-select" multiple>
+                                <option selected>Catedral de la Ciudad</option>
+                                <option>Puente Antiguo</option>
+                                <option>Museo Municipal</option>
+                                <option>Torre del Reloj</option>
+                                <option>Plaza Mayor</option>
+                                <option>Mural Comunitario</option>
+                                <option>Parque Central</option>
+                            </select>
+                            <small class="text-muted">Mantén presionada la tecla Ctrl para seleccionar múltiples sitios.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mapa de la Ruta</label>
+                            <div class="map-container">
+                                <div id="nueva-ruta-map"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Crear Ruta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Sitio -->
+    <div class="modal fade" id="nuevoSitioModal" tabindex="-1" aria-labelledby="nuevoSitioModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nuevoSitioModalLabel">Agregar Sitio de Interés</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+               
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+    <script>
+        // Inicialización de mapas (simulado)
+        function initMap() {
+            console.log("Mapas inicializados (simulación)");
+        }
+        
+        // Activar tooltips y popovers de Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+
+</html>
