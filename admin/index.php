@@ -9,123 +9,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --admin-primary: #2c3e50;
-            --admin-secondary: #34495e;
-            --admin-dark: #1a1a2e;
-            --admin-light: #f8f9fa;
-            --admin-success: #27ae60;
-            --admin-danger: #e74c3c;
-            --admin-warning: #f39c12;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .login-container {
-            max-width: 400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .login-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            text-align: center;
-        }
-
-        .login-logo {
-            margin-bottom: 30px;
-        }
-
-        .login-logo img {
-            width: 80px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-
-        .login-logo h2 {
-            color: var(--admin-primary);
-            font-weight: 700;
-        }
-
-        .form-control {
-            height: 45px;
-            border-radius: 8px;
-            padding-left: 15px;
-            border: 1px solid #ddd;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: var(--admin-primary);
-            box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
-        }
-
-        .input-group-text {
-            background-color: transparent;
-            border-right: none;
-        }
-
-        .input-group .form-control {
-            border-left: none;
-        }
-
-        .input-group .form-control:focus {
-            border-left: 1px solid var(--admin-primary);
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
-            border: none;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.3);
-        }
-
-        .login-footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-
-        .login-footer a {
-            color: var(--admin-primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .error-message {
-            color: var(--admin-danger);
-            font-size: 14px;
-            margin-top: 5px;
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="../util/css/style-admin.css">
+    
+    <?php
+    /**CODIGO DE ERROR */
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 );
+        require('../util/conexion.php');
+    ?>
+   
 </head>
 
 <body>
+        <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $usuario = $_POST["usuario"];
+            $contrasena = $_POST["contrasena"];
+
+            // Preparar consulta segura con PDO
+            $sql = "SELECT * FROM administradores WHERE email = :email";
+            $stmt = $_conexion->prepare($sql);
+            $stmt->bindParam(':email', $usuario);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$resultado) {
+                echo "El usuario no existe";
+            } else {
+                //por ahora utilizamos de esta forma sin hash para realizar pruebas
+                //$acceso_conseguido = password_verify($contrasena, $resultado["password"]);
+                if ($contrasena != $resultado["password"]) {
+                    echo "Contraseña errónea";
+                } else {
+                    session_start();
+                    $_SESSION["usuario"] = $usuario;
+                    header("location: ./panel-admin.html");
+                    exit;
+                }
+            }
+        }
+        ?>
+
     <div class="login-container">
         <div class="login-card">
             <div class="login-logo">
@@ -134,11 +58,11 @@
                 <p class="text-muted">Panel de administración</p>
             </div>
 
-            <form id="loginForm">
+            <form id="loginForm" method="post">
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" id="username" placeholder="Nombre de usuario" required>
+                        <input type="text" class="form-control" name="usuario" id="username" placeholder="Nombre de usuario" required>
                     </div>
                     <div id="usernameError" class="error-message"></div>
                 </div>
@@ -146,7 +70,7 @@
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" name="contrasena" id="password" placeholder="Contraseña" required>
                         <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -189,7 +113,7 @@
             }
         });
 
-        // Validación del formulario
+      /*  // Validación del formulario
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -218,9 +142,9 @@
                 // Aquí iría la lógica de autenticación
                 alert('Inicio de sesión exitoso (simulado)');
                 // Redireccionar al panel de administración
-                window.location.href = 'panel-admin.html';
+                window.location.href = 'admin.html';
             }
-        });
+        });*/
     </script>
 </body>
 

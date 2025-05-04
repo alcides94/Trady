@@ -1,11 +1,15 @@
 <?php
+ 
+    $_servidor = "localhost";
+    $_usuario = "estudiante";
+    $_contrasena = "estudiante";
+    $_base_de_datos = "trady_bd";
 
-    $_servidor ="localhost"; 
-    $_usuario="estudiante"; 
-    $_contrasena ="estudiante";
-    $_base_de_datos="trady_bd"; 
-
-    $_conexion=new Mysqli($_servidor,$_usuario,$_contrasena,$_base_de_datos)
-        or die ("Error de conexion");
-
+    try {
+        $_conexion = new PDO("mysql:host=$_servidor;dbname=$_base_de_datos",
+            $_usuario,$_contrasena);
+        $_conexion -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        die("Conexión fallida: " . $e -> getMessage());
+    }
 ?>
