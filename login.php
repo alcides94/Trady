@@ -11,7 +11,6 @@
     <?php
         error_reporting( E_ALL );
         ini_set( "display_errors", 1 ); 
-        
     ?>
     <style>
         :root {
@@ -69,6 +68,11 @@
     </style>
 </head>
 <body>
+<?php 
+    
+
+    
+    ?>
     <div class="container d-flex align-items-center justify-content-center h-100">
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->
@@ -135,13 +139,7 @@
                                 <input type="email" class="form-control" id="register-email" name="email" required>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="register-password" class="form-label">Contraseña</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="register-password" name="password" required>
-                            </div>
-                        </div>
+                
                         <div class="d-grid">
                             <button type="submit" class="btn game-btn">
                                 <i class="fas fa-user-plus me-2"></i>Crear Cuenta

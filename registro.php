@@ -245,7 +245,19 @@
     </style>
 </head>
 <body>
-    
+    <?php
+
+        // Obtener los valores de la URL y decodificarlos
+        $usuario = htmlspecialchars($_POST['username']);
+        $email = htmlspecialchars($_POST['email']);
+
+        // Sanitizar los valores para seguridad al mostrarlos en HTML
+        $usuario_safe = htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8');
+        $email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+
+        
+        
+    ?>
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -313,11 +325,11 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label required-field">Nombre completo</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo $usuario; ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label required-field">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="email" value="<?php echo $email; ?>" required>
                                 </div>
                             </div>
                             
