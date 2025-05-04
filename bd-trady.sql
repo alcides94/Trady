@@ -4,7 +4,7 @@
 
 CREATE DATABASE IF NOT EXISTS trady_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE trady;
+USE trady_bd;
 
 -- --------------------------------------------------
 -- 1. Tabla suscripcion_comercios
@@ -30,13 +30,13 @@ CREATE TABLE suscripcion_usuarios (
 CREATE TABLE usuarios (
   id_usuario       INT             AUTO_INCREMENT PRIMARY KEY,
   email            VARCHAR(50)     NOT NULL UNIQUE,
-  alias            VARCHAR(50),
+  alias            VARCHAR(50) ,
   nombre           VARCHAR(50)     NOT NULL,
-  apellido         VARCHAR(50),
+  apellido         VARCHAR(50)	NOT NULL,
   fecha_nac        DATE,
   password         VARCHAR(255)    NOT NULL,
-  fecha_registro   DATE            NOT NULL DEFAULT CURRENT_DATE,
-  id_suscripcion   INT,
+  fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id_suscripcion   INT DEFAULT 1,
   puntos           INT             NOT NULL DEFAULT 0,
   estado           TINYINT(1)      NOT NULL DEFAULT 1,
   CONSTRAINT fk_usuario_suscripcion
@@ -60,16 +60,16 @@ CREATE TABLE comercios (
   id_comercios     INT             AUTO_INCREMENT PRIMARY KEY,
   nombre           VARCHAR(100)    NOT NULL,
   cif              VARCHAR(100),
-  descripcion      VARCHAR(100),
+  descripcion      VARCHAR(255),
   tipo             VARCHAR(50),
   direccion        VARCHAR(100),
   telefono         VARCHAR(100),
   email            VARCHAR(100),
-  id_suscripcion   INT,
-  fecha_alta       DATE            NOT NULL DEFAULT CURRENT_DATE,
-  id_qr            INT,
-  latitud          FLOAT,
-  longitud         FLOAT,
+  id_suscripcion   INT unique,
+  fecha_registro       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id_qr            INT unique,
+  latitud          DECIMAL(9, 6),
+  longitud         DECIMAL(9, 6),
   estado           TINYINT(1)      NOT NULL DEFAULT 1,
   CONSTRAINT fk_comercio_suscripcion
     FOREIGN KEY (id_suscripcion) REFERENCES suscripcion_comercios(id_suscripcion),
@@ -86,16 +86,16 @@ CREATE TABLE comercios (
 CREATE TABLE sitiosInteres (
   id_sitio         INT             AUTO_INCREMENT PRIMARY KEY,
   nombre           VARCHAR(100)    NOT NULL,
-  descripcion      VARCHAR(100),
+  descripcion      VARCHAR(255),
   tipo             VARCHAR(50),
   direccion        VARCHAR(100),
   telefono         VARCHAR(100),
   email            VARCHAR(100),
-  fecha_alta       DATE            NOT NULL DEFAULT CURRENT_DATE,
-  latitud          FLOAT,
-  longitud         FLOAT,
+  fecha_registro       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  latitud          DECIMAL(9, 6),
+  longitud         DECIMAL(9, 6),
   estado           TINYINT(1)      NOT NULL DEFAULT 1,
-  id_qr            INT,
+  id_qr            INT unique,
   CONSTRAINT fk_sitio_qr
     FOREIGN KEY (id_qr) REFERENCES qr_codigos(id_qr)
 ) ENGINE=InnoDB;
@@ -108,7 +108,7 @@ CREATE TABLE recompensas (
   id_comercio      INT             NOT NULL,
   nombre           VARCHAR(255)    NOT NULL,
   puntos           INT             NOT NULL,
-  fecha_alta       DATE            NOT NULL DEFAULT CURRENT_DATE,
+  fecha_registro       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   estado           TINYINT(1)      NOT NULL DEFAULT 1,
   CONSTRAINT fk_recompensa_comercio
     FOREIGN KEY (id_comercio) REFERENCES comercios(id_comercios)
@@ -128,12 +128,18 @@ CREATE TABLE rutas (
 -- --------------------------------------------------
 -- 9. Tabla rutas_puntos
 -- --------------------------------------------------
-CREATE TABLE rutas_puntos (
-  id_ruta_puntos   INT             AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE rutas_comercio_sitios (
+  id_rutas_comercio_sitios   INT             AUTO_INCREMENT PRIMARY KEY,
   id_ruta          INT             NOT NULL,
   id_comercio      INT,
   id_sitios        INT,
   orden            INT             NOT NULL,
+  
+  CHECK (
+    (id_comercio IS NOT NULL AND id_sitios IS NULL) OR
+    (id_comercio IS NULL AND id_sitios IS NOT NULL)
+  ),
+  
   CONSTRAINT fk_rutapunto_ruta
     FOREIGN KEY (id_ruta) REFERENCES rutas(id_ruta),
   CONSTRAINT fk_rutapunto_comercio
@@ -149,11 +155,17 @@ CREATE TABLE cuestionarios (
   id_cuestionario  INT             AUTO_INCREMENT PRIMARY KEY,
   pregunta         VARCHAR(255)    NOT NULL,
   respuesta        VARCHAR(255)    NOT NULL,
-  fecha_alta       DATE            NOT NULL DEFAULT CURRENT_DATE,
+  fecha_registro        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   estado           TINYINT(1)      NOT NULL DEFAULT 1,
   id_comercio      INT,
   id_sitio         INT,
   puntos           INT             NOT NULL,
+  
+  CHECK (
+    (id_comercio IS NOT NULL AND id_sitio IS NULL) OR
+    (id_comercio IS NULL AND id_sitio IS NOT NULL)
+  ),
+  
   CONSTRAINT fk_cuestionario_comercio
     FOREIGN KEY (id_comercio) REFERENCES comercios(id_comercios),
   CONSTRAINT fk_cuestionario_sitio
@@ -169,7 +181,7 @@ CREATE TABLE usuarios_desafios (
   id_usuario       INT             NOT NULL,
   fecha_inicio     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   fecha_fin        DATETIME,
-  estado           VARCHAR(25)     NOT NULL,
+  estado          ENUM('en_progreso', 'completado', 'cancelado') NOT NULL,
   CONSTRAINT fk_desafio_ruta
     FOREIGN KEY (id_ruta) REFERENCES rutas(id_ruta),
   CONSTRAINT fk_desafio_usuario
@@ -179,7 +191,7 @@ CREATE TABLE usuarios_desafios (
 -- --------------------------------------------------
 -- 12. Tabla usuario_Actividad
 -- --------------------------------------------------
-CREATE TABLE usuario_Actividad (
+CREATE TABLE usuario_actividad (
   id_actividad     INT             AUTO_INCREMENT PRIMARY KEY,
   id_usuario       INT             NOT NULL,
   id_desafios      INT,
@@ -188,6 +200,13 @@ CREATE TABLE usuario_Actividad (
   estado           VARCHAR(25),
   puntos_actividad INT             NOT NULL,
   fecha_act        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  
+  CHECK (
+  (id_desafios IS NOT NULL AND id_recompensa IS NULL AND id_cuestionario IS NULL) OR
+  (id_desafios IS NULL AND id_recompensa IS NOT NULL AND id_cuestionario IS NULL) OR
+  (id_desafios IS NULL AND id_recompensa IS NULL AND id_cuestionario IS NOT NULL)
+),
+  
   CONSTRAINT fk_actividad_usuario
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
   CONSTRAINT fk_actividad_desafio
@@ -234,7 +253,7 @@ CREATE TABLE pagos (
   fecha_pago       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   monto            DECIMAL(10,2)   NOT NULL,
   metodo           VARCHAR(100),
-  estado           VARCHAR(50),
+  estado ENUM('pendiente', 'completado', 'fallido', 'reembolsado') NOT NULL,
   CONSTRAINT fk_pagos_comercio
     FOREIGN KEY (id_comercios) REFERENCES comercios(id_comercios),
   CONSTRAINT fk_pagos_usuario
