@@ -8,6 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <?php
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 ); 
+        
+        require('../util/conexion.php');
+    ?>
     <style>
         :root {
             --game-primary: #6a11cb;
@@ -68,7 +74,7 @@
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->
             <div class="text-center mb-4">
-                <i class="qr-icon"><img src="./trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
+                <i class="qr-icon"><img src="util/img/trady_sinFondo.png" alt="logo trady" width="300" height="300"></i>
                 <h1 class="fw-bold">TRADY</h1>
                 <p class="mb-4">¡Encuentra, Escanea, Gana!</p>
             </div>
@@ -115,7 +121,7 @@
 
                 <!-- Registro -->
                 <div class="tab-pane fade" id="pills-register" role="tabpanel">
-                    <form action="register.php" method="POST">
+                    <form action="registro.php" method="POST">
                         <div class="mb-3">
                             <label for="register-username" class="form-label">Nombre de Usuario</label>
                             <div class="input-group">
