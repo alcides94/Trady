@@ -9,99 +9,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --admin-primary: #2c3e50;
-            --admin-secondary: #34495e;
-            --admin-dark: #1a1a2e;
-            --admin-light: #f8f9fa;
-            --admin-success: #27ae60;
-            --admin-danger: #e74c3c;
-            --admin-warning: #f39c12;
+    <link rel="stylesheet" href="../util/css/style-admin-usuarios.css">
+    
+    <?php 
+    error_reporting( E_ALL );
+    ini_set( "display_errors", 1 );
+    require('../util/conexion.php');
+    
+    session_start();
+        if (!isset($_SESSION["usuario"])){
+            header("location: ./index.php");
+            exit;
         }
-
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .admin-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .admin-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
-            color: white;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-blocked {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .user-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-card {
-            border-left: 4px solid var(--admin-primary);
-            padding-left: 15px;
-        }
-
-        .activity-item {
-            border-left: 3px solid var(--admin-primary);
-            padding-left: 15px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .activity-item:before {
-            content: '';
-            width: 12px;
-            height: 12px;
-            background: var(--admin-primary);
-            border-radius: 50%;
-            position: absolute;
-            left: -7.5px;
-            top: 5px;
-        }
-
-        .badge-custom {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-    </style>
+    ?>
+   
 </head>
 
 <body>

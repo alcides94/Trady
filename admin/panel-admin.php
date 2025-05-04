@@ -11,174 +11,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --admin-primary: #2c3e50;
-            --admin-secondary: #34495e;
-            --admin-dark: #1a1a2e;
-            --admin-light: #f8f9fa;
-            --admin-success: #27ae60;
-            --admin-danger: #e74c3c;
-            --admin-warning: #f39c12;
+    <?php 
+    error_reporting( E_ALL );
+    ini_set( "display_errors", 1 );
+    require('../util/conexion.php');
+    
+    session_start();
+        if (!isset($_SESSION["usuario"])){
+            header("location: ./index.php");
+            exit;
         }
-
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .admin-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .admin-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-3px);
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
-            color: white;
-        }
-
-        .nav-tabs .nav-link {
-            color: var(--admin-secondary);
-            border: none;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: var(--admin-primary);
-            border-bottom: 3px solid var(--admin-primary);
-            background: transparent;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-blocked {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .action-btn {
-            padding: 5px 10px;
-            font-size: 0.85rem;
-            margin-right: 5px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding-left: 40px;
-            border-radius: 20px;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 10px;
-            color: #6c757d;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .form-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .form-section h5 {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .map-container {
-            height: 300px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        #route-map {
-            height: 100%;
-            width: 100%;
-        }
-
-        .admin-navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-menu img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .stat-card {
-            border-left: 4px solid;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card.users {
-            border-left-color: #3498db;
-        }
-
-        .stat-card.partners {
-            border-left-color: #2ecc71;
-        }
-
-        .stat-card.routes {
-            border-left-color: #9b59b6;
-        }
-
-        .stat-card.sites {
-            border-left-color: #f39c12;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-bottom: 20px;
-        }
-    </style>
+    ?>
+    <link rel="stylesheet" href="../util/css/style-panel-admin.css">
 </head>
 
 <body>

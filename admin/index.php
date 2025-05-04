@@ -43,7 +43,7 @@
                 } else {
                     session_start();
                     $_SESSION["usuario"] = $usuario;
-                    header("location: ./panel-admin.html");
+                    header("location: ./panel-admin.php");
                     exit;
                 }
             }

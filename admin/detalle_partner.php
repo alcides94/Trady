@@ -9,137 +9,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --admin-primary: #2c3e50;
-            --admin-secondary: #34495e;
-            --admin-dark: #1a1a2e;
-            --admin-light: #f8f9fa;
-            --admin-success: #27ae60;
-            --admin-danger: #e74c3c;
-            --admin-warning: #f39c12;
-        }
+    
+    <link rel="stylesheet" href="../util/css/style-admin-partner.css">
 
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
+    <?php 
+    error_reporting( E_ALL );
+    ini_set( "display_errors", 1 );
+    require('../util/conexion.php');
+    
+    session_start();
+        if (!isset($_SESSION["usuario"])){
+            header("location: ./index.php");
+            exit;
         }
-
-        .admin-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .admin-card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-3px);
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
-            color: white;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-blocked {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .action-btn {
-            padding: 5px 10px;
-            font-size: 0.85rem;
-            margin-right: 5px;
-        }
-
-        .form-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .form-section h5 {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .map-container {
-            height: 300px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        #partner-map {
-            height: 100%;
-            width: 100%;
-        }
-
-        .user-menu img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .partner-header {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .partner-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-right: 20px;
-            border: 2px solid #eee;
-        }
-
-        .partner-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .stat-item {
-            background-color: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .stat-item i {
-            margin-right: 5px;
-            color: var(--admin-primary);
-        }
-    </style>
+    ?>
+    
 </head>
 
 <body>
