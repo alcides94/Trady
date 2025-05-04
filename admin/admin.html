@@ -222,10 +222,16 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="suscripciones-tab" data-bs-toggle="tab" data-bs-target="#suscripciones" type="button" role="tab">
+                    <i class="fas fa-id-card me-2"></i>Suscripciones
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
                 <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes" type="button" role="tab">
                     <i class="fas fa-chart-bar me-2"></i>Estadísticas
                 </button>
             </li>
+            
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="configuracion-tab" data-bs-toggle="tab" data-bs-target="#configuracion" type="button" role="tab">
                     <i class="fas fa-cog me-2"></i>Configuración
@@ -559,6 +565,286 @@
                             </li>
                         </ul>
                     </nav>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="suscripciones" role="tabpanel">
+                <div class="admin-card p-4">
+                    <h4><i class="fas fa-id-card me-2"></i>Gestión de Suscripciones</h4>
+                    <p class="text-muted mb-4">Administra los diferentes tipos de suscripciones disponibles para usuarios y partners.</p>
+
+                    <ul class="nav nav-tabs mb-4" id="subscriptionTypeTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="usuarios-sub-tab" data-bs-toggle="tab" data-bs-target="#usuarios-sub" type="button">
+                                <i class="fas fa-users me-1"></i> Usuarios
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="partners-sub-tab" data-bs-toggle="tab" data-bs-target="#partners-sub" type="button">
+                                <i class="fas fa-store me-1"></i> Partners
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Suscripciones para Usuarios -->
+                        <div class="tab-pane fade show active" id="usuarios-sub" role="tabpanel">
+                            <div class="row">
+                                <!-- Suscripción Básica -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Básica</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_user_1">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_user_1" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Básica">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="4.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Acceso a rutas básicas</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>3 puntos de interés diarios</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Soporte básico</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Suscripción Premium -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Premium</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_user_2">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_user_2" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Premium">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="9.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Acceso a todas las rutas</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>10 puntos de interés diarios</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Soporte prioritario</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Descuentos en partners</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Suscripción Familiar -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Familiar</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_user_3">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_user_3" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Familiar">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="14.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Todas las ventajas Premium</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Hasta 5 usuarios</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Control parental</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Descuentos exclusivos</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Suscripciones para Partners -->
+                        <div class="tab-pane fade" id="partners-sub" role="tabpanel">
+                            <div class="row">
+                                <!-- Suscripción Básica Partner -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Básica</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_partner_1">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_partner_1" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Básica Partner">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="19.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Listado básico en la app</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Hasta 3 promociones</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Soporte básico</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Suscripción Estándar Partner -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Estándar</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_partner_2">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_partner_2" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Estándar Partner">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="39.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Listado destacado</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Hasta 10 promociones</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Estadísticas básicas</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Soporte prioritario</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Suscripción Premium Partner -->
+                                <div class="col-md-4">
+                                    <div class="subscription-type-card">
+                                        <h5>Suscripción Premium</h5>
+                                        <form>
+                                            <input type="hidden" name="subscription_id" value="sub_partner_3">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de Suscripción</label>
+                                                <input type="text" class="form-control" value="sub_partner_3" disabled>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" name="name" value="Premium Partner">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Precio (€/mes)</label>
+                                                <input type="number" step="0.01" class="form-control" name="price" value="79.99">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Características</label>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Listado destacado en primera posición</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Promociones ilimitadas</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Estadísticas avanzadas</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Soporte 24/7</span>
+                                                </div>
+                                                <div class="subscription-feature">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Inclusión en rutas premium</span>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
