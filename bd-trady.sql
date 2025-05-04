@@ -2,7 +2,7 @@
 -- Base de datos: trady
 -- --------------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS trady CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS trady_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE trady;
 
