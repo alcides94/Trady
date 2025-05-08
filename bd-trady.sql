@@ -33,7 +33,7 @@ CREATE TABLE usuarios (
   nombre           VARCHAR(50)     NOT NULL,
   fecha_nac        DATE,
   password         VARCHAR(255)    NOT NULL,
-  telefono         number(9),
+  telefono         int,
   fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   id_suscripcion   INT DEFAULT 1,
   puntos           INT             NOT NULL DEFAULT 0,
