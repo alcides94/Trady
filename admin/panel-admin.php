@@ -34,8 +34,6 @@
             </a>
             <div class="d-flex align-items-center">
                 <div class="user-menu d-flex align-items-center text-white">
-                    
-                    <span></span>
                     <?php if (isset($_SESSION["usuario"])) { ?>
                         <h4>Bienvenido <?php echo $_SESSION["usuario"] ?></h4>
                         <a href="cerrar_sesion.php" class="btn btn-danger">Cerrar Sesion</a>
@@ -444,12 +442,6 @@
                             <div class="row">
                                 <!-- Suscripción Básica -->
                                 <div class="col-md-4">
-                                
-                                <?php
-                                
-                                
-                                
-                                ?>
                                     <div class="subscription-type-card">
                                         <h5>Suscripción Básica</h5>
                                         <form>
@@ -798,25 +790,23 @@
                 </div>
             </div>
 
-            <!-- Pestaña de Configuración -->
-            <?php
-            if (isset($_SESSION["usuario"])) {
-                $email = $_SESSION["usuario"];
-                var_dump($_SESSION["usuario"]);
-                
-                $sql = "SELECT nombre FROM administradores WHERE email = ?";
-                //$stmt = $conexion->prepare($sql);
-                //$stmt->execute([$email]); // pasa el parámetro directamente en un array
+           <!-- Pestaña de Configuración -->
+           <?php
 
-//$usuario = $stmt->fetch(PDO::FETCH_ASSOC); // obtener resultado como array asociativo
-//
-                
-            }
-            ?>
+            $email = $_SESSION["usuario"];
+            $adminNombre = "";
+            $stmt = $_conexion->prepare("SELECT nombre FROM administradores WHERE email = :email");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            if ($admin) {
+                $adminNombre = $admin['nombre'];
+            }   
+           
+           ?>
 
-
-            <div class="tab-pane fade" id="configuracion" role="tabpanel">
+           <div class="tab-pane fade" id="configuracion" role="tabpanel">
                 <div class="admin-card p-4">
                     <h4 class="mb-4"><i class="fas fa-cog me-2"></i>Configuración del Administrador</h4>
                     
@@ -824,16 +814,16 @@
                         <div class="col-md-6">
                             <div class="form-section">
                                 <h5><i class="fas fa-user-shield me-2"></i>Perfil de Administrador</h5>
-                                <form>
+                                <form action="conexiones/configuracion.php" id="formuAdmin" method="post">
                                     <div class="mb-3">
                                         <label for="adminNombre" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="adminNombre" value="<?php echo Hola ?>">
+                                        <input type="text" class="form-control" id="adminNombre" name="adminNombre" value="<?php echo $adminNombre?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="adminEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="adminEmail" value="<?php echo $_SESSION["usuario"] ?>" disabled>
+                                        <input type="email" class="form-control" name="adminEmail" id="adminEmail" value="<?php echo $_SESSION["usuario"] ?>" disabled>
                                     </div>
-                                   
+                                    <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
                                 </form>
                             </div>
                         </div>
@@ -859,34 +849,6 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <div class="form-section">
-                                <h5><i class="fas fa-bell me-2"></i>Notificaciones</h5>
-                                <form>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notifUsuarios" checked>
-                                        <label class="form-check-label" for="notifUsuarios">Nuevos usuarios registrados</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notifPartners" checked>
-                                        <label class="form-check-label" for="notifPartners">Solicitudes de partners</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notifReportes">
-                                        <label class="form-check-label" for="notifReportes">Reportes semanales</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notifErrores" checked>
-                                        <label class="form-check-label" for="notifErrores">Errores del sistema</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                   
                 </div>
             </div>
         </div>
