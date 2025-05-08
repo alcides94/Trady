@@ -34,8 +34,13 @@
             </a>
             <div class="d-flex align-items-center">
                 <div class="user-menu d-flex align-items-center text-white">
-                    <img src="https://via.placeholder.com/40" alt="Admin Avatar">
-                    <span>Admin</span>
+                    
+                    <span></span>
+                    <?php if (isset($_SESSION["usuario"])) { ?>
+                        <h4>Bienvenido <?php echo $_SESSION["usuario"] ?></h4>
+                        <a href="cerrar_sesion.php" class="btn btn-danger">Cerrar Sesion</a>
+                    <?php } ?>
+                        
                 </div>
             </div>
         </div>
@@ -70,17 +75,20 @@
                     <i class="fas fa-id-card me-2"></i>Suscripciones
                 </button>
             </li>
+               <!-- Nueva pestaña para códigos QR -->
+         
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes" type="button" role="tab">
-                    <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                <button class="nav-link" id="qr-tab" data-bs-toggle="tab" data-bs-target="#qr" type="button" role="tab">
+                    <i class="fas fa-qrcode me-2"></i>Códigos QR
                 </button>
             </li>
-            
+          
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="configuracion-tab" data-bs-toggle="tab" data-bs-target="#configuracion" type="button" role="tab">
                     <i class="fas fa-cog me-2"></i>Configuración
                 </button>
             </li>
+          
         </ul>
 
         <div class="tab-content">
@@ -436,6 +444,12 @@
                             <div class="row">
                                 <!-- Suscripción Básica -->
                                 <div class="col-md-4">
+                                
+                                <?php
+                                
+                                
+                                
+                                ?>
                                     <div class="subscription-type-card">
                                         <h5>Suscripción Básica</h5>
                                         <form>
@@ -691,104 +705,117 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Pestaña de Estadísticas -->
-            <div class="tab-pane fade" id="reportes" role="tabpanel">
+            <!-- Nueva pestaña para Códigos QR -->
+            <div class="tab-pane fade" id="qr" role="tabpanel">
                 <div class="admin-card p-4">
-                    <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Estadísticas y Reportes</h4>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-3 mb-3">
-                            <div class="admin-card p-3 stat-card users">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted">Usuarios</h6>
-                                        <h3 class="mb-0">1,245</h3>
-                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>12.5%</small>
-                                    </div>
-                                    <div class="bg-primary bg-opacity-10 p-3 rounded">
-                                        <i class="fas fa-users text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="admin-card p-3 stat-card partners">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted">Partners</h6>
-                                        <h3 class="mb-0">87</h3>
-                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>5.2%</small>
-                                    </div>
-                                    <div class="bg-success bg-opacity-10 p-3 rounded">
-                                        <i class="fas fa-store text-success"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="admin-card p-3 stat-card routes">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted">Rutas Activas</h6>
-                                        <h3 class="mb-0">12</h3>
-                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>3.8%</small>
-                                    </div>
-                                    <div class="bg-purple bg-opacity-10 p-3 rounded">
-                                        <i class="fas fa-route text-purple"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="admin-card p-3 stat-card sites">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="text-muted">Sitios de Interés</h6>
-                                        <h3 class="mb-0">45</h3>
-                                        <small class="text-success"><i class="fas fa-caret-up me-1"></i>8.1%</small>
-                                    </div>
-                                    <div class="bg-warning bg-opacity-10 p-3 rounded">
-                                        <i class="fas fa-map-marker-alt text-warning"></i>
-                                    </div>
-                                </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4><i class="fas fa-qrcode me-2"></i>Gestión de Códigos QR</h4>
+                        <div>
+                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#nuevoQrModal">
+                                <i class="fas fa-plus me-1"></i> Generar QR
+                            </button>
+                            <div class="search-box d-inline-block">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" placeholder="Buscar códigos QR...">
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <div class="admin-card p-3">
-                                <h5 class="mb-3">Registro de Usuarios</h5>
-                                <div class="chart-container">
-                                    <canvas id="usuariosChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <div class="admin-card p-3">
-                                <h5 class="mb-3">Actividad por Categoría</h5>
-                                <div class="chart-container">
-                                    <canvas id="categoriasChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Código</th>
+                                    <th>Imagen QR</th>
+                                    <th>Ubicación</th>
+                                    <th>Ruta Asociada</th>
+                                    <th>Puntos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>QR001</td>
+                                    <td>TRA-HIS-001</td>
+                                    <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=TRA-HIS-001" alt="QR Code"></td>
+                                    <td>Catedral de la Ciudad</td>
+                                    <td>Ruta Histórica</td>
+                                    <td>50</td>
+                                    <td><span class="status-badge status-active">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info action-btn">Descargar</button>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Desactivar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>QR002</td>
+                                    <td>TRA-GAS-001</td>
+                                    <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=TRA-GAS-001" alt="QR Code"></td>
+                                    <td>Café Central</td>
+                                    <td>Gastronomía Local</td>
+                                    <td>30</td>
+                                    <td><span class="status-badge status-active">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info action-btn">Descargar</button>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-danger action-btn">Desactivar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>QR003</td>
+                                    <td>TRA-ART-001</td>
+                                    <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=TRA-ART-001" alt="QR Code"></td>
+                                    <td>Mural Comunitario</td>
+                                    <td>Arte Urbano</td>
+                                    <td>40</td>
+                                    <td><span class="status-badge status-blocked">Inactivo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info action-btn">Descargar</button>
+                                        <button class="btn btn-sm btn-warning action-btn">Editar</button>
+                                        <button class="btn btn-sm btn-success action-btn">Activar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="admin-card p-3">
-                                <h5 class="mb-3">Escaneos de QR por Mes</h5>
-                                <div class="chart-container" style="height: 400px;">
-                                    <canvas id="qrChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
             <!-- Pestaña de Configuración -->
+            <?php
+            if (isset($_SESSION["usuario"])) {
+                $email = $_SESSION["usuario"];
+                var_dump($_SESSION["usuario"]);
+                
+                $sql = "SELECT nombre FROM administradores WHERE email = ?";
+                //$stmt = $conexion->prepare($sql);
+                //$stmt->execute([$email]); // pasa el parámetro directamente en un array
+
+//$usuario = $stmt->fetch(PDO::FETCH_ASSOC); // obtener resultado como array asociativo
+//
+                
+            }
+            ?>
+
+
+
             <div class="tab-pane fade" id="configuracion" role="tabpanel">
                 <div class="admin-card p-4">
                     <h4 class="mb-4"><i class="fas fa-cog me-2"></i>Configuración del Administrador</h4>
@@ -800,17 +827,13 @@
                                 <form>
                                     <div class="mb-3">
                                         <label for="adminNombre" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="adminNombre" value="Administrador Principal">
+                                        <input type="text" class="form-control" id="adminNombre" value="<?php echo Hola ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="adminEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="adminEmail" value="admin@trady.com">
+                                        <input type="email" class="form-control" id="adminEmail" value="<?php echo $_SESSION["usuario"] ?>" disabled>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="adminFoto" class="form-label">Foto de Perfil</label>
-                                        <input class="form-control" type="file" id="adminFoto">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                                   
                                 </form>
                             </div>
                         </div>
@@ -863,36 +886,7 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <div class="form-section">
-                                <h5><i class="fas fa-sliders-h me-2"></i>Configuración del Sistema</h5>
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="sistemaTema" class="form-label">Tema del Panel</label>
-                                        <select class="form-select" id="sistemaTema">
-                                            <option selected>Claro</option>
-                                            <option>Oscuro</option>
-                                            <option>Azul</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="sistemaIdioma" class="form-label">Idioma</label>
-                                        <select class="form-select" id="sistemaIdioma">
-                                            <option selected>Español</option>
-                                            <option>Inglés</option>
-                                            <option>Francés</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="sistemaRegistros" class="form-label">Registros por página</label>
-                                        <input type="number" class="form-control" id="sistemaRegistros" value="10">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -948,7 +942,59 @@
             </div>
         </div>
     </div>
-
+         <!-- Modal Nuevo Código QR -->
+    <div class="modal fade" id="nuevoQrModal" tabindex="-1" aria-labelledby="nuevoQrModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nuevoQrModalLabel">Generar Nuevo Código QR</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="qrIdentificador" class="form-label">Identificador Único</label>
+                            <input type="text" class="form-control" id="qrIdentificador" placeholder="Ej: TRA-HIS-001">
+                        </div>
+                        <div class="mb-3">
+                            <label for="qrUbicacion" class="form-label">Ubicación Asociada</label>
+                            <select class="form-select" id="qrUbicacion">
+                                <option selected>Seleccionar ubicación...</option>
+                                <option>Catedral de la Ciudad</option>
+                                <option>Puente Antiguo</option>
+                                <option>Café Central</option>
+                                <option>Mural Comunitario</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="qrRuta" class="form-label">Ruta Asociada</label>
+                            <select class="form-select" id="qrRuta">
+                                <option selected>Seleccionar ruta...</option>
+                                <option>Ruta Histórica</option>
+                                <option>Gastronomía Local</option>
+                                <option>Arte Urbano</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="qrPuntos" class="form-label">Puntos Otorgados</label>
+                            <input type="number" class="form-control" id="qrPuntos" value="50">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Vista Previa QR</label>
+                            <div class="text-center p-3 bg-light rounded">
+                                <img id="qrPreview" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TRA-SAMPLE" alt="Vista previa QR" class="img-fluid mb-2">
+                                <p class="small text-muted">El código QR se generará automáticamente al guardar</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Generar Código QR</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Modal Nuevo Sitio -->
     <div class="modal fade" id="nuevoSitioModal" tabindex="-1" aria-labelledby="nuevoSitioModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -973,6 +1019,13 @@
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Actualizar vista previa del QR cuando cambia el identificador
+        document.getElementById('qrIdentificador').addEventListener('input', function() {
+            var identificador = this.value || 'TRA-SAMPLE';
+            document.getElementById('qrPreview').src = 
+                'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(identificador);
         });
     </script>
 </body>
