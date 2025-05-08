@@ -30,11 +30,10 @@ CREATE TABLE suscripcion_usuarios (
 CREATE TABLE usuarios (
   id_usuario       INT             AUTO_INCREMENT PRIMARY KEY,
   email            VARCHAR(50)     NOT NULL UNIQUE,
-  alias            VARCHAR(50) ,
   nombre           VARCHAR(50)     NOT NULL,
-  apellido         VARCHAR(50)	NOT NULL,
   fecha_nac        DATE,
   password         VARCHAR(255)    NOT NULL,
+  telefono         number(9),
   fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   id_suscripcion   INT DEFAULT 1,
   puntos           INT             NOT NULL DEFAULT 0,
