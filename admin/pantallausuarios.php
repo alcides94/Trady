@@ -12,9 +12,22 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="../util/css/style-panel-admin.css">
+    <?php 
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
+    require('../util/conexion.php');
+    
+    session_start();
+        if (!isset($_SESSION["usuario"])){
+            header("location: ./index.php");
+            exit;
+        }
+    ?>
+
 </head>
 
 <body>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark admin-header">
         <div class="container-fluid">
@@ -22,10 +35,10 @@
                 <img src="../util/img/trady_sinFondo.png" alt="Trady Logo" width="40" class="me-2">Trady Admin
             </a>
             <div class="d-flex align-items-center">
-                <div class="user-menu d-flex align-items-center text-white">
-                    <h4>Bienvenido Admin</h4>
-                    <a href="cerrar_sesion.html" class="btn btn-danger ms-3">Cerrar Sesión</a>
-                </div>
+            <?php if (isset($_SESSION["usuario"])) { ?>
+                        <h4>Bienvenido <?php echo $_SESSION["usuario"] ?></h4>
+                        <a href="cerrar_sesion.php" class="btn btn-danger ms-3">Cerrar Sesión</a>
+                    <?php } ?>
             </div>
         </div>
     </nav>
@@ -74,14 +87,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <?php 
+                                    $sql = "SELECT id_usuario, nombre, email, fecha_nac, fecha_registro, puntos,estado FROM usuarios";
+                                    $stmt = $_conexion->prepare($sql);
+                                    $stmt->execute();
+                                    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    foreach ($usuarios as $usuario) {
+
+                                ?>
                                     <tr>
-                                        <td>1</td>
-                                        <td>Juan Pérez</td>
-                                        <td>juan@example.com</td>
-                                        <td>600123456</td>
-                                        <td><span class="badge bg-primary">Usuario</span></td>
-                                        <td>15/05/2023</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td><?php echo $usuario['id_usuario'] ?></td>
+                                        <td><?php echo $usuario['nombre'] ?></td>
+                                        <td><?php echo $usuario['email'] ?></td>
+                                        <td><?php echo $usuario['fecha_nac'] ?></td>
+                                        <td><?php echo $usuario['puntos'] ?></td>
+                                        <td><?php echo $usuario['fecha_registro'] ?></td>
+                                        <td><span class="badge bg-success"><?php echo $usuario['estado'] ?></span></td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Editar">
                                                 <i class="fas fa-edit"></i>
@@ -91,57 +112,8 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>María García</td>
-                                        <td>maria@example.com</td>
-                                        <td>600654321</td>
-                                        <td><span class="badge bg-warning">Partner</span></td>
-                                        <td>20/06/2023</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Carlos López</td>
-                                        <td>carlos@example.com</td>
-                                        <td>600987654</td>
-                                        <td><span class="badge bg-danger">Admin</span></td>
-                                        <td>10/04/2023</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>Ana Martínez</td>
-                                        <td>ana@example.com</td>
-                                        <td>600456789</td>
-                                        <td><span class="badge bg-primary">Usuario</span></td>
-                                        <td>05/07/2023</td>
-                                        <td><span class="badge bg-secondary">Inactivo</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <?php } ?>
+                                    
                                 </tbody>
                             </table>
                         </div>
