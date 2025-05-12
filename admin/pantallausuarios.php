@@ -80,7 +80,7 @@
                                         <th>Nombre</th>
                                         <th>Email</th>
                                         <th>Teléfono</th>
-                                        <th>Rol</th>
+                                        <th>Puntos</th>
                                         <th>Fecha Registro</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
@@ -104,9 +104,11 @@
                                         <td><?php echo $usuario['fecha_registro'] ?></td>
                                         <td><span class="badge bg-success"><?php echo $usuario['estado'] ?></span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Editar">
-                                                <i class="fas fa-edit"></i>
+                                            <button class="btn btn-sm btn-outline-primary btn-editar" data-id="<?php echo $usuario['id_usuario']; ?>" data-bs-toggle="tooltip" title="Editar">
+                                                    <input type="hidden" name="id_usuario" id="id_usuario">
+                                                    <i class="fas fa-edit"></i>
                                             </button>
+                                            
                                             <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
@@ -131,7 +133,7 @@
                     <h5 class="modal-title" id="nuevoUsuarioModalLabel">Nuevo Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formNuevoUsuario">
+                <form id="formNuevoUsuario" action="conexiones/nuevo_usuario.php" method="post">
                     <div class="modal-body">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -147,11 +149,16 @@
                                 <input type="tel" class="form-control" id="telefono" name="telefono">
                             </div>
                             <div class="col-md-6">
-                                <label for="rol" class="form-label">Rol</label>
-                                <select class="form-select" id="rol" name="rol" required>
-                                    <option value="usuario">Usuario</option>
-                                    <option value="partner">Partner</option>
-                                    <option value="admin">Administrador</option>
+                                <label for="fecha_nac" class="form-label">Fecha Nacimiento</label>
+                                <input type="date" class="form-control" id="fecha_nac" name="fecha_nac">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="rol" class="form-label">Suscripcion</label>
+                                <select class="form-select" id="rol" name="id_suscripcion" required>
+                                    <option value="1">Bronce</option>
+                                    <option value="2">Plata</option>
+                                    <option value="3">Oro</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -164,7 +171,7 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="activo" name="activo" checked>
+                                    <input class="form-check-input" type="checkbox" id="activo" name="estado" checked>
                                     <label class="form-check-label" for="activo">
                                         Usuario activo
                                     </label>
@@ -189,51 +196,56 @@
                     <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formEditarUsuario">
-                    <input type="hidden" id="edit_id" name="id">
+                <form id="formEditarUsuario" action="conexiones/editar_usuario.php" method="post">
                     <div class="modal-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="edit_nombre" class="form-label">Nombre completo</label>
-                                <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                                <label for="nombre" class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control" id="e_nombre" name="e_nombre" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="edit_email" name="email" required>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="e_email" name="e_email" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_telefono" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="edit_telefono" name="telefono">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="e_telefono" name="e_telefono">
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_rol" class="form-label">Rol</label>
-                                <select class="form-select" id="edit_rol" name="rol" required>
-                                    <option value="usuario">Usuario</option>
-                                    <option value="partner">Partner</option>
-                                    <option value="admin">Administrador</option>
+                                <label for="fecha_nac" class="form-label">Fecha Nacimiento</label>
+                                <input type="date" class="form-control" id="e_fecha_nac" name="e_fecha_nac">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="id_suscripcion" class="form-label">Suscripcion</label>
+                                <select class="form-select" id="e_id_suscripcion" name="e_id_suscripcion" required>
+                                    <option value="1">Bronce</option>
+                                    <option value="2">Plata</option>
+                                    <option value="3">Oro</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_password" class="form-label">Nueva Contraseña (opcional)</label>
-                                <input type="password" class="form-control" id="edit_password" name="password">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="e_password" name="e_password" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_confirm_password" class="form-label">Confirmar Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="edit_confirm_password" name="confirm_password">
+                                <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
+                                <input type="password" class="form-control" id="e_confirm_password" name="e_confirm_password" required>
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="edit_activo" name="activo">
-                                    <label class="form-check-label" for="edit_activo">
+                                    <input class="form-check-input" type="checkbox" id="e_activo" name="e_estado" checked>
+                                    <label class="form-check-label" for="activo">
                                         Usuario activo
                                     </label>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" name="id_usuario" id="id_usuario">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+                        <button type="submit" class="btn btn-primary">Editar Usuario</button>
                     </div>
                 </form>
             </div>
@@ -283,53 +295,37 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
             
-            // Validación de contraseña en el formulario de nuevo usuario
-            $('#formNuevoUsuario').on('submit', function(e) {
-                e.preventDefault();
-                if ($('#password').val() !== $('#confirm_password').val()) {
-                    alert('Las contraseñas no coinciden');
-                    return;
-                }
-                alert('Usuario creado correctamente (simulación)');
-                $('#nuevoUsuarioModal').modal('hide');
-                this.reset();
-            });
-            
-            // Validación de contraseña en el formulario de edición
-            $('#formEditarUsuario').on('submit', function(e) {
-                e.preventDefault();
-                const pass = $('#edit_password').val();
-                const confirmPass = $('#edit_confirm_password').val();
-                
-                if (pass !== '' && pass !== confirmPass) {
-                    alert('Las contraseñas no coinciden');
-                    return;
-                }
-                alert('Usuario actualizado correctamente (simulación)');
-                $('#editarUsuarioModal').modal('hide');
-            });
-            
             // Configurar botones de edición en la tabla
-            $('.btn-outline-primary').on('click', function() {
-                const row = $(this).closest('tr');
-                const id = row.find('td:eq(0)').text();
-                const nombre = row.find('td:eq(1)').text();
-                const email = row.find('td:eq(2)').text();
-                const telefono = row.find('td:eq(3)').text();
-                const rol = row.find('td:eq(4) span').text().toLowerCase();
-                const activo = row.find('td:eq(6) span').text() === 'Activo';
-                
-                // Rellenar el formulario de edición
-                $('#edit_id').val(id);
-                $('#edit_nombre').val(nombre);
-                $('#edit_email').val(email);
-                $('#edit_telefono').val(telefono);
-                $('#edit_rol').val(rol);
-                $('#edit_activo').prop('checked', activo);
-                
-                // Mostrar el modal
-                $('#editarUsuarioModal').modal('show');
-            });
+            document.querySelectorAll('.btn-editar').forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const idUsuario = boton.getAttribute('data-id');
+                    
+                    fetch('conexiones/editar_usuario.php?id_usuario=' + idUsuario)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                        }
+
+                        // Rellenar los campos del modal
+                        document.getElementById('e_nombre').value = data.nombre;
+                        document.getElementById('e_email').value = data.email;
+                        document.getElementById('e_telefono').value = data.telefono;
+                        document.getElementById('e_fecha_nac').value = data.fecha_nac;
+                       // document.getElementById('id_suscripcion').value = data.id_suscripcion;
+                        //document.getElementById('estado').value = data.estado;
+
+                        // Mostrar el modal (si usás Bootstrap 5)
+                        const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener los datos del usuario:', error);
+                    });
+                });
+                });
+
             
             // Configurar botones de eliminación en la tabla
             $('.btn-outline-danger').on('click', function() {
