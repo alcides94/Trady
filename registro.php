@@ -493,11 +493,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            <div class="row">
                                <div class="col-md-6 mb-3">
                                    <label for="name" class="form-label required-field">Nombre</label>
-                                   <input type="text" class="form-control" id="name" name="name" value="<?php echo $usuario; ?>" required>
+                                   <input type="text" class="form-control" id="name" name="name" required>
                                </div>
                                <div class="col-md-6 mb-3">
                                    <label for="email" class="form-label required-field">Email</label>
-                                   <input type="email" class="form-control" id="email" name="email" value="<?php echo $email; ?>" required>
+                                   <input type="email" class="form-control" id="email" name="email" required>
                                </div>
                            </div>
                          
