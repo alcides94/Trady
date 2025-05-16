@@ -71,31 +71,32 @@
 </head>
 <body>
 <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $email = $_POST["email"];
-            $password = $_POST["password"];
+       if ($_SERVER["REQUEST_METHOD"] == "POST") {
+           $email = $_POST["email"];
+           $password = $_POST["password"];
 
-            // Preparar consulta segura con PDO
-            $sql = "SELECT * FROM administradores WHERE email = :email";
-            $stmt = $_conexion->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+           // Preparar consulta segura con PDO
+           $sql = "SELECT * FROM usuarios WHERE email = :email";
+           $stmt = $_conexion->prepare($sql);
+           $stmt->bindParam(':email', $email);
+           $stmt->execute();
+           $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$resultado) {
-                echo "El email no existe";
-            } else {
-                if ($password != $resultado["password"]) {
-                    echo "Contraseña errónea";
-                } else {
-                    session_start();
-                    $_SESSION["email"] = $email;
-                    header("location: ./perfil-usuario.html");
-                    exit;
-                }
-            }
-        }
-        ?>
+
+           if (!$resultado) {
+               echo "El email no existe";
+           } else {
+               if (!password_verify($password, $resultado["password"])) {
+                   echo "Contraseña errónea";
+               } else {
+                   session_start();
+                   $_SESSION["email"] = $email;
+                   header("location: ./perfil-usuario.html");
+                   exit;
+               }
+           }
+       }
+       ?>
     <div class="container d-flex align-items-center justify-content-center h-100">
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->
