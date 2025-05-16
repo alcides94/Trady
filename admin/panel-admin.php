@@ -56,7 +56,7 @@
                         <i class="fas fa-users fa-3x text-primary mb-3"></i>
                         <h5 class="card-title">Usuarios</h5>
                     </div>
-                    </a>
+                </a>
                 </div>
             </div>
 
@@ -65,60 +65,72 @@
             <!-- Tarjeta: Partners -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallapartners.php">
                     <div class="card-body">
                         <i class="fas fa-store fa-3x text-success mb-3"></i>
                         <h5 class="card-title">Partners</h5>
                     </div>
+                </a>
                 </div>
             </div>
 
             <!-- Tarjeta: Rutas -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallarutas.php">
                     <div class="card-body">
                         <i class="fas fa-route fa-3x text-warning mb-3"></i>
                         <h5 class="card-title">Rutas</h5>
                     </div>
+                </a>
                 </div>
             </div>
 
             <!-- Tarjeta: Sitios de Interés -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallasitiosinteres.php">
                     <div class="card-body">
                         <i class="fas fa-map-marker-alt fa-3x text-danger mb-3"></i>
                         <h5 class="card-title">Sitios de Interés</h5>
                     </div>
                 </div>
+                </a>
             </div>
 
             <!-- Tarjeta: Suscripciones -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallasuscripciones.php">
                     <div class="card-body">
                         <i class="fas fa-id-card fa-3x text-info mb-3"></i>
                         <h5 class="card-title">Suscripciones</h5>
                     </div>
+                </a>
                 </div>
             </div>
 
             <!-- Tarjeta: Códigos QR -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallacodigosqr.php">
                     <div class="card-body">
                         <i class="fas fa-qrcode fa-3x text-dark mb-3"></i>
                         <h5 class="card-title">Códigos QR</h5>
                     </div>
+                </a>
                 </div>
             </div>
 
             <!-- Tarjeta: Configuración -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">
+                <a href="pantallaconfiguracion.php">
                     <div class="card-body">
                         <i class="fas fa-cog fa-3x text-secondary mb-3"></i>
                         <h5 class="card-title">Configuración</h5>
                     </div>
+                </a>
                 </div>
             </div>
 

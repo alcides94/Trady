@@ -260,20 +260,20 @@
 
 
        // Obtener los valores de la URL y decodificarlos
-$usuario = htmlspecialchars($_POST['username']);
-$email = htmlspecialchars($_POST['email']);
+//$usuario = htmlspecialchars($_POST['username']);
+//$email = htmlspecialchars($_POST['email']);
 
 
 
 
 // Sanitizar los valores para seguridad al mostrarlos en HTML
-$usuario_safe = htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8');
-$email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+//$usuario_safe = htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8');
+//$email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
 
 
-echo "<pre>";
-print_r($_POST);
-echo "</pre>";
+//echo "<pre>";
+//print_r($_POST);
+//echo "</pre>";
 
 
 

@@ -66,7 +66,7 @@
     /**CODIGO DE ERROR */
         error_reporting( E_ALL );
         ini_set( "display_errors", 1 );
-        require('../util/conexion.php');
+        require('./util/conexion.php');
     ?>
 </head>
 <body>
@@ -147,28 +147,13 @@
 
                 <!-- Registro -->
                 <div class="tab-pane fade" id="pills-register" role="tabpanel">
-                    <form action="registro.php" method="POST">
-                        <div class="mb-3">
-                            <label for="register-username" class="form-label">Nombre de Usuario</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="register-username" name="username" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-email" class="form-label">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="register-email" name="email" required>
-                            </div>
-                        </div>
-                
                         <div class="d-grid">
+                        <a href="registro.php">
                             <button type="submit" class="btn game-btn">
                                 <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                             </button>
+                        </a>
                         </div>
-                    </form>
                 </div>
             </div>
         </div>
