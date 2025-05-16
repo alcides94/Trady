@@ -310,7 +310,7 @@
        if (selected === "client") {
            window.location.href = "./usuarios/registro_usuarios.php";
        } else if (selected === "partner") {
-           window.location.href = "registro_parners.php";
+           window.location.href = "./comercios/registro_comercios.php";
        }
    }
 </script>

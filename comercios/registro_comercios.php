@@ -3,21 +3,20 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>TRADY - Registro de Usuario</title>
+   <title>TRADY - Registro de Partner</title>
    <!-- Bootstrap CSS -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
    <!-- FontAwesome (iconos) -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    <style>
        :root {
-           --game-primary: #6a11cb;
-           --game-secondary: #2575fc;
-           --game-dark: #1a1a2e;
+           --partner-primary: #2575fc;
+           --partner-secondary: #6a11cb;
            --success-color: #00b09b;
        }
      
        body {
-           background: linear-gradient(135deg, var(--game-primary), var(--game-secondary));
+           background: linear-gradient(135deg, var(--partner-primary), var(--partner-secondary));
            min-height: 100vh;
            font-family: 'Arial', sans-serif;
            color: white;
@@ -95,7 +94,7 @@
            top: -10px;
            right: 20px;
            background: gold;
-           color: var(--game-dark);
+           color: #1a1a2e;
            padding: 3px 15px;
            border-radius: 20px;
            font-size: 0.8rem;
@@ -236,56 +235,91 @@
        $telefono = $_POST["phone"];
        $contrasena = $_POST["password"];
        $confir_contra = $_POST["confirm_password"];
-       $fecha = $_POST["birthdate"];
        $id_suscripcion = $_POST["subscription_plan"];
+       $business_type = $_POST["business_type"];
+       $business_address = $_POST["business_address"];
+       $business_cif = $_POST["business_cif"];
 
        $cont = 0; // Contador de validaciones
+       $errores = [];
 
        // Validación del nombre
        if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
-           echo "<h4>Nombre inválido. Debe contener solo letras y/o numeros (3-16 caracteres).</h4>";
+           $errores[] = "Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).";
        } else {
            $cont++;
        }
 
        // Validación de la contraseña
        if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
-           echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
+           $errores[] = "La contraseña debe tener entre 8 y 15 caracteres con letras y números";
        } else {
            $cont++;
        }
 
        // Confirmación de la contraseña
        if ($contrasena !== $confir_contra) {
-           echo "<h4>Las contraseñas no coinciden</h4>";
+           $errores[] = "Las contraseñas no coinciden";
        } else {
            $cont++;
        }
 
        // Validación del teléfono
        if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
-           echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
+           $errores[] = "Teléfono inválido. Debe tener entre 7 y 15 dígitos.";
+       } else {
+           $cont++;
+       }
+
+       // Validación de datos del negocio
+       if (empty($business_type) || empty($business_address) || empty($business_cif)) {
+           $errores[] = "Todos los campos del negocio son obligatorios";
        } else {
            $cont++;
        }
 
        // Si todas las validaciones pasaron
-       if ($cont == 4) {
+       if ($cont == 5) {
            $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
 
-           $stmt = $_conexion->prepare("
-               INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
-               VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
-           ");
-           
-           $stmt->execute([
-               "email" => $correo,
-               "nombre" => $nombre,
-               "fecha_nac" => $fecha,
-               "password" => $contrasena_cifrada,
-               "telefono" => $telefono, 
-               "id_suscripcion" => $id_suscripcion
-           ]);
+           try {
+               $stmt = $_conexion->prepare("
+                   INSERT INTO comercios (email, nombre, password, telefono, id_suscripcion, 
+                                    tipo, direccion, cif)
+                   VALUES (:email, :nombre, :password, :telefono, :id_suscripcion,
+                            :business_type, :business_address, :business_cif)
+               ");
+               
+               $resultado = $stmt->execute([
+                   "email" => $correo,
+                   "nombre" => $nombre,
+                   "password" => $contrasena_cifrada,
+                   "telefono" => $telefono,
+                   "id_suscripcion" => $id_suscripcion,
+                   "business_type" => $business_type,
+                   "business_address" => $business_address,
+                   "business_cif" => $business_cif
+               ]);
+
+               if($resultado) {
+                   echo '<div class="alert alert-success">Registro exitoso! Redirigiendo...</div>';
+                   echo '<script>setTimeout(function(){ window.location.href = "perfil-partner.html"; }, 2000);</script>';
+                   exit();
+               } else {
+                   $errores[] = "Error al registrar: " . $stmt->errorInfo()[2];
+               }
+           } catch(PDOException $e) {
+               $errores[] = "Error de base de datos: " . $e->getMessage();
+           }
+       }
+
+       // Mostrar errores si existen
+       if (!empty($errores)) {
+           echo '<div class="container"><div class="row justify-content-center"><div class="col-lg-8">';
+           foreach ($errores as $error) {
+               echo '<div class="alert alert-danger mb-2">'.$error.'</div>';
+           }
+           echo '</div></div></div>';
        }
    }
    ?>
@@ -296,41 +330,45 @@
                <div class="registration-card p-4 p-md-5">
                    <!-- Logo -->
                    <div class="logo-container">
-                       <img src="../util/img/trady_sinFondo.png" alt="TRADY Logo">
-                       <h1 class="fw-bold mt-3">Registro de Usuario</h1>
-                       <p class="mb-4">Completa tus datos para comenzar la aventura</p>
+                       <img src="trady_sinFondo.png" alt="TRADY Logo">
+                       <h1 class="fw-bold mt-3">Registro de Partner</h1>
+                       <p class="mb-4">Completa los datos de tu negocio</p>
                    </div>
                  
                    <!-- Indicador de pasos -->
                    <div class="step-indicator">
                        <div class="step active" data-step="1">
                            <div class="step-number">1</div>
-                           <div class="step-label">Datos personales</div>
+                           <div class="step-label">Datos del negocio</div>
                        </div>
                        <div class="step" data-step="2">
                            <div class="step-number">2</div>
-                           <div class="step-label">Suscripción</div>
+                           <div class="step-label">Datos del negocio</div>
                        </div>
                        <div class="step" data-step="3">
                            <div class="step-number">3</div>
+                           <div class="step-label">Suscripción</div>
+                       </div>
+                       <div class="step" data-step="4">
+                           <div class="step-number">4</div>
                            <div class="step-label">Pago</div>
                        </div>
                    </div>
                  
                    <!-- Formulario de registro -->
-                   <form id="registrationForm" action="" method="POST">
+                   <form id="registrationForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                        <!-- Paso 1: Datos personales -->
                        <div class="form-section active" id="step1">
-                           <h4 class="mb-4">Tus datos personales</h4>
+                           <h4 class="mb-4">Los datos del negocio</h4>
                          
                            <div class="row">
                                <div class="col-md-6 mb-3">
-                                   <label for="name" class="form-label required-field">Nombre</label>
-                                   <input type="text" class="form-control" id="name" name="name" required>
+                                   <label for="name" class="form-label required-field">Nombre del Negocio</label>
+                                   <input type="text" class="form-control" id="name" name="name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>">
                                </div>
                                <div class="col-md-6 mb-3">
                                    <label for="email" class="form-label required-field">Email</label>
-                                   <input type="email" class="form-control" id="email" name="email" required>
+                                   <input type="email" class="form-control" id="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                                </div>
                            </div>
                          
@@ -338,7 +376,7 @@
                                <div class="col-md-6 mb-3">
                                    <label for="password" class="form-label required-field">Contraseña</label>
                                    <input type="password" class="form-control" id="password" name="password" required minlength="8">
-                                   <small class="form-text">Mínimo 8 caracteres</small>
+                                   <small class="form-text">Mínimo 8 caracteres con letras y números</small>
                                </div>
                                <div class="col-md-6 mb-3">
                                    <label for="confirm_password" class="form-label required-field">Confirmar contraseña</label>
@@ -349,11 +387,7 @@
                            <div class="row">
                                <div class="col-md-6 mb-3">
                                    <label for="phone" class="form-label required-field">Teléfono</label>
-                                   <input type="tel" class="form-control" id="phone" name="phone" required>
-                               </div>
-                               <div class="col-md-6 mb-3">
-                                   <label for="birthdate" class="form-label required-field">Fecha de nacimiento</label>
-                                   <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                                   <input type="tel" class="form-control" id="phone" name="phone" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
                                </div>
                            </div>
                          
@@ -362,50 +396,32 @@
                            </div>
                        </div>
                      
-                       <!-- Paso 2: Suscripción -->
+                       <!-- Paso 2: Datos del negocio -->
                        <div class="form-section" id="step2">
-                           <h4 class="mb-4">Elige tu plan de suscripción</h4>
+                           <h4 class="mb-4">Más datos de tu negocio</h4>
                          
                            <div class="row">
-                               <div class="col-md-4 mb-4">
-                                   <div class="plan-card active" data-plan="free">
-                                       <h5>Básico</h5>
-                                       <h3 class="my-3">Gratis</h3>
-                                       <ul class="list-unstyled">
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Acceso a rutas básicas</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> 5 escaneos diarios</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas estándar</li>
-                                           <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin estadísticas avanzadas</li>
-                                       </ul>
-                                       <input type="radio" class="d-none" name="subscription_plan" value="1" checked>
-                                   </div>
+                               <div class="col-md-6 mb-3">
+                                   <label for="business_type" class="form-label required-field">Tipo de negocio</label>
+                                   <select class="form-select" id="business_type" name="business_type" required>
+                                       <option value="">Seleccionar...</option>
+                                       <option value="restaurant" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'restaurant') ? 'selected' : ''; ?>>Restaurante/Cafetería</option>
+                                       <option value="bar" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'bar') ? 'selected' : ''; ?>>Bar/Pub</option>
+                                       <option value="shop" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'shop') ? 'selected' : ''; ?>>Tienda/Comercio</option>
+                                       <option value="hotel" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'hotel') ? 'selected' : ''; ?>>Hotel/Alojamiento</option>
+                                       <option value="attraction" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'attraction') ? 'selected' : ''; ?>>Atracción turística</option>
+                                       <option value="other" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'other') ? 'selected' : ''; ?>>Otro</option>
+                                   </select>
                                </div>
-                               <div class="col-md-4 mb-4">
-                                   <div class="plan-card featured" data-plan="premium">
-                                       <span class="featured-badge">Recomendado</span>
-                                       <h5>Premium</h5>
-                                       <h3 class="my-3">€4.99/mes</h3>
-                                       <ul class="list-unstyled">
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las rutas premium</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Escaneos ilimitados</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas exclusivas</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
-                                       </ul>
-                                       <input type="radio" class="d-none" name="subscription_plan" value="2">
-                                   </div>
+                           </div>
+                           <div class="row">
+                               <div class="col-md-6 mb-3">
+                                   <label for="business_address" class="form-label required-field">Dirección</label>
+                                   <input type="text" class="form-control" id="business_address" name="business_address" required value="<?php echo isset($_POST['business_address']) ? htmlspecialchars($_POST['business_address']) : ''; ?>">
                                </div>
-                               <div class="col-md-4 mb-4">
-                                   <div class="plan-card" data-plan="annual">
-                                       <h5>Premium Anual</h5>
-                                       <h3 class="my-3">€49.99/año</h3>
-                                       <p class="small text-success">Ahorra 2 meses</p>
-                                       <ul class="list-unstyled">
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las ventajas Premium</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario</li>
-                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Descuentos exclusivos</li>
-                                       </ul>
-                                       <input type="radio" class="d-none" name="subscription_plan" value="3">
-                                   </div>
+                               <div class="col-md-6 mb-3">
+                                   <label for="business_cif" class="form-label required-field">CIF/NIF</label>
+                                   <input type="text" class="form-control" id="business_cif" name="business_cif" required value="<?php echo isset($_POST['business_cif']) ? htmlspecialchars($_POST['business_cif']) : ''; ?>">
                                </div>
                            </div>
                          
@@ -415,8 +431,60 @@
                            </div>
                        </div>
                      
-                       <!-- Paso 3: Método de pago -->
+                       <!-- Paso 3: Suscripción -->
                        <div class="form-section" id="step3">
+                           <h4 class="mb-4">Elige tu plan de suscripción</h4>
+                         
+                           <div class="row">
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card" data-plan="partner-starter">
+                                       <h5>Partner Starter</h5>
+                                       <h3 class="my-3">€9.99/mes</h3>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> 2 códigos QR activos</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas básicas</li>
+                                           <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin campañas promocionales</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="1">
+                                   </div>
+                               </div>
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card featured active" data-plan="partner-premium">
+                                       <span class="featured-badge">Popular</span>
+                                       <h5>Partner Premium</h5>
+                                       <h3 class="my-3">€29.99/mes</h3>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> 5 códigos QR activos</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> 2 campañas activas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Posicionamiento destacado</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="2" checked>
+                                   </div>
+                               </div>
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card" data-plan="partner-business">
+                                       <h5>Partner Business</h5>
+                                       <h3 class="my-3">€99.99/mes</h3>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> QR ilimitados</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Analíticas completas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Campañas ilimitadas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario 24/7</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="3">
+                                   </div>
+                               </div>
+                           </div>
+                         
+                           <div class="d-flex justify-content-between mt-4">
+                               <button type="button" class="btn btn-outline-light prev-step" data-prev="2">Anterior</button>
+                               <button type="button" class="btn btn-main next-step" data-next="4">Siguiente</button>
+                           </div>
+                       </div>
+                     
+                       <!-- Paso 4: Método de pago -->
+                       <div class="form-section" id="step4">
                            <h4 class="mb-4">Método de pago</h4>
                          
                            <div class="mb-4">
@@ -481,12 +549,10 @@
                            </div>
                          
                            <div class="d-flex justify-content-between mt-4">
-                               <button type="button" class="btn btn-outline-light prev-step" data-prev="2">Anterior</button>
-                               
+                               <button type="button" class="btn btn-outline-light prev-step" data-prev="3">Anterior</button>
                                <button type="submit" class="btn btn-main">
                                    <i class="fas fa-check me-2"></i>Completar Registro
                                </button>
-                                
                            </div>
                        </div>
                    </form>
@@ -540,6 +606,7 @@
                    const currentStep = document.querySelector('.form-section.active');
                    const nextStepId = this.getAttribute('data-next');
                  
+                   // Validar campos requeridos antes de avanzar
                    if (nextStepId === '2') {
                        const requiredFields = currentStep.querySelectorAll('[required]');
                        let isValid = true;
@@ -553,6 +620,7 @@
                            }
                        });
                      
+                       // Validar contraseñas coincidentes
                        const password = document.getElementById('password');
                        const confirmPassword = document.getElementById('confirm_password');
                      
@@ -563,12 +631,34 @@
                            confirmPassword.classList.remove('is-invalid');
                        }
                      
-                       if (!isValid) return;
+                       if (!isValid) {
+                           return;
+                       }
+                   } else if (nextStepId === '3') {
+                       const requiredFields = currentStep.querySelectorAll('[required]');
+                       let isValid = true;
+                     
+                       requiredFields.forEach(field => {
+                           if (!field.value) {
+                               field.classList.add('is-invalid');
+                               isValid = false;
+                           } else {
+                               field.classList.remove('is-invalid');
+                           }
+                       });
+                     
+                       if (!isValid) {
+                           return;
+                       }
+                   } else if (nextStepId === '4') {
+                       // No hay campos requeridos en el paso 3 (solo selección)
                    }
                  
+                   // Cambiar a siguiente paso
                    currentStep.classList.remove('active');
                    document.getElementById('step' + nextStepId).classList.add('active');
                  
+                   // Actualizar indicador de pasos
                    steps.forEach(step => {
                        if (parseInt(step.getAttribute('data-step')) < parseInt(nextStepId)) {
                            step.classList.add('completed');
@@ -591,6 +681,7 @@
                    currentStep.classList.remove('active');
                    document.getElementById('step' + prevStepId).classList.add('active');
                  
+                   // Actualizar indicador de pasos
                    steps.forEach(step => {
                        if (parseInt(step.getAttribute('data-step')) === parseInt(prevStepId)) {
                            step.classList.add('active');
@@ -602,6 +693,7 @@
                });
            });
          
+           // Validación en tiempo real para campos requeridos
            document.querySelectorAll('[required]').forEach(field => {
                field.addEventListener('input', function() {
                    if (this.value) {
@@ -610,6 +702,7 @@
                });
            });
          
+           // Validación de contraseña en tiempo real
            document.getElementById('confirm_password').addEventListener('input', function() {
                const password = document.getElementById('password');
                if (this.value !== password.value) {
