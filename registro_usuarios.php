@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>TRADY - Registro Completo</title>
+   <title>TRADY - Registro de Usuario</title>
    <!-- Bootstrap CSS -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
    <!-- FontAwesome (iconos) -->
@@ -13,8 +13,6 @@
            --game-primary: #6a11cb;
            --game-secondary: #2575fc;
            --game-dark: #1a1a2e;
-           --partner-primary: #2575fc;
-           --partner-secondary: #6a11cb;
            --success-color: #00b09b;
        }
      
@@ -66,24 +64,6 @@
      
        .btn-outline-light {
            border-radius: 50px;
-       }
-     
-       .user-type-card {
-           cursor: pointer;
-           transition: all 0.3s;
-           border: 2px solid transparent;
-           border-radius: 10px;
-           padding: 20px;
-           text-align: center;
-       }
-     
-       .user-type-card:hover {
-           transform: translateY(-5px);
-       }
-     
-       .user-type-card.active {
-           border-color: white;
-           background: rgba(255, 255, 255, 0.2);
        }
      
        .plan-card {
@@ -243,177 +223,72 @@
            opacity: 0.8;
        }
    </style>
-
-
-
-
-<?php
-   error_reporting( E_ALL );
-   ini_set( "display_errors", 1 );
-   require('./util/conexion.php');
-   ?>
 </head>
 <body>
    <?php
+   error_reporting(E_ALL);
+   ini_set("display_errors", 1);
+   require('./util/conexion.php');
 
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+       $nombre = $_POST["name"];
+       $correo = $_POST["email"];
+       $telefono = $_POST["phone"];
+       $contrasena = $_POST["password"];
+       $confir_contra = $_POST["confirm_password"];
+       $fecha = $_POST["birthdate"];
+       $id_suscripcion = $_POST["subscription_plan"];
 
+       $cont = 0; // Contador de validaciones
 
-
-       // Obtener los valores de la URL y decodificarlos
-//$usuario = htmlspecialchars($_POST['username']);
-//$email = htmlspecialchars($_POST['email']);
-
-
-
-
-// Sanitizar los valores para seguridad al mostrarlos en HTML
-//$usuario_safe = htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8');
-//$email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-
-
-//echo "<pre>";
-//print_r($_POST);
-//echo "</pre>";
-
-
-
-
-
-
-     
-
-
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-
-
-
-
-
-
-
-
-
-   $nombre = $_POST["name"];
-   $correo = $_POST["email"];
-   $telefono = $_POST["phone"];
-   $contrasena = $_POST["password"];
-   $confir_contra = $_POST["confirm_password"];
-   $fecha = $_POST["birthdate"];
-   $id_suscripcion= $_POST["subscription_plan"];
-
-
-   $cont = 0; // Contador de validaciones
-
-
-
-
-   // Validación del nombre
-   if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
-       echo "<h4>Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).</h4>";
-   } else {
-       $cont++;
-   }
-
-
-
-
-
-
-
-
-   /*VALIDACION EMAIL CHATGPT
-   $stmt = $_conexion->prepare("SELECT COUNT(*) FROM usuarios WHERE email = :email");
-   $stmt->bindParam(':email', $correo);
-   $stmt->execute();
-   if ($stmt->fetchColumn() > 0) {
-       echo "<h4>El email ya está registrado</h4>";
-   } else{
-       $cont++;
-   }
-    //Validación del email
-   if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-       echo "<h4>Email no válido</h4>";
-   } else {
-       $stmt = $_conexion->prepare("SELECT id_usuario FROM usuarios WHERE email = :email");
-       $stmt->execute(["email"=>$correo]);
-       if ($stmt->num_rows > 0) {
-           echo "<h4>El email ya está registrado</h4>";
+       // Validación del nombre
+       if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
+           echo "<h4>Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).</h4>";
        } else {
            $cont++;
        }
-       //$stmt->close();
+
+       // Validación de la contraseña
+       if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
+           echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Confirmación de la contraseña
+       if ($contrasena !== $confir_contra) {
+           echo "<h4>Las contraseñas no coinciden</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Validación del teléfono
+       if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
+           echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Si todas las validaciones pasaron
+       if ($cont == 4) {
+           $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
+
+           $stmt = $_conexion->prepare("
+               INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
+               VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
+           ");
+           
+           $stmt->execute([
+               "email" => $correo,
+               "nombre" => $nombre,
+               "fecha_nac" => $fecha,
+               "password" => $contrasena_cifrada,
+               "telefono" => $telefono, 
+               "id_suscripcion" => $id_suscripcion
+           ]);
+       }
    }
-*/
-
-
-   // Validación de la contraseña
-   if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
-       echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
-   } else {
-       $cont++;
-   }
-
-
-
-
-   // Confirmación de la contraseña
-   if ($contrasena !== $confir_contra) {
-       echo "<h4>Las contraseñas no coinciden</h4>";
-   } else {
-       $cont++;
-   }
-
-
-
-
-   // Validación del teléfono
-   if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
-       echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
-   } else {
-       $cont++;
-   }
-
-
-   echo "<p>";
-   print($cont);
-   echo "</p>";
-   // Si todas las validaciones pasaron
-   if ($cont == 4) {
-
-
-       echo "<b>";
-       print($cont);
-       echo "</b>";
-
-
-      
-       $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-
-
-
-
-       $stmt = $_conexion->prepare("
-           INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
-           VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
-       ");
-       //("sssis", $correo, $nombre, $fecha, $telefono, $contrasena_cifrada);
-
-
-       $stmt->execute(["email"=>$correo,"nombre"=>$nombre,"fecha_nac"=>$fecha,"password"=>$contrasena_cifrada,"telefono"=>$telefono, "id_suscripcion"=>$id_suscripcion]);
-
-
-
-
-       //$stmt->close();
-   }
-
-
-  // $_conexion->close();
-}
-?>
+   ?>
 
    <div class="container py-5">
        <div class="row justify-content-center">
@@ -422,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    <!-- Logo -->
                    <div class="logo-container">
                        <img src="trady_sinFondo.png" alt="TRADY Logo">
-                       <h1 class="fw-bold mt-3">Registro en TRADY</h1>
+                       <h1 class="fw-bold mt-3">Registro de Usuario</h1>
                        <p class="mb-4">Completa tus datos para comenzar la aventura</p>
                    </div>
                  
@@ -430,56 +305,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    <div class="step-indicator">
                        <div class="step active" data-step="1">
                            <div class="step-number">1</div>
-                           <div class="step-label">Tipo de usuario</div>
+                           <div class="step-label">Datos personales</div>
                        </div>
                        <div class="step" data-step="2">
                            <div class="step-number">2</div>
-                           <div class="step-label">Datos personales</div>
+                           <div class="step-label">Suscripción</div>
                        </div>
                        <div class="step" data-step="3">
                            <div class="step-number">3</div>
-                           <div class="step-label">Suscripción</div>
-                       </div>
-                       <div class="step" data-step="4">
-                           <div class="step-number">4</div>
                            <div class="step-label">Pago</div>
                        </div>
                    </div>
                  
                    <!-- Formulario de registro -->
                    <form id="registrationForm" action="usuarios/perfil-usuario.html" method="POST">
-                       <!-- Paso 1: Tipo de usuario -->
+                       <!-- Paso 1: Datos personales -->
                        <div class="form-section active" id="step1">
-                           <h4 class="mb-4">¿Qué tipo de cuenta deseas crear?</h4>
-                           <div class="row">
-                               <div class="col-md-6 mb-4">
-                                   <div class="user-type-card active" id="userTypeClient">
-                                       <i class="fas fa-user fa-3x mb-3"></i>
-                                       <h5>Usuario Cliente</h5>
-                                       <p class="small">Perfecto para explorar, escanear QR y ganar recompensas</p>
-                                       <input type="radio" class="d-none" name="user_type" value="client" checked>
-                                   </div>
-                               </div>
-                               <div class="col-md-6 mb-4">
-                                   <div class="user-type-card" id="userTypePartner">
-                                       <i class="fas fa-store fa-3x mb-3"></i>
-                                       <h5>Usuario Partner</h5>
-                                       <p class="small">Para negocios que quieran promocionarse y crear QR</p>
-                                       <input type="radio" class="d-none" name="user_type" value="partner">
-                                   </div>
-                               </div>
-                           </div>
-                           <div class="d-flex justify-content-end">
-                               <button type="button" class="btn btn-main next-step" data-next="2">Siguiente</button>
-                           </div>
-                       </div>
-                     
-                       <!-- Paso 2: Datos personales -->
-                       <div class="form-section" id="step2">
                            <h4 class="mb-4">Tus datos personales</h4>
                          
-                           <!-- Campos comunes -->
-                           <!-- PARA LOS USUARIOS -->
                            <div class="row">
                                <div class="col-md-6 mb-3">
                                    <label for="name" class="form-label required-field">Nombre</label>
@@ -514,36 +357,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                </div>
                            </div>
                          
-                           <!-- Campos específicos para partners -->
-                           <div id="partnerFields" style="display: none;">
-                               <hr class="my-4">
-                               <h5 class="mb-3">Datos del negocio</h5>
-                               <div class="row">
-                                   <div class="col-md-6 mb-3">
-                                       <label for="business_name" class="form-label required-field">Nombre del negocio</label>
-                                       <input type="text" class="form-control" id="business_name" name="business_name">
-                                   </div>
-                                   <div class="col-md-6 mb-3">
-                                       <label for="business_type" class="form-label required-field">Tipo de negocio</label>
-                                       <select class="form-select" id="business_type" name="business_type">
-                                           <option value="">Seleccionar...</option>
-                                           <option value="restaurant">Restaurante/Cafetería</option>
-                                           <option value="bar">Bar/Pub</option>
-                                           <option value="shop">Tienda/Comercio</option>
-                                           <option value="hotel">Hotel/Alojamiento</option>
-                                           <option value="attraction">Atracción turística</option>
-                                           <option value="other">Otro</option>
-                                       </select>
+                           <div class="d-flex justify-content-end mt-4">
+                               <button type="button" class="btn btn-main next-step" data-next="2">Siguiente</button>
+                           </div>
+                       </div>
+                     
+                       <!-- Paso 2: Suscripción -->
+                       <div class="form-section" id="step2">
+                           <h4 class="mb-4">Elige tu plan de suscripción</h4>
+                         
+                           <div class="row">
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card active" data-plan="free">
+                                       <h5>Básico</h5>
+                                       <h3 class="my-3">Gratis</h3>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Acceso a rutas básicas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> 5 escaneos diarios</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas estándar</li>
+                                           <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin estadísticas avanzadas</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="1" checked>
                                    </div>
                                </div>
-                               <div class="row">
-                                   <div class="col-md-6 mb-3">
-                                       <label for="business_address" class="form-label required-field">Dirección</label>
-                                       <input type="text" class="form-control" id="business_address" name="business_address">
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card featured" data-plan="premium">
+                                       <span class="featured-badge">Recomendado</span>
+                                       <h5>Premium</h5>
+                                       <h3 class="my-3">€4.99/mes</h3>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las rutas premium</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Escaneos ilimitados</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas exclusivas</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="2">
                                    </div>
-                                   <div class="col-md-6 mb-3">
-                                       <label for="business_cif" class="form-label required-field">CIF/NIF</label>
-                                       <input type="text" class="form-control" id="business_cif" name="business_cif">
+                               </div>
+                               <div class="col-md-4 mb-4">
+                                   <div class="plan-card" data-plan="annual">
+                                       <h5>Premium Anual</h5>
+                                       <h3 class="my-3">€49.99/año</h3>
+                                       <p class="small text-success">Ahorra 2 meses</p>
+                                       <ul class="list-unstyled">
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las ventajas Premium</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario</li>
+                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Descuentos exclusivos</li>
+                                       </ul>
+                                       <input type="radio" class="d-none" name="subscription_plan" value="3">
                                    </div>
                                </div>
                            </div>
@@ -554,109 +415,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            </div>
                        </div>
                      
-                       <!-- Paso 3: Suscripción -->
+                       <!-- Paso 3: Método de pago -->
                        <div class="form-section" id="step3">
-                           <h4 class="mb-4">Elige tu plan de suscripción</h4>
-                         
-                           <!-- Planes para clientes -->
-                           <div id="clientPlans">
-                               <div class="row">
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card active" data-plan="free">
-                                           <h5>Básico</h5>
-                                           <h3 class="my-3">Gratis</h3>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Acceso a rutas básicas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> 5 escaneos diarios</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas estándar</li>
-                                               <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin estadísticas avanzadas</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="1" checked>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card featured" data-plan="premium">
-                                           <span class="featured-badge">Recomendado</span>
-                                           <h5>Premium</h5>
-                                           <h3 class="my-3">€4.99/mes</h3>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las rutas premium</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Escaneos ilimitados</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Recompensas exclusivas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="2">
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card" data-plan="annual">
-                                           <h5>Premium Anual</h5>
-                                           <h3 class="my-3">€49.99/año</h3>
-                                           <p class="small text-success">Ahorra 2 meses</p>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las ventajas Premium</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Descuentos exclusivos</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="3">
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                         
-                           <!-- Planes para partners -->
-                           <div id="partnerPlans" style="display: none;">
-                               <div class="row">
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card" data-plan="partner-starter">
-                                           <h5>Partner Starter</h5>
-                                           <h3 class="my-3">€9.99/mes</h3>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> 2 códigos QR activos</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas básicas</li>
-                                               <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin campañas promocionales</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="partner-starter">
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card featured active" data-plan="partner-premium">
-                                           <span class="featured-badge">Popular</span>
-                                           <h5>Partner Premium</h5>
-                                           <h3 class="my-3">€29.99/mes</h3>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> 5 códigos QR activos</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> 2 campañas activas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Posicionamiento destacado</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="partner-premium" checked>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4 mb-4">
-                                       <div class="plan-card" data-plan="partner-business">
-                                           <h5>Partner Business</h5>
-                                           <h3 class="my-3">€99.99/mes</h3>
-                                           <ul class="list-unstyled">
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> QR ilimitados</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Analíticas completas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Campañas ilimitadas</li>
-                                               <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario 24/7</li>
-                                           </ul>
-                                           <input type="radio" class="d-none" name="subscription_plan" value="partner-business">
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                         
-                           <div class="d-flex justify-content-between mt-4">
-                               <button type="button" class="btn btn-outline-light prev-step" data-prev="2">Anterior</button>
-                               <button type="button" class="btn btn-main next-step" data-next="4">Siguiente</button>
-                           </div>
-                       </div>
-                     
-                       <!-- Paso 4: Método de pago -->
-                       <div class="form-section" id="step4">
                            <h4 class="mb-4">Método de pago</h4>
                          
                            <div class="mb-4">
@@ -688,7 +448,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                </div>
                            </div>
                          
-                           <!-- Formulario de tarjeta (visible solo cuando se selecciona tarjeta) -->
+                           <!-- Formulario de tarjeta -->
                            <div id="cardForm">
                                <div class="row">
                                    <div class="col-md-6 mb-3">
@@ -721,7 +481,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            </div>
                          
                            <div class="d-flex justify-content-between mt-4">
-                               <button type="button" class="btn btn-outline-light prev-step" data-prev="3">Anterior</button>
+                               <button type="button" class="btn btn-outline-light prev-step" data-prev="2">Anterior</button>
                                <button type="submit" class="btn btn-main">
                                    <i class="fas fa-check me-2"></i>Completar Registro
                                </button>
@@ -733,53 +493,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        </div>
    </div>
 
-
-
-
    <!-- Bootstrap JS -->
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  
    <!-- Script para el formulario -->
    <script>
        document.addEventListener('DOMContentLoaded', function() {
-           // Manejar el tipo de usuario
-           //e.preventDefault();
-           const userTypeClient = document.getElementById('userTypeClient');
-           const userTypePartner = document.getElementById('userTypePartner');
-           const partnerFields = document.getElementById('partnerFields');
-           const clientPlans = document.getElementById('clientPlans');
-           const partnerPlans = document.getElementById('partnerPlans');
-         
-           userTypeClient.addEventListener('click', function() {
-               this.classList.add('active');
-               userTypePartner.classList.remove('active');
-               document.querySelector('input[name="user_type"][value="client"]').checked = true;
-               partnerFields.style.display = 'none';
-               clientPlans.style.display = 'block';
-               partnerPlans.style.display = 'none';
-             
-               // Reset required fields for partner
-               document.getElementById('business_name').required = false;
-               document.getElementById('business_type').required = false;
-               document.getElementById('business_address').required = false;
-               document.getElementById('business_cif').required = false;
-           });
-         
-           userTypePartner.addEventListener('click', function() {
-               this.classList.add('active');
-               userTypeClient.classList.remove('active');
-               document.querySelector('input[name="user_type"][value="partner"]').checked = true;
-               partnerFields.style.display = 'block';
-               clientPlans.style.display = 'none';
-               partnerPlans.style.display = 'block';
-             
-               // Set required fields for partner
-               document.getElementById('business_name').required = true;
-               document.getElementById('business_type').required = true;
-               document.getElementById('business_address').required = true;
-               document.getElementById('business_cif').required = true;
-           });
-         
            // Manejar selección de planes
            const planCards = document.querySelectorAll('.plan-card');
            planCards.forEach(card => {
@@ -800,7 +519,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    const radio = this.querySelector('input[type="radio"]');
                    if (radio) radio.checked = true;
                  
-                   // Mostrar/ocultar formulario de tarjeta
                    if (this.id === 'paymentCard') {
                        document.getElementById('cardForm').style.display = 'block';
                    } else {
@@ -820,10 +538,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    const currentStep = document.querySelector('.form-section.active');
                    const nextStepId = this.getAttribute('data-next');
                  
-                   // Validar campos requeridos antes de avanzar
                    if (nextStepId === '2') {
-                       // No hay campos requeridos en el paso 1
-                   } else if (nextStepId === '3') {
                        const requiredFields = currentStep.querySelectorAll('[required]');
                        let isValid = true;
                      
@@ -836,7 +551,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            }
                        });
                      
-                       // Validar contraseñas coincidentes
                        const password = document.getElementById('password');
                        const confirmPassword = document.getElementById('confirm_password');
                      
@@ -847,18 +561,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            confirmPassword.classList.remove('is-invalid');
                        }
                      
-                       if (!isValid) {
-                           return;
-                       }
-                   } else if (nextStepId === '4') {
-                       // No hay campos requeridos en el paso 3 (solo selección)
+                       if (!isValid) return;
                    }
                  
-                   // Cambiar a siguiente paso
                    currentStep.classList.remove('active');
                    document.getElementById('step' + nextStepId).classList.add('active');
                  
-                   // Actualizar indicador de pasos
                    steps.forEach(step => {
                        if (parseInt(step.getAttribute('data-step')) < parseInt(nextStepId)) {
                            step.classList.add('completed');
@@ -881,7 +589,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    currentStep.classList.remove('active');
                    document.getElementById('step' + prevStepId).classList.add('active');
                  
-                   // Actualizar indicador de pasos
                    steps.forEach(step => {
                        if (parseInt(step.getAttribute('data-step')) === parseInt(prevStepId)) {
                            step.classList.add('active');
@@ -893,7 +600,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                });
            });
          
-           // Validación en tiempo real para campos requeridos
            document.querySelectorAll('[required]').forEach(field => {
                field.addEventListener('input', function() {
                    if (this.value) {
@@ -902,7 +608,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                });
            });
          
-           // Validación de contraseña en tiempo real
            document.getElementById('confirm_password').addEventListener('input', function() {
                const password = document.getElementById('password');
                if (this.value !== password.value) {
