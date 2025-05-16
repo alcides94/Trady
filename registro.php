@@ -381,7 +381,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    print($cont);
    echo "</p>";
    // Si todas las validaciones pasaron
-   if ($cont == 5) {
+   if ($cont == 4) {
 
 
        echo "<b>";
@@ -457,7 +457,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    </div>
                  
                    <!-- Formulario de registro -->
-                   <form id="registrationForm" action="" method="POST">
+                   <form id="registrationForm" action="usuarios/perfil-usuario.html" method="POST">
                        <!-- Paso 1: Tipo de usuario -->
                        <div class="form-section active" id="step1">
                            <h4 class="mb-4">¿Qué tipo de cuenta deseas crear?</h4>
