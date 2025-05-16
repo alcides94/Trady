@@ -149,7 +149,7 @@
                 <!-- Registro -->
                 <div class="tab-pane fade" id="pills-register" role="tabpanel">
                         <div class="d-grid">
-                        <a href="registro.php">
+                        <a href="paginaDecision.php">
                             <button type="submit" class="btn game-btn">
                                 <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                             </button>

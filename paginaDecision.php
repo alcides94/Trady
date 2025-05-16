@@ -3,20 +3,23 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>TRADY - Registro de Partner</title>
+   <title>TRADY - Registro Completo</title>
    <!-- Bootstrap CSS -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
    <!-- FontAwesome (iconos) -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    <style>
        :root {
+           --game-primary: #6a11cb;
+           --game-secondary: #2575fc;
+           --game-dark: #1a1a2e;
            --partner-primary: #2575fc;
            --partner-secondary: #6a11cb;
            --success-color: #00b09b;
        }
      
        body {
-           background: linear-gradient(135deg, var(--partner-primary), var(--partner-secondary));
+           background: linear-gradient(135deg, var(--game-primary), var(--game-secondary));
            min-height: 100vh;
            font-family: 'Arial', sans-serif;
            color: white;
@@ -65,6 +68,24 @@
            border-radius: 50px;
        }
      
+       .user-type-card {
+           cursor: pointer;
+           transition: all 0.3s;
+           border: 2px solid transparent;
+           border-radius: 10px;
+           padding: 20px;
+           text-align: center;
+       }
+     
+       .user-type-card:hover {
+           transform: translateY(-5px);
+       }
+     
+       .user-type-card.active {
+           border-color: white;
+           background: rgba(255, 255, 255, 0.2);
+       }
+     
        .plan-card {
            background: rgba(0, 0, 0, 0.2);
            border-radius: 10px;
@@ -94,7 +115,7 @@
            top: -10px;
            right: 20px;
            background: gold;
-           color: #1a1a2e;
+           color: var(--game-dark);
            padding: 3px 15px;
            border-radius: 20px;
            font-size: 0.8rem;
@@ -222,97 +243,77 @@
            opacity: 0.8;
        }
    </style>
+
+
+<?php
+   error_reporting( E_ALL );
+   ini_set( "display_errors", 1 );
+   ?>
 </head>
 <body>
-   <?php
-   error_reporting(E_ALL);
-   ini_set("display_errors", 1);
-   require('./util/conexion.php');
+     
+<form id="registrationForm" action="" method="POST">
+   <!-- Paso 1: Tipo de usuario -->
+   <div class="form-section active" id="step1">
+       <h4 class="mb-4">¿Qué tipo de cuenta deseas crear?</h4>
+       <div class="row">
+           <div class="col-md-6 mb-4">
+               <div class="user-type-card active" id="userTypeClient" onclick="selectUserType('client')">
+                   <i class="fas fa-user fa-3x mb-3"></i>
+                   <h5>Usuario Cliente</h5>
+                   <p class="small">Perfecto para explorar, escanear QR y ganar recompensas</p>
+               </div>
+           </div>
+           <div class="col-md-6 mb-4">
+               <div class="user-type-card" id="userTypePartner" onclick="selectUserType('partner')">
+                   <i class="fas fa-store fa-3x mb-3"></i>
+                   <h5>Usuario Partner</h5>
+                   <p class="small">Para negocios que quieran promocionarse y crear QR</p>
+               </div>
+           </div>
+       </div>
 
-   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-       $nombre = $_POST["name"];
-       $correo = $_POST["email"];
-       $telefono = $_POST["phone"];
-       $contrasena = $_POST["password"];
-       $confir_contra = $_POST["confirm_password"];
-       $fecha = $_POST["birthdate"];
-       $id_suscripcion = $_POST["subscription_plan"];
-       $business_name = $_POST["business_name"];
-       $business_type = $_POST["business_type"];
-       $business_address = $_POST["business_address"];
-       $business_cif = $_POST["business_cif"];
 
-       $cont = 0; // Contador de validaciones
+       <!-- Campo oculto para almacenar selección -->
+       <input type="hidden" id="selectedUserType" name="user_type" value="client">
 
-       // Validación del nombre
-       if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
-           echo "<h4>Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).</h4>";
+
+       <div class="d-flex justify-content-end">
+           <button type="button" class="btn btn-main next-step" onclick="goToNext()">Siguiente</button>
+       </div>
+   </div>
+</form>
+
+<script>
+   let selected = "client";
+
+
+   function selectUserType(type) {
+       selected = type;
+       document.getElementById('selectedUserType').value = type;
+
+
+       // Activar visualmente la tarjeta seleccionada
+       document.getElementById('userTypeClient').classList.remove('active');
+       document.getElementById('userTypePartner').classList.remove('active');
+
+
+       if (type === "client") {
+           document.getElementById('userTypeClient').classList.add('active');
        } else {
-           $cont++;
-       }
-
-       // Validación de la contraseña
-       if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
-           echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Confirmación de la contraseña
-       if ($contrasena !== $confir_contra) {
-           echo "<h4>Las contraseñas no coinciden</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Validación del teléfono
-       if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
-           echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Validación de datos del negocio
-       if (empty($business_name) || empty($business_type) || empty($business_address) || empty($business_cif)) {
-           echo "<h4>Todos los campos del negocio son obligatorios</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Si todas las validaciones pasaron
-       if ($cont == 5) {
-           $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-
-           $stmt = $_conexion->prepare("
-               INSERT INTO partners (email, nombre, fecha_nac, password, telefono, id_suscripcion, 
-                                    business_name, business_type, business_address, business_cif)
-               VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion,
-                       :business_name, :business_type, :business_address, :business_cif)
-           ");
-           
-           $stmt->execute([
-               "email" => $correo,
-               "nombre" => $nombre,
-               "fecha_nac" => $fecha,
-               "password" => $contrasena_cifrada,
-               "telefono" => $telefono,
-               "id_suscripcion" => $id_suscripcion,
-               "business_name" => $business_name,
-               "business_type" => $business_type,
-               "business_address" => $business_address,
-               "business_cif" => $business_cif
-           ]);
+           document.getElementById('userTypePartner').classList.add('active');
        }
    }
-   ?>
 
-   <div class="container py-5">
-       <div class="row justify-content-center">
-           <div class="col-lg-8">
-               <div class="registration-card p-4 p-md-5">
-                   <!-- Logo -->
-                   <div class="logo-container">
-                       <img src="trady_sinFondo.png" alt="TRADY Logo">
-                       <h1 class="fw-bold mt-3">Registro de Partner</h1>
-                       <p class="mb-4">Completa los datos de tu negocio</p>
-                  
+
+   function goToNext() {
+       if (selected === "client") {
+           window.location.href = "./usuarios/registro_usuarios.php";
+       } else if (selected === "partner") {
+           window.location.href = "registro_parners.php";
+       }
+   }
+</script>
+                                   
+</body>
+</html>
