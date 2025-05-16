@@ -11,9 +11,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fecha_nac = $_POST["fecha_nac"];
     $contrasena = $_POST["password"];
     $id_suscripcion = $_POST["id_suscripcion"];
+    $telefono = $_POST["telefono"];
 
-    $sql = "INSERT INTO usuarios (email, nombre, fecha_nac, password, id_suscripcion) 
-            VALUES(:email, :nombre, :fecha_nac, :password, :id_suscripcion)";
+    $sql = "INSERT INTO usuarios (email, nombre, fecha_nac, password, id_suscripcion, telefono) 
+            VALUES(:email, :nombre, :fecha_nac, :password, :id_suscripcion, :telefono)";
     
     $stmt = $_conexion->prepare($sql);
 
@@ -22,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "nombre" => $nombre,
         "fecha_nac" => $fecha_nac,
         "password" => $contrasena,
-        "id_suscripcion" => $id_suscripcion
+        "id_suscripcion" => $id_suscripcion,
+        "telefono" => $telefono
     ]);
 
     // Opcional: redirigir o mostrar mensaje

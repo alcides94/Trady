@@ -105,13 +105,15 @@
                                         <td><span class="badge bg-success"><?php echo $usuario['estado'] ?></span></td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary btn-editar" data-id="<?php echo $usuario['id_usuario']; ?>" data-bs-toggle="tooltip" title="Editar">
-                                                    <input type="hidden" name="id_usuario" id="id_usuario">
-                                                    <i class="fas fa-edit"></i>
+                                                <input type="hidden" name="id_usuario" id="id_usuario">
+                                                <i class="fas fa-edit"></i>
                                             </button>
-                                            
-                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <form action="conexiones/eliminar_usuario.php" method="post">
+                                                <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $usuario['id_usuario'] ?>">
+                                                <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar" type="submit">     
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -226,15 +228,15 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="e_password" name="e_password" required>
+                                <input type="password" class="form-control" id="e_password" name="e_password" >
                             </div>
                             <div class="col-md-6">
                                 <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
-                                <input type="password" class="form-control" id="e_confirm_password" name="e_confirm_password" required>
+                                <input type="password" class="form-control" id="e_confirm_password" name="e_confirm_password" >
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="e_activo" name="e_estado" checked>
+                                    <input class="form-check-input" type="checkbox" id="e_estado" name="e_estado" >
                                     <label class="form-check-label" for="activo">
                                         Usuario activo
                                     </label>
@@ -242,31 +244,12 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="id_usuario" id="id_usuario">
+                    <input type="hidden" name="e_id_usuario" id="e_id_usuario">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Editar Usuario</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Confirmar Eliminación -->
-    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
-                </div>
             </div>
         </div>
     </div>
@@ -296,57 +279,32 @@
             });
             
             // Configurar botones de edición en la tabla
-            document.querySelectorAll('.btn-editar').forEach(boton => {
-                boton.addEventListener('click', () => {
-                    const idUsuario = boton.getAttribute('data-id');
-                    
-                    fetch('conexiones/editar_usuario.php?id_usuario=' + idUsuario)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.error) {
-                        alert('Error: ' + data.error);
-                        return;
-                        }
+            $(document).ready(function () {
+                $('.btn-editar').on('click', async function () {
+                    const idUsuario = $(this).data('id');
 
-                        // Rellenar los campos del modal
-                        document.getElementById('e_nombre').value = data.nombre;
-                        document.getElementById('e_email').value = data.email;
-                        document.getElementById('e_telefono').value = data.telefono;
-                        document.getElementById('e_fecha_nac').value = data.fecha_nac;
-                       // document.getElementById('id_suscripcion').value = data.id_suscripcion;
-                        //document.getElementById('estado').value = data.estado;
+                    try {
+                        const response = await fetch(`conexiones/obtener_usuario.php?id_usuario=${idUsuario}`);
+                        const usuario = await response.json();
 
-                        // Mostrar el modal (si usás Bootstrap 5)
-                        const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
+                        $('#e_id_usuario').val(usuario.id_usuario);
+                        $('#e_nombre').val(usuario.nombre);
+                        $('#e_email').val(usuario.email);
+                        $('#e_telefono').val(usuario.telefono);
+                        $('#e_fecha_nac').val(usuario.fecha_nac);
+                        $('#e_id_suscripcion').val(usuario.id_suscripcion);
+                        $('#e_estado').prop('checked', usuario.estado === 1);
+
+                        const modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
                         modal.show();
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener los datos del usuario:', error);
-                    });
-                });
-                });
 
-            
-            // Configurar botones de eliminación en la tabla
-            $('.btn-outline-danger').on('click', function() {
-                const row = $(this).closest('tr');
-                const id = row.find('td:eq(0)').text();
-                const nombre = row.find('td:eq(1)').text();
-                
-                // Configurar el modal de confirmación
-                $('#confirmarEliminarModal .modal-body').html(
-                    `¿Estás seguro de que deseas eliminar al usuario <strong>${nombre}</strong> (ID: ${id})? Esta acción no se puede deshacer.`
-                );
-                
-                // Configurar el botón de confirmar eliminación
-                $('#btnConfirmarEliminar').off('click').on('click', function() {
-                    alert(`Usuario ${id} eliminado correctamente (simulación)`);
-                    $('#confirmarEliminarModal').modal('hide');
-                    row.fadeOut(300, function() { $(this).remove(); });
+                    } catch (error) {
+                        console.error('Error al obtener los datos del usuario:', error);
+                    }
                 });
-                
-                $('#confirmarEliminarModal').modal('show');
             });
+
+
         });
     </script>
 </body>

@@ -1,29 +1,83 @@
-<?php 
-session_start();
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-header('Content-Type: application/json'); // <--- importante
-
+<?php
 require('../../util/conexion.php');
 
-if (isset($_GET['id_usuario'])) {
-    $id = $_GET['id_usuario'];
+// Habilitar errores (para desarrollo)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+header('Content-Type: application/json');
 
-    try {
-        $stmt = $_conexion->prepare("SELECT * FROM usuarios WHERE id_usuario = :id_usuario");
-        $stmt->execute(["id_usuario" => $id]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $id_usuario = $_POST['e_id_usuario'];
+    $nombre = $_POST['e_nombre'] ?? '';
+    $email = $_POST['e_email'] ?? '';
+    $telefono = $_POST['e_telefono'] ?? '';
+    $fecha_nac = $_POST['e_fecha_nac'] ?? null;
+    $id_suscripcion = $_POST['e_id_suscripcion'] ?? 1;
+    $password = $_POST['e_password'] ?? '';
+    $confirm_password = $_POST['e_confirm_password'] ?? '';
+    $estado = isset($_POST['e_estado']) ? 1 : 0;
 
-        if ($usuario) {
-            echo json_encode($usuario);
-        } else {
-            echo json_encode(["error" => "Usuario no encontrado"]);
+    // Si el usuario quiere cambiar la contraseña
+    if (!empty($password) && !empty($confirm_password)) {
+
+        if ($password !== $confirm_password) {
+            echo json_encode(["error" => "Las contraseñas no coinciden"]);
+            exit;
         }
-    } catch (PDOException $e) {
-        echo json_encode(["error" => $e->getMessage()]);
+
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $_conexion->prepare("
+            UPDATE usuarios 
+            SET nombre = :nombre,
+                email = :email,
+                telefono = :telefono,
+                fecha_nac = :fecha_nac,
+                id_suscripcion = :id_suscripcion,
+                password = :password,
+                estado = :estado
+            WHERE id_usuario = :id_usuario
+        ");
+
+        $stmt->execute([
+            'nombre' => $nombre,
+            'email' => $email,
+            'telefono' => $telefono,
+            'fecha_nac' => $fecha_nac,
+            'id_suscripcion' => $id_suscripcion,
+            'password' => $passwordHash,
+            'estado' => $estado,
+            'id_usuario' => $id_usuario
+        ]);
+
+    } else {
+        // No se cambia la contraseña
+        $stmt = $_conexion->prepare("
+            UPDATE usuarios 
+            SET nombre = :nombre,
+                email = :email,
+                telefono = :telefono,
+                fecha_nac = :fecha_nac,
+                id_suscripcion = :id_suscripcion,
+                estado = :estado
+            WHERE id_usuario = :id_usuario
+        ");
+
+        $stmt->execute([
+            'nombre' => $nombre,
+            'email' => $email,
+            'telefono' => $telefono,
+            'fecha_nac' => $fecha_nac,
+            'id_suscripcion' => $id_suscripcion,
+            'estado' => $estado,
+            'id_usuario' => $id_usuario
+        ]);
     }
-} else {
-    echo json_encode(["error" => "Falta el parámetro id_usuario"]);
+
+    // Si querés hacer redirección:
+    header('Location: ../pantallausuarios.php');
+    exit;
+
 }
 ?>
