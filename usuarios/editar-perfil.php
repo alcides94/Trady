@@ -235,6 +235,7 @@
                     <input type="date" class="form-control" name="birthdate" id="birthdate" value="<?php echo $resultado["fecha_nac"];?>">
                 </div>
                 <a class="btn btn-danger" href="cambiar_contraseña.php">CAMBIAR CONTRASEÑA</a>
+                <a class="btn btn-danger" href="eliminar_usuario.php">ELIMINAR ESTA CUENTA</a>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="button" class="btn btn-cancel me-md-2" onclick="window.history.back()">Cancelar</button>
                     <button type="submit" class="btn btn-save">Guardar Cambios</button>
