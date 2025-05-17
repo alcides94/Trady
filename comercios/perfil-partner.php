@@ -217,6 +217,7 @@
                     <h3><?php echo $_SESSION["nombre_usuario"]?></h3>
                     <p class="text-muted">Partner desde: <?php echo $resultado["fecha_alta"]?></p>
                     <span class="premium-badge mb-3">PARTNER PREMIUM</span>
+                    <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
 
                     <!-- Pestañas de partner -->
                     <ul class="nav nav-tabs justify-content-center mt-3" id="partnerTabs" role="tablist">
