@@ -20,7 +20,17 @@
             $stmt->bindParam(':email', $_SESSION["usuario"]);
             $stmt->execute();
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            
+            $sql2 = "SELECT * FROM suscripcion_usuarios WHERE id_suscripcion = :id_suscripcion";
+            $stmt = $_conexion->prepare($sql2);
+            $stmt->bindParam(':id_suscripcion', $resultado["id_suscripcion"]);
+            $stmt->execute();
+            $suscripcion = $stmt->fetch(PDO::FETCH_ASSOC);
+                                            
         }
+
+
     ?>
 
 <!DOCTYPE html>
@@ -333,15 +343,23 @@
                                 <div class="subscription-card">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h6 class="mb-1">Plan Premium</h6>
-                                            <small class="text-muted">Renovación: 15/11/2023</small>
+                                            <h6 class="mb-1"><?php 
+                                            if($resultado["id_suscripcion"]==1){
+                                                echo "Gratis";
+                                            }elseif($resultado["id_suscripcion"]==2){
+                                                echo "Plata";
+                                            }elseif($resultado["id_suscripcion"]==3){
+                                                echo "Oro";
+                                            }
+                                        ?></h6>
                                         </div>
                                         <span class="badge bg-success">Activa</span>
                                     </div>
                                     <div class="d-flex justify-content-between mt-3">
                                         <div>
+                                            
                                             <small>Próximo pago:</small>
-                                            <h5 class="mb-0">$9.99</h5>
+                                            <h5 class="mb-0"><?php echo $suscripcion["precio"];?>€</h5>
                                         </div>
                                         <a href="suscripcion-usuario.html" class="btn btn-sm btn-outline-danger">Cambiar</a>
                                     </div>
