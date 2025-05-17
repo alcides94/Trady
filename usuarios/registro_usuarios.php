@@ -1,3 +1,80 @@
+
+<?php
+   error_reporting(E_ALL);
+   ini_set("display_errors", 1);
+   require('../util/conexion.php');
+
+   
+
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+       $nombre = $_POST["name"];
+       $correo = $_POST["email"];
+       $telefono = $_POST["phone"];
+       $contrasena = $_POST["password"];
+       $confir_contra = $_POST["confirm_password"];
+       $fecha = $_POST["birthdate"];
+       $id_suscripcion = $_POST["subscription_plan"];
+
+       $cont = 0; // Contador de validaciones
+
+       // Validación del nombre
+       if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
+           echo "<h4>Nombre inválido. Debe contener solo letras y/o numeros (3-16 caracteres).</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Validación de la contraseña
+       if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
+           echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Confirmación de la contraseña
+       if ($contrasena !== $confir_contra) {
+           echo "<h4>Las contraseñas no coinciden</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Validación del teléfono
+       if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
+           echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
+       } else {
+           $cont++;
+       }
+
+       // Si todas las validaciones pasaron
+       if ($cont == 4) {
+            $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
+
+            $stmt = $_conexion->prepare("
+                INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
+                VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
+            ");
+            
+            $stmt->execute([
+                "email" => $correo,
+                "nombre" => $nombre,
+                "fecha_nac" => $fecha,
+                "password" => $contrasena_cifrada,
+                "telefono" => $telefono, 
+                "id_suscripcion" => $id_suscripcion
+            ]);
+
+            session_start();
+            
+            $_SESSION["usuario"] = $correo;
+                
+            $_SESSION["nombre_usuario"] = $nombre;
+                
+            // Redireccionar
+            header("Location: perfil-usuario.php");
+            exit();
+       }
+   }
+   ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -225,70 +302,6 @@
    </style>
 </head>
 <body>
-   <?php
-   error_reporting(E_ALL);
-   ini_set("display_errors", 1);
-   require('../util/conexion.php');
-
-   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-       $nombre = $_POST["name"];
-       $correo = $_POST["email"];
-       $telefono = $_POST["phone"];
-       $contrasena = $_POST["password"];
-       $confir_contra = $_POST["confirm_password"];
-       $fecha = $_POST["birthdate"];
-       $id_suscripcion = $_POST["subscription_plan"];
-
-       $cont = 0; // Contador de validaciones
-
-       // Validación del nombre
-       if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
-           echo "<h4>Nombre inválido. Debe contener solo letras y/o numeros (3-16 caracteres).</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Validación de la contraseña
-       if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
-           echo "<h4>La contraseña debe tener entre 8 y 15 caracteres con letras y números</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Confirmación de la contraseña
-       if ($contrasena !== $confir_contra) {
-           echo "<h4>Las contraseñas no coinciden</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Validación del teléfono
-       if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
-           echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
-       } else {
-           $cont++;
-       }
-
-       // Si todas las validaciones pasaron
-       if ($cont == 4) {
-           $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-
-           $stmt = $_conexion->prepare("
-               INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
-               VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
-           ");
-           
-           $stmt->execute([
-               "email" => $correo,
-               "nombre" => $nombre,
-               "fecha_nac" => $fecha,
-               "password" => $contrasena_cifrada,
-               "telefono" => $telefono, 
-               "id_suscripcion" => $id_suscripcion
-           ]);
-       }
-   }
-   ?>
 
    <div class="container py-5">
        <div class="row justify-content-center">
@@ -620,5 +633,9 @@
            });
        });
    </script>
+   <?php 
+   
+   
+   ?>
 </body>
 </html>
