@@ -13,6 +13,13 @@
         }
         else{
             $iniciado=true;
+
+            // Preparar consulta segura con PDO
+            $sql = "SELECT * FROM usuarios WHERE email = :email";
+            $stmt = $_conexion->prepare($sql);
+            $stmt->bindParam(':email', $_SESSION["usuario"]);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         }
     ?>
 
@@ -221,7 +228,7 @@
                 <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i></i>TRADY
             </a>
             <div class="d-flex align-items-center">
-                <span class="me-3">Puntos: <strong>1,250</strong></span>
+                <span class="me-3">Puntos: <strong><?php echo $resultado["puntos"]?></strong></span>
                 <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
             </div>
         </div>
@@ -236,7 +243,7 @@
                     <?php
                     //si la sesion esta iniciada se mostrará lo siguiente
                         if($iniciado){?>
-                            <h3>¡Hola, <?php echo $_SESSION["nombre_usuario"]?></h3>
+                            <h3>¡Hola, <?php echo $_SESSION["nombre_usuario"]?>!</h3>
                             <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
                             <?php
                         }else{?>
@@ -245,8 +252,6 @@
                             <?php
                         }//si la sesion no esta iniciada se mostrarán los botones de Iniciar Sesión y Registrarse
                     ?>
-                    
-                    <p class="text-muted">Nivel 5 - Explorador Avanzado</p>
 
                     <!-- Pestañas de perfil -->
                     <ul class="nav nav-tabs justify-content-center mt-3" id="profileTabs" role="tablist">
@@ -274,11 +279,13 @@
                             <div class="my-4">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Progreso:</span>
-                                    <span>1,250/2,000 pts</span>
+                                    <span><?php echo $resultado["puntos"];?> pts</span>
                                 </div>
                                 <div class="progress">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                        role="progressbar" style="width: 62.5%"></div>
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                        role="progressbar" 
+                                        style="width: <?php echo $resultado["puntos"]; ?>%">
+                                    </div>
                                 </div>
                             </div>
 
@@ -297,21 +304,21 @@
                             <div class="text-start mt-3">
                                 <div class="mb-3">
                                     <label class="form-label">Nombre:</label>
-                                    <p class="form-control bg-transparent text-white">Juan Pérez</p>
+                                    <p class="form-control bg-transparent text-white"><?php echo $resultado["nombre"];?></p>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email:</label>
-                                    <p class="form-control bg-transparent text-white">juan.perez@example.com</p>
+                                    <p class="form-control bg-transparent text-white"><?php echo $resultado["email"];?></p>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Miembro desde:</label>
-                                    <p class="form-control bg-transparent text-white">15 Marzo 2023</p>
+                                    <p class="form-control bg-transparent text-white"><?php echo $resultado["fecha_registro"];?></p>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">QR escaneados:</label>
-                                    <p class="form-control bg-transparent text-white">27</p>
+                                    <p class="form-control bg-transparent text-white"><?php echo $resultado["qrs_escaneados"];?></p>
                                 </div>
-                                <a href="editar-perfil.html" class="btn btn-sm btn-outline-light w-100 mt-2">
+                                <a href="editar-perfil.php" class="btn btn-sm btn-outline-light w-100 mt-2">
                                     <i class="btn btn-sm btn-outline-light w-100">Editar Perfil</i> 
                                 </a>
                                 
@@ -492,19 +499,26 @@
                 <div class="col-md-6 mb-4">
                     <div class="game-card p-4 h-100">
                         <h4><i class="fas fa-crown me-2"></i>Ranking</h4>
+                        <?php
+                        // Preparar consulta segura con PDO
+                            $sql2 = "SELECT * FROM usuarios";
+                            $stmt = $_conexion->prepare($sql2);
+                            $stmt->execute();
+                            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            // Ordenar el array por "puntos" (de mayor a menor)
+                            usort($usuarios, function($a, $b) {
+                                return $b["puntos"] - $a["puntos"]; // Orden descendente
+                            });
+                            ?>
                         <ol class="list-group list-group-numbered mt-3">
-                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                <span>Ana_Exploradora</span>
-                                <span>3,450 pts</span>
-                            </li>
-                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                <span>CarlosQR</span>
-                                <span>2,780 pts</span>
-                            </li>
-                            <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                <span>Tú</span>
-                                <span class="fw-bold">1,250 pts</span>
-                            </li>
+                            <?php
+                            foreach($usuarios as $usuario){
+                                echo '<li class="list-group-item bg-transparent text-white d-flex justify-content-between">';
+                                echo '<span>' . $usuario["nombre"] . '</span>';
+                                echo '<span>' . $usuario["puntos"] . '</span>';
+                                echo '</li>';
+                            }
+                            ?>
                         </ol>
                     </div>
                 </div>

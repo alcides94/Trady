@@ -1,3 +1,82 @@
+<?php
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 ); 
+        
+        //para conectar con la base de datos
+        require('../util/conexion.php');
+
+        //averiguamos si está abierta la sesion
+        session_start();
+        if(!isset($_SESSION["usuario"])){
+            $iniciado=false;//usaremos el booleano para indicar si la sesion esta iniciada o no
+            header("Location: login.php");
+            exit();
+        }
+        else{
+            $iniciado=true;
+
+            // Preparar consulta segura con PDO
+            $sql = "SELECT * FROM usuarios WHERE email = :email";
+            $stmt = $_conexion->prepare($sql);
+            $stmt->bindParam(':email', $_SESSION["usuario"]);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = $_POST["name"];
+            $correo = $_POST["email"];
+            $telefono = $_POST["phone"];
+            $fecha = $_POST["birthdate"];
+     
+            $cont = 0; // Contador de validaciones
+     
+            // Validación del nombre
+            if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
+                echo "<h4>Nombre inválido. Debe contener solo letras y/o numeros (3-16 caracteres).</h4>";
+            } else {
+                $cont++;
+            }
+     
+            // Validación del teléfono
+            if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
+                echo "<h4>Teléfono inválido. Debe tener entre 7 y 15 dígitos.</h4>";
+            } else {
+                $cont++;
+            }
+     
+            // Si todas las validaciones pasaron
+            if ($cont == 2) {
+                 $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
+     
+                 $stmt = $_conexion->prepare("
+                     UPDATE usuarios SET 
+                    nombre = :nombre, 
+                    telefono = :telefono, 
+                    fecha_nac = :fecha_nac
+                    WHERE email = :email
+                 ");
+                 
+                 $stmt->execute([
+                     "email" => $correo,
+                     "nombre" => $nombre,
+                     "fecha_nac" => $fecha,
+                     "telefono" => $telefono
+                 ]);
+     
+                 session_start();
+                 
+                 $_SESSION["usuario"] = $correo;
+                     
+                 $_SESSION["nombre_usuario"] = $nombre;
+                     
+                 // Redireccionar
+                 header("Location: perfil-usuario.php");
+                 exit();
+            }
+        }
+    ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -115,11 +194,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i></i>TRADY
+                <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i></i>TRADY
             </a>
             <div class="d-flex align-items-center">
-                <span class="me-3">Puntos: <strong>1,250</strong></span>
-                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+                <span class="me-3">Puntos: <strong><?php echo $resultado["puntos"];?></strong></span>
+                <img src="https://via.placeholder.com/40" alt=": )" class="rounded-circle">
             </div>
         </div>
     </nav>
@@ -133,64 +212,29 @@
             
             <h2 class="text-center mb-4"><i class="fas fa-user-edit me-2"></i>Editar Perfil</h2>
             
-            <div class="avatar-upload">
-                <img id="avatar-preview" src="https://via.placeholder.com/120" alt="Avatar">
-                <label for="avatar-input">
-                    <i class="fas fa-camera"></i>
-                </label>
-                <input type="file" id="avatar-input" accept="image/*">
-            </div>
-            
-            <form>
+            <form id="savechangesform" action="" method="POST">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="firstName" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="firstName" value="Juan">
+                        <input type="text" class="form-control" name="name" id="firstName" value="<?php echo $resultado["nombre"];?>">
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="lastName" class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" id="lastName" value="Pérez">
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="username" class="form-label">Nombre de usuario</label>
-                    <input type="text" class="form-control" id="username" value="JuanExplorador">
                 </div>
                 
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="email" value="juan.perez@example.com">
+                    <input type="email" class="form-control" name="email" id="email" value="<?php echo $resultado["email"];?>">
                 </div>
                 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Teléfono</label>
-                    <input type="tel" class="form-control" id="phone" value="+34 612 345 678">
+                    <input type="tel" class="form-control" name="phone" id="phone" value="<?php echo $resultado["telefono"];?>">
                 </div>
                 
                 <div class="mb-3">
                     <label for="birthdate" class="form-label">Fecha de nacimiento</label>
-                    <input type="date" class="form-control" id="birthdate" value="1990-05-15">
+                    <input type="date" class="form-control" name="birthdate" id="birthdate" value="<?php echo $resultado["fecha_nac"];?>">
                 </div>
-                
-                <div class="mb-3">
-                    <label for="bio" class="form-label">Biografía</label>
-                    <textarea class="form-control" id="bio" rows="3">¡Amante de la exploración urbana y la caza de códigos QR!</textarea>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="interests" class="form-label">Intereses</label>
-                    <select class="form-select" id="interests" multiple>
-                        <option selected>Arte</option>
-                        <option selected>Historia</option>
-                        <option>Gastronomía</option>
-                        <option selected>Deportes</option>
-                        <option>Música</option>
-                        <option>Naturaleza</option>
-                    </select>
-                    <small class="text-muted">Mantén presionada la tecla Ctrl (Windows) o Comando (Mac) para seleccionar múltiples opciones.</small>
-                </div>
-                
+                <a class="btn btn-danger" href="cambiar_contraseña.php">CAMBIAR CONTRASEÑA</a>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="button" class="btn btn-cancel me-md-2" onclick="window.history.back()">Cancelar</button>
                     <button type="submit" class="btn btn-save">Guardar Cambios</button>
