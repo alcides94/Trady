@@ -88,7 +88,7 @@
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT id_usuario, nombre, email, fecha_nac, fecha_registro, puntos,estado FROM usuarios";
+                                    $sql = "SELECT id_usuario, nombre, email, telefono, fecha_registro, puntos,estado FROM usuarios";
                                     $stmt = $_conexion->prepare($sql);
                                     $stmt->execute();
                                     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -99,7 +99,7 @@
                                         <td><?php echo $usuario['id_usuario'] ?></td>
                                         <td><?php echo $usuario['nombre'] ?></td>
                                         <td><?php echo $usuario['email'] ?></td>
-                                        <td><?php echo $usuario['fecha_nac'] ?></td>
+                                        <td><?php echo $usuario['telefono'] ?></td>
                                         <td><?php echo $usuario['puntos'] ?></td>
                                         <td><?php echo $usuario['fecha_registro'] ?></td>
                                         <td><span class="badge bg-success"><?php echo $usuario['estado'] ?></span></td>
