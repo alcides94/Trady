@@ -1,3 +1,21 @@
+    <?php
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 ); 
+        
+        //para conectar con la base de datos
+        require('../util/conexion.php');
+
+        //averiguamos si está abierta la sesion
+        session_start();
+        if(!isset($_SESSION["usuario"])){
+            $iniciado=false;//usaremos el booleano para indicar si la sesion esta iniciada o no
+            echo "<h4>NO SE INICIA LA SESION</h4>";
+        }
+        else{
+            $iniciado=true;
+        }
+    ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -195,6 +213,7 @@
 </head>
 
 <body>
+        
     <!-- Barra de Navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
         <div class="container">
@@ -214,8 +233,19 @@
             <!-- Sección Perfil y Progreso -->
             <div class="col-md-4 mb-4">
                 <div class="game-card p-4 text-center">
-                    <img src="https://via.placeholder.com/100" alt="Avatar" class="rounded-circle mb-3" width="100">
-                    <h3>¡Hola, Cazador!</h3>
+                    <?php
+                    //si la sesion esta iniciada se mostrará lo siguiente
+                        if($iniciado){?>
+                            <h3>¡Hola, <?php echo $_SESSION["nombre_usuario"]?></h3>
+                            <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
+                            <?php
+                        }else{?>
+                            <a class="btn btn-danger" href="usuario/iniciar_sesion.php">Iniciar Sesión</a>
+                            <a class="btn btn-danger" href="usuario/registro.php">Registrarse</a>
+                            <?php
+                        }//si la sesion no esta iniciada se mostrarán los botones de Iniciar Sesión y Registrarse
+                    ?>
+                    
                     <p class="text-muted">Nivel 5 - Explorador Avanzado</p>
 
                     <!-- Pestañas de perfil -->

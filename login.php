@@ -1,3 +1,58 @@
+
+<?php
+    /**CODIGO DE ERROR */
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 );
+        require('./util/conexion.php');
+?>
+
+<?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $email = $_POST["email"];
+            $password = $_POST["password"];
+
+            // Preparar consulta segura con PDO para los usuarios
+            $sql = "SELECT * FROM usuarios WHERE email = :email";
+            $stmt = $_conexion->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $partner=false;
+
+            if (!$resultado) {
+                // Preparar consulta segura con PDO
+                $sql = "SELECT * FROM comercios WHERE email = :email";
+                $stmt = $_conexion->prepare($sql);
+                $stmt->bindParam(':email', $email);
+                $stmt->execute();
+                $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+                $partner=true;
+            }
+
+            if (!$resultado) {
+                echo "El email no existe";
+            } else {
+                if (!password_verify($password, $resultado["password"])) {
+                    echo "Contraseña errónea";
+                } else {
+                    if(!$partner){
+                        session_start();
+                        $_SESSION["usuario"] = $email;
+                        $_SESSION["nombre_usuario"]=$resultado["nombre"];
+                        header("location: ./usuarios/perfil-usuario.php");
+                        exit;
+                    }else{
+                        session_start();
+                        $_SESSION["usuario"] = $email;
+                        $_SESSION["nombre_usuario"]=$resultado["nombre"];
+                        header("location: ./comercios/perfil-partner.php");
+                        exit;
+                    }
+                    
+                }
+            }
+        }
+    ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,41 +117,10 @@
             100% { transform: scale(1); }
         }
     </style>
-    <?php
-    /**CODIGO DE ERROR */
-        error_reporting( E_ALL );
-        ini_set( "display_errors", 1 );
-        require('./util/conexion.php');
-    ?>
+    
 </head>
 <body>
-<?php
-       if ($_SERVER["REQUEST_METHOD"] == "POST") {
-           $email = $_POST["email"];
-           $password = $_POST["password"];
-
-           // Preparar consulta segura con PDO
-           $sql = "SELECT * FROM usuarios WHERE email = :email";
-           $stmt = $_conexion->prepare($sql);
-           $stmt->bindParam(':email', $email);
-           $stmt->execute();
-           $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-           if (!$resultado) {
-               echo "El email no existe";
-           } else {
-               if (!password_verify($password, $resultado["password"])) {
-                   echo "Contraseña errónea";
-               } else {
-                   session_start();
-                   $_SESSION["email"] = $email;
-                   header("location: ./perfil-usuario.html");
-                   exit;
-               }
-           }
-       }
-       ?>
+    
     <div class="container d-flex align-items-center justify-content-center h-100">
         <div class="game-login-card p-4 p-md-5 text-white" style="width: 100%; max-width: 500px;">
             <!-- Logo y Título -->

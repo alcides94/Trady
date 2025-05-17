@@ -1,3 +1,29 @@
+    <?php
+        error_reporting( E_ALL );
+        ini_set( "display_errors", 1 ); 
+        
+        //para conectar con la base de datos
+        require('../util/conexion.php');
+
+        //averiguamos si está abierta la sesion
+        session_start();
+        if(!isset($_SESSION["usuario"])){
+            $iniciado=false;//usaremos el booleano para indicar si la sesion esta iniciada o no
+            echo "<h4>NO SE INICIA LA SESION</h4>";
+        }
+        else{
+            $iniciado=true;
+
+            // Preparar consulta segura con PDO
+            $sql = "SELECT * FROM comercios WHERE email = :email";
+            $stmt = $_conexion->prepare($sql);
+            $stmt->bindParam(':email', $_SESSION["usuario"]);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        }
+    ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -173,7 +199,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
+                <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
             </a>
             <div class="d-flex align-items-center">
                 <span class="me-3">Nivel: <strong>Partner Oro</strong></span>
@@ -188,9 +214,8 @@
             <!-- Sección Perfil y Estadísticas -->
             <div class="col-md-4 mb-4">
                 <div class="partner-card p-4 text-center">
-                    <img src="https://via.placeholder.com/100" alt="Logo del negocio" class="rounded-circle mb-3" width="100">
-                    <h3>Restaurante La Parrilla</h3>
-                    <p class="text-muted">Partner desde: 15/03/2023</p>
+                    <h3><?php echo $_SESSION["nombre_usuario"]?></h3>
+                    <p class="text-muted">Partner desde: <?php echo $resultado["fecha_alta"]?></p>
                     <span class="premium-badge mb-3">PARTNER PREMIUM</span>
 
                     <!-- Pestañas de partner -->
