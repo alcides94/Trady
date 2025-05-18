@@ -68,49 +68,51 @@
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-user-cog me-2"></i>Configuración de Cuenta</h4>
                     </div>
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($_SESSION['usuario'] ?? 'Admin'); ?>&background=random" 
-                                 alt="Foto de perfil" class="profile-pic mb-3">
-                            <div>
-                                <button class="btn btn-sm btn-outline-primary me-2">
-                                    <i class="fas fa-camera me-1"></i> Cambiar Foto
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
 
-                        <form>
+                    <?php 
+                        $email = $_SESSION["usuario"];
+                        $sql = "SELECT * FROM administradores where email=:email";
+                        $stmt = $_conexion->prepare($sql);
+                        $stmt->execute(
+                            ['email' => $email]
+                        );
+                        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        
+                    ?>
+
+
+                    <div class="card-body">
+                        <form action="configuracion/configuracion.php" method="post">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Nombre de Usuario</label>
-                                <input type="text" class="form-control" id="username" 
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario'] ?? ''); ?>">
+                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                       value="<?php echo ($usuario['nombre']); ?>" >
                             </div>
                             
                             <div class="mb-3">
                                 <label for="email" class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="email" value="admin@trady.com">
+                                <input type="email" class="form-control" id="email" name="email" value="<?php echo ($usuario['email']); ?>" ">
                             </div>
                             
                             <div class="mb-3">
                                 <label for="currentPassword" class="form-label">Contraseña Actual</label>
-                                <input type="password" class="form-control" id="currentPassword">
+                                <input type="password" class="form-control" id="currentPassword" name="contrasena">
                             </div>
                             
                             <div class="mb-3">
                                 <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="newPassword">
+                                <input type="password" class="form-control" id="newPassword" name="contrasenaNueva">
                                 <small class="text-muted">Mínimo 8 caracteres</small>
                             </div>
                             
                             <div class="mb-4">
                                 <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="confirmPassword">
+                                <input type="password" class="form-control" id="confirmPassword" name="contrasenaRepetir">
                             </div>
                             
                             <div class="d-grid gap-2">
+                            <input type="hidden" class="form-control" id="id" name="id" value="<?php echo ($usuario['id']); ?>" >
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-1"></i> Guardar Cambios
                                 </button>
@@ -127,30 +129,29 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Validación básica del formulario
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (newPassword && newPassword.length < 8) {
-                alert('La contraseña debe tener al menos 8 caracteres');
-                e.preventDefault();
-                return;
+        document.querySelector("form").addEventListener("submit", function(event) {
+            const nueva = document.getElementById("newPassword").value.trim();
+            const repetir = document.getElementById("confirmPassword").value.trim();
+
+            if (nueva !== "" || repetir !== "") {
+                if (nueva.length < 8) {
+                    alert("La nueva contraseña debe tener al menos 8 caracteres.");
+                    event.preventDefault(); // Detiene el envío
+                    return;
+                }
+
+                if (nueva !== repetir) {
+                    alert("Las contraseñas no coinciden.");
+                    event.preventDefault(); // Detiene el envío
+                    return;
+                }
             }
-            
-            if (newPassword !== confirmPassword) {
-                alert('Las contraseñas no coinciden');
-                e.preventDefault();
-                return;
-            }
-            
-            // Aquí podrías agregar una llamada AJAX para guardar los cambios
-            alert('Cambios guardados correctamente (simulación)');
-            e.preventDefault();
+
+            // Si todo está bien, el formulario se envía normalmente
         });
-    </script>
+        </script>
+
 </body>
 
 </html>

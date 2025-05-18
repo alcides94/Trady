@@ -84,62 +84,6 @@
             </div>
         </div>
 
-        <!-- Estadísticas Rápidas -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card text-white bg-dark h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title">Total QR Generados</h6>
-                                <h3 class="mb-0">48</h3>
-                            </div>
-                            <i class="fas fa-qrcode fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card text-white bg-success h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title">QR Activos</h6>
-                                <h3 class="mb-0">36</h3>
-                            </div>
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card text-white bg-info h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title">Escaneos Hoy</h6>
-                                <h3 class="mb-0">124</h3>
-                            </div>
-                            <i class="fas fa-mobile-screen fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card text-white bg-warning h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title">Escaneos Totales</h6>
-                                <h3 class="mb-0">2,548</h3>
-                            </div>
-                            <i class="fas fa-chart-line fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Listado de Códigos QR -->
         <div class="row">
             <div class="col-12">
@@ -156,94 +100,55 @@
                                         <th>Código QR</th>
                                         <th>Nombre</th>
                                         <th>Tipo</th>
-                                        <th>Asociado a</th>
-                                        <th>Escaneos</th>
-                                        <th>Estado</th>
+                                        <th>Identificador</th>
+                                        <th>Acciones</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Ejemplo de datos estáticos -->
+
+                                    <?php 
+                                        $sql = "SELECT * FROM qr_codigos";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $codigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($codigos as $codigo) {
+                                    ?>
+
                                     <tr>
-                                        <td>QR-1001</td>
-                                        <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TRA-1001" alt="QR Code" class="qr-img"></td>
-                                        <td>QR Restaurante La Parrilla</td>
-                                        <td><span class="badge bg-success qr-badge">Partner</span></td>
-                                        <td>Restaurante La Parrilla</td>
-                                        <td>428</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td><?php echo $codigo["id_qr"]?> </td>
+                                        
+                                        <td><img src="<?php echo $codigo["qr"]?>" alt="QR Code" class="qr-img" ></td>
+                                        <td><?php echo $codigo["nombre"]?> </td>
+                                    
+                                        <td><span class="badge bg-success qr-badge"><?php echo $codigo["tipo"]?> </span></td>
+                                        <td><span class="badge bg-success">TRADY-<?php echo $codigo["identificador_qr"]?> </span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-info" title="Editar">
+                                            <button 
+                                                class="btn btn-sm btn-info btn-editar" 
+                                                data-id="<?php echo $codigo['id_qr']; ?>" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editQrModal" 
+                                                title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" title="Desactivar">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-dark" title="Descargar">
+                                            
+                                            
+                                            <button class="btn btn-sm btn-dark downloadQR" title="Descargar" data-id="<?php echo $codigo['identificador_qr']; ?>" >
                                                 <i class="fas fa-download"></i>
                                             </button>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>QR-1002</td>
-                                        <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TRA-1002" alt="QR Code" class="qr-img"></td>
-                                        <td>QR Ruta Histórica</td>
-                                        <td><span class="badge bg-primary qr-badge">Ruta</span></td>
-                                        <td>Ruta Histórica</td>
-                                        <td>312</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" title="Desactivar">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-dark" title="Descargar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
+                                            <form action="qr/eliminar_qr.php" method="post">
+                                                <input type="hidden" name="id_qr" value="<?php echo $codigo['id_qr']; ?>">
+                                                <button class="btn btn-sm btn-danger" title="Eliminar" type="submit">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>QR-1003</td>
-                                        <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TRA-1003" alt="QR Code" class="qr-img"></td>
-                                        <td>QR Alcazaba</td>
-                                        <td><span class="badge bg-warning text-dark qr-badge">Sitio</span></td>
-                                        <td>Alcazaba de Málaga</td>
-                                        <td>896</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" title="Desactivar">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-dark" title="Descargar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>QR-1004</td>
-                                        <td><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TRA-1004" alt="QR Code" class="qr-img"></td>
-                                        <td>QR Evento Octubre</td>
-                                        <td><span class="badge bg-info qr-badge">Evento</span></td>
-                                        <td>Festival Gastronómico</td>
-                                        <td>124</td>
-                                        <td><span class="badge bg-secondary">Expirado</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-success" title="Activar">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-dark" title="Descargar">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -262,80 +167,94 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="qrForm">
+                    <form id="newQr" action="qr/nuevo_qr.php" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="qrName" class="form-label">Nombre del QR</label>
-                                <input type="text" class="form-control" id="qrName" required>
+                                <label for="nombre" class="form-label">Nombre del QR</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="qrType" class="form-label">Tipo de QR</label>
-                                <select class="form-select" id="qrType" required>
+                                <label for="tipo" class="form-label">Tipo de QR</label>
+                                <select class="form-select" id="tipo" name="tipo"required>
                                     <option value="" selected disabled>Seleccione tipo</option>
-                                    <option value="partner">Partner</option>
-                                    <option value="route">Ruta</option>
-                                    <option value="site">Sitio de Interés</option>
-                                    <option value="event">Evento</option>
-                                    <option value="other">Otro</option>
+                                    <option value="Partner">Partner</option>
+                                    <option value="Ruta">Ruta</option>
+                                    <option value="Sitio de Interés">Sitio de Interés</option>
+                                    <option value="Evento">Evento</option>
+                                    <option value="Otro">Otro</option>
                                 </select>
                             </div>
+                          
                             <div class="col-md-6">
-                                <label for="qrAssociation" class="form-label">Asociar a</label>
-                                <select class="form-select" id="qrAssociation" required>
-                                    <option value="" selected disabled>Seleccione primero el tipo</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="qrIdentifier" class="form-label">Identificador</label>
+                                <label for="identificador_qr" class="form-label">Identificador</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">TRA-</span>
-                                    <input type="text" class="form-control" id="qrIdentifier" required>
+                                    <span class="input-group-text">TRADY-</span>
+                                    <input type="text" class="form-control" id="identificador_qr" name ="identificador_qr" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="qrStatus" class="form-label">Estado</label>
-                                <select class="form-select" id="qrStatus" required>
-                                    <option value="active" selected>Activo</option>
-                                    <option value="inactive">Inactivo</option>
-                                    <option value="expired">Expirado</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="qrExpiration" class="form-label">Fecha de Expiración</label>
-                                <input type="date" class="form-control" id="qrExpiration">
-                            </div>
-                            <div class="col-12">
-                                <label for="qrNotes" class="form-label">Notas</label>
-                                <textarea class="form-control" id="qrNotes" rows="2"></textarea>
-                            </div>
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <i class="fas fa-qrcode me-2"></i> Vista Previa del QR
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <img id="qrPreview" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TRA-SAMPLE" alt="QR Preview" class="img-fluid mb-3" style="max-width: 200px;">
-                                        <div class="d-flex justify-content-center gap-3">
-                                            <button type="button" class="btn btn-outline-dark" id="downloadQR">
-                                                <i class="fas fa-download me-1"></i> Descargar PNG
-                                            </button>
-                                            <button type="button" class="btn btn-outline-dark" id="downloadSVG">
-                                                <i class="fas fa-download me-1"></i> Descargar SVG
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="guardar">Guardar QR</button>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="saveQRBtn">Guardar QR</button>
-                </div>
+                
             </div>
         </div>
     </div>
+
+<!-- Modal para generar Modificar QR -->
+<div class="modal fade" id="editQrModal" tabindex="-1" aria-labelledby="editQrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQrModalLabel"><i class="fas fa-qrcode me-2"></i>Generar Nuevo Código QR</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newQr" action="qr/editar_qr.php" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre del QR</label>
+                                <input type="text" class="form-control" id="edit_nombre" name="edit_nombre" >
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tipo" class="form-label">Tipo de QR</label>
+                                <select class="form-select" id="edit_tipo" name="edit_tipo">
+                                    <option value="" selected disabled>Seleccione tipo</option>
+                                    <option value="Partner">Partner</option>
+                                    <option value="Ruta">Ruta</option>
+                                    <option value="Sitio de Interés">Sitio de Interés</option>
+                                    <option value="Evento">Evento</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                          
+                            <div class="col-md-6">
+                                <label for="identificador_qr" class="form-label">Identificador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">TRADY-</span>
+                                    <input type="text" class="form-control" id="edit_identificador_qr" name ="edit_identificador_qr" >
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="edit_id_qr" id="edit_id_qr">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="guardar">Guardar QR</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -351,88 +270,56 @@
             $('#qrTable').DataTable({
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-                columnDefs: [
-                    { orderable: false, targets: [1, 7] } // Deshabilitar ordenación para columna de QR y Acciones
-                ]
+                }
             });
 
-            // Manejar cambio en tipo de QR
-            $('#qrType').change(function() {
-                const type = $(this).val();
-                const $associationSelect = $('#qrAssociation');
-                
-                $associationSelect.empty().append('<option value="" selected disabled>Cargando...</option>');
-                
-                // Simular carga de datos según el tipo seleccionado
-                setTimeout(function() {
-                    $associationSelect.empty().append('<option value="" selected disabled>Seleccione una opción</option>');
-                    
-                    if (type === 'partner') {
-                        $associationSelect.append('<option value="1">Restaurante La Parrilla</option>');
-                        $associationSelect.append('<option value="2">Hotel Playa</option>');
-                        $associationSelect.append('<option value="3">Tienda de Regalos</option>');
-                    } else if (type === 'route') {
-                        $associationSelect.append('<option value="101">Ruta Histórica</option>');
-                        $associationSelect.append('<option value="102">Ruta Gastronómica</option>');
-                        $associationSelect.append('<option value="103">Ruta Natural</option>');
-                    } else if (type === 'site') {
-                        $associationSelect.append('<option value="201">Alcazaba de Málaga</option>');
-                        $associationSelect.append('<option value="202">Museo Picasso</option>');
-                        $associationSelect.append('<option value="203">Catedral de Málaga</option>');
-                    } else if (type === 'event') {
-                        $associationSelect.append('<option value="301">Festival Gastronómico</option>');
-                        $associationSelect.append('<option value="302">Feria de Abril</option>');
-                    } else {
-                        $associationSelect.append('<option value="401">Genérico 1</option>');
-                        $associationSelect.append('<option value="402">Genérico 2</option>');
-                    }
-                }, 500);
+
+            // Configurar botones de edición 
+            
+            $('.btn-editar').on('click', function () {
+                const id = $(this).data('id');
+
+                fetch(`qr/obtener-qr.php?id_qr=${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert('No se encontró el QR');
+                            return;
+                        }
+
+                        $('#edit_id_qr').val(data.id_qr);
+                        $('#edit_nombre').val(data.nombre);
+                        $('#edit_tipo').val(data.tipo);
+                        $('#edit_identificador_qr').val(data.identificador_qr);
+
+                        // Mostrar el modal
+                       
+
+                    })
+                    .catch(err => {
+                        console.error('Error al obtener datos del qr:', err);
+                        alert('No se pudo cargar la información del sitio');
+                    });
             });
 
-            // Actualizar vista previa del QR al cambiar el identificador
-            $('#qrIdentifier').on('input', function() {
-                const identificador = $(this).val() || 'SAMPLE';
-                $('#qrPreview').attr('src', 
-                    `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TRA-${identificador}`);
-            });
-
+        
             // Manejar descarga de QR
-            $('#downloadQR').click(function() {
-                const identificador = $('#qrIdentifier').val() || 'SAMPLE';
-                const url = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=TRA-${identificador}`;
+           
+                
+            $('.downloadQR').click(function() {
+                const id = $(this).data('id');
+                const url = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=TRADY-${id}`;
                 
                 // Crear enlace temporal para descarga
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `QR-TRA-${identificador}.png`;
+                a.download = `TRADY-${id}.png`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
             });
 
-            $('#downloadSVG').click(function() {
-                const identificador = $('#qrIdentifier').val() || 'SAMPLE';
-                const url = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=TRA-${identificador}&format=svg`;
-                
-                // Crear enlace temporal para descarga
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `QR-TRA-${identificador}.svg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-
-            // Manejar el botón de guardar QR
-            $('#saveQRBtn').click(function() {
-                // Aquí iría la lógica para guardar el QR
-                alert('Código QR guardado correctamente (simulación)');
-                $('#newQRModal').modal('hide');
-                $('#qrForm')[0].reset();
-                // Restablecer la vista previa
-                $('#qrPreview').attr('src', 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TRA-SAMPLE');
-            });
+            
         });
     </script>
 </body>
