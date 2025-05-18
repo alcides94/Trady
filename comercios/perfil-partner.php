@@ -248,7 +248,7 @@
            <!-- Sección Perfil y Estadísticas -->
            <div class="col-md-4 mb-4">
                <div class="partner-card p-4 text-center">
-                   <h3><?php echo $_SESSION["nombre_usuario"]?></h3>
+                   <h3><?php echo $resultado["nombre"]?></h3>
                    <p class="text-muted">Partner desde: <?php echo $resultado["fecha_alta"]?></p>
                    <span class="premium-badge mb-3">PARTNER <?php echo $suscripcion["nombre"]?></span>
                    <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
