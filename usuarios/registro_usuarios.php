@@ -14,6 +14,7 @@
        $confir_contra = $_POST["confirm_password"];
        $fecha = $_POST["birthdate"];
        $id_suscripcion = $_POST["subscription_plan"];
+       $payment_method=$_POST["payment_method"];
 
        $cont = 0; // Contador de validaciones
 
@@ -50,8 +51,8 @@
             $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
 
             $stmt = $_conexion->prepare("
-                INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion)
-                VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion)
+                INSERT INTO usuarios (email, nombre, fecha_nac, password, telefono, id_suscripcion, metodo_pago)
+                VALUES (:email, :nombre, :fecha_nac, :password, :telefono, :id_suscripcion, :metodo_pago)
             ");
             
             $stmt->execute([
@@ -60,7 +61,8 @@
                 "fecha_nac" => $fecha,
                 "password" => $contrasena_cifrada,
                 "telefono" => $telefono, 
-                "id_suscripcion" => $id_suscripcion
+                "id_suscripcion" => $id_suscripcion,
+                "metodo_pago" => $payment_method
             ]);
 
             session_start();
