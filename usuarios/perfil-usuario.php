@@ -257,8 +257,7 @@
                             <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
                             <?php
                         }else{?>
-                            <a class="btn btn-danger" href="usuario/iniciar_sesion.php">Iniciar Sesión</a>
-                            <a class="btn btn-danger" href="usuario/registro.php">Registrarse</a>
+                            <a class="btn btn-danger" href="../login.php">VOLVER</a>
                             <?php
                         }//si la sesion no esta iniciada se mostrarán los botones de Iniciar Sesión y Registrarse
                     ?>
@@ -328,10 +327,7 @@
                                     <label class="form-label">QR escaneados:</label>
                                     <p class="form-control bg-transparent text-white"><?php echo $resultado["qrs_escaneados"];?></p>
                                 </div>
-                                <a href="editar-perfil.php" class="btn btn-sm btn-outline-light w-100 mt-2">
-                                    <i class="btn btn-sm btn-outline-light w-100">Editar Perfil</i> 
-                                </a>
-                                
+                                <a class="btn btn-danger" href="editar-perfil.php">Editar Perfil</a>
                             </div>
                         </div>
 
@@ -361,48 +357,23 @@
                                             <small>Próximo pago:</small>
                                             <h5 class="mb-0"><?php echo $suscripcion["precio"];?>€</h5>
                                         </div>
-                                        <a href="suscripcion-usuario.html" class="btn btn-sm btn-outline-danger">Cambiar</a>
+                                        <a href="suscripcion-usuario.php" class="btn btn-sm btn-outline-danger">Cambiar Suscripción</a>
                                     </div>
                                 </div>
 
                                 <h5 class="mt-4 mb-3">Método de Pago</h5>
 
                                 <div class="payment-method">
-                                    <i class="fab fa-cc-visa payment-icon"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between">
-                                            <span>Visa **** 4242</span>
-                                            <small>Expira: 05/25</small>
-                                        </div>
-                                        <small class="text-muted">Principal</small>
-                                    </div>
-                                    <a href="../pagos/editar-pago.html" class="btn btn-sm btn-outline-light w-100 mt-2">
-                                        <i class="btn btn-sm btn-outline-light ms-2"></i> Editar
-                                    </a>
-                                </div>
-
-                                <a href="../pagos/aniadir-metodo-pago.html" class="btn btn-sm btn-outline-light w-100 mt-2">
-                                    <i class="fas fa-plus me-1"></i> Añadir método de pago
-                                </a>
-
-                                <h5 class="mt-4 mb-3">Historial de Pagos</h5>
-                                <div class="list-group">
-                                    <div
-                                        class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                        <div>
-                                            <small>15/10/2023</small>
-                                            <div>Plan Premium</div>
-                                        </div>
-                                        <span>$9.99</span>
-                                    </div>
-                                    <div
-                                        class="list-group-item bg-transparent text-white d-flex justify-content-between">
-                                        <div>
-                                            <small>15/09/2023</small>
-                                            <div>Plan Premium</div>
-                                        </div>
-                                        <span>$9.99</span>
-                                    </div>
+                                    <?php 
+                                        if($resultado["metodo_pago"]=="card"){
+                                            echo '<i class="fab fa-cc-visa payment-icon" style="color: white; font-size: 4rem;"></i>';
+                                        }elseif($resultado["metodo_pago"]=="paypal"){
+                                            echo '<i class="fab fa-cc-paypal payment-icon" style="color: white; font-size: 4rem;"></i>';
+                                        }elseif($resultado["metodo_pago"]=="paypal"){
+                                            echo '<i class="fas fa-university payment-icon fa-2x" style="color: white; font-size: 4rem;"></i>';
+                                        }
+                                    ?>
+                                    <a class="btn btn-danger" href="../pagos/editar-pago.html">CAMBIAR METODO DE PAGO</a>
                                 </div>
                             </div>
                         </div>
