@@ -9,7 +9,7 @@
         session_start();
         if(!isset($_SESSION["usuario"])){
             $iniciado=false;//usaremos el booleano para indicar si la sesion esta iniciada o no
-            header("Location: login.php");
+            header("Location: ../login.php");
             exit();
         }
         else{

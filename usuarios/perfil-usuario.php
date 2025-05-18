@@ -239,7 +239,7 @@
             </a>
             <div class="d-flex align-items-center">
                 <span class="me-3">Puntos: <strong><?php echo $resultado["puntos"]?></strong></span>
-                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+                <img src="https://via.placeholder.com/40" alt=": )" class="rounded-circle">
             </div>
         </div>
     </nav>
@@ -369,11 +369,11 @@
                                             echo '<i class="fab fa-cc-visa payment-icon" style="color: white; font-size: 4rem;"></i>';
                                         }elseif($resultado["metodo_pago"]=="paypal"){
                                             echo '<i class="fab fa-cc-paypal payment-icon" style="color: white; font-size: 4rem;"></i>';
-                                        }elseif($resultado["metodo_pago"]=="paypal"){
-                                            echo '<i class="fas fa-university payment-icon fa-2x" style="color: white; font-size: 4rem;"></i>';
+                                        }elseif($resultado["metodo_pago"]=="bank"){
+                                            echo '<i class="fas fa-university payment-icon" style="color: white; font-size: 4rem;"></i>';
                                         }
                                     ?>
-                                    <a class="btn btn-danger" href="../pagos/editar-pago.html">CAMBIAR METODO DE PAGO</a>
+                                    <a class="btn btn-danger" href="../pagos/editar-pago.php">CAMBIAR METODO DE PAGO</a>
                                 </div>
                             </div>
                         </div>
