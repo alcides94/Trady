@@ -248,11 +248,12 @@
            <!-- Sección Perfil y Estadísticas -->
            <div class="col-md-4 mb-4">
                <div class="partner-card p-4 text-center">
+               <span class="premium-badge mb-3">TIPO DE NEGOCIO: <?php echo $resultado["tipo"]?></span>
                    <h3><?php echo $resultado["nombre"]?></h3>
                    <p class="text-muted">Partner desde: <?php echo $resultado["fecha_alta"]?></p>
                    <span class="premium-badge mb-3">PARTNER <?php echo $suscripcion["nombre"]?></span>
                    <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
-                   <span class="premium-badge mb-3">TIPO DE NEGOCIO: <?php echo $resultado["tipo"]?></span>
+                   
 
                    <!-- Pestañas de partner -->
                    <ul class="nav nav-tabs justify-content-center mt-3" id="partnerTabs" role="tablist">
