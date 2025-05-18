@@ -45,6 +45,7 @@
                         session_start();
                         $_SESSION["usuario"] = $email;
                         $_SESSION["nombre_usuario"]=$resultado["nombre"];
+                        $_SESSION["partner"]=true;
                         header("location: ./comercios/perfil-partner.php");
                         exit;
                     }

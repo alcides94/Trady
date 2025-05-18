@@ -235,8 +235,8 @@
                <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
            </a>
            <div class="d-flex align-items-center">
-               <span class="me-3">Nivel: <strong>Partner Oro</strong></span>
-               <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+               <span class="me-3">Nivel: <strong>Partner <?php echo $suscripcion["nombre"]?></strong></span>
+               <img src="https://via.placeholder.com/40" alt=": )" class="rounded-circle">
            </div>
        </div>
    </nav>
@@ -250,9 +250,9 @@
                <div class="partner-card p-4 text-center">
                    <h3><?php echo $_SESSION["nombre_usuario"]?></h3>
                    <p class="text-muted">Partner desde: <?php echo $resultado["fecha_alta"]?></p>
-                   <span class="premium-badge mb-3">PARTNER PREMIUM</span>
+                   <span class="premium-badge mb-3">PARTNER <?php echo $suscripcion["nombre"]?></span>
                    <a class="btn btn-danger" href="cerrar_sesion.php">Cerrar Sesión</a>
-
+                   <span class="premium-badge mb-3">TIPO DE NEGOCIO: <?php echo $resultado["tipo"]?></span>
 
                    <!-- Pestañas de partner -->
                    <ul class="nav nav-tabs justify-content-center mt-3" id="partnerTabs" role="tablist">
@@ -326,43 +326,54 @@
                                    <label class="form-label">Teléfono:</label>
                                    <p class="form-control bg-transparent text-white"><?php echo $resultado["telefono"]?></p>
                                </div>
-                               <a href="editar-info.php" class="btn btn-sm btn-outline-light w-100">Editar Información</a>
+                               <a href="editar-info.php" class="btn btn-danger">Editar Información</a>
                            </div>
                        </div>
-
 
                        <!-- Pestaña de Suscripción -->
                        <div class="tab-pane fade" id="subscription" role="tabpanel">
                            <div class="mt-3 text-start">
                                <h5 class="mb-3">Tu Suscripción Partner</h5>
 
+                               <div class="subscription-card">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1"><?php 
+                                            if($resultado["id_suscripcion"]==1){
+                                                echo "Starter";
+                                            }elseif($resultado["id_suscripcion"]==2){
+                                                echo "Premium";
+                                            }elseif($resultado["id_suscripcion"]==3){
+                                                echo "Bussiness";
+                                            }
+                                        ?></h6>
+                                        </div>
+                                        <span class="badge bg-success">Activa</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <div>
+                                            
+                                            <small>Próximo pago:</small>
+                                            <h5 class="mb-0"><?php echo $suscripcion["precio"];?>€</h5>
+                                        </div>
+                                        <a href="suscripcion-partner.php" class="btn btn-sm btn-outline-danger">Cambiar Suscripción</a>
+                                    </div>
+                                </div>
 
-                               <div class="partner-card p-3 mb-3">
-                                   <div class="d-flex justify-content-between align-items-center">
-                                       <div>
-                                           <h6 class="mb-1"><?php
-                                           if($resultado["id_suscripcion"]==1){
-                                               echo "Gratis";
-                                           }elseif($resultado["id_suscripcion"]==2){
-                                               echo "Plata";
-                                           }elseif($resultado["id_suscripcion"]==3){
-                                               echo "Oro";
-                                           }
-                                       ?></h6>
-                                       </div>
-                                       <span class="badge bg-success">Activa</span>
-                                   </div>
-                                   <div class="d-flex justify-content-between mt-3">
-                                       <div>
-                                           <small>Próximo pago:</small>
-                                           <h5 class="mb-0"><?php echo $suscripcion["precio"];?>€</h5>
-                                       </div>
-                                       <a href="suscripcion-partner.html" class="btn btn-sm btn-outline-danger">Cambiar</a>
-                                   </div>
-                               </div>
-                               <a href="suscripcion-partner.html" class="btn btn-sm btn-outline-light w-100">
-                                   <i class="fas fa-chart-line me-1"></i> Ver planes avanzados
-                               </a>
+                                <h5 class="mt-4 mb-3">Método de Pago</h5>
+
+                                <div class="payment-method">
+                                    <?php 
+                                        if($resultado["metodo_pago"]=="card"){
+                                            echo '<i class="fab fa-cc-visa payment-icon" style="color: white; font-size: 4rem;"></i>';
+                                        }elseif($resultado["metodo_pago"]=="paypal"){
+                                            echo '<i class="fab fa-cc-paypal payment-icon" style="color: white; font-size: 4rem;"></i>';
+                                        }elseif($resultado["metodo_pago"]=="bank"){
+                                            echo '<i class="fas fa-university payment-icon" style="color: white; font-size: 4rem;"></i>';
+                                        }
+                                    ?>
+                                    <a class="btn btn-danger" href="../pagos/editar-pago.php">CAMBIAR METODO DE PAGO</a>
+                                </div>
                            </div>
                        </div>
                    </div>
@@ -377,7 +388,7 @@
                    <div class="d-flex justify-content-between align-items-center mb-4">
                        <h2><i class="fas fa-qrcode me-2"></i>Tu Código QR</h2>
                        <a href="misQR.html" class="btn btn-outline-light">
-                           <i class="fas fa-plus me-1"></i>Nuevo QR
+                           <i class="fas fa-plus me-1"></i>Solicitar nuevo QR
                        </a>
                    </div>
                    <div class="row">

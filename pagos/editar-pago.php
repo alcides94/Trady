@@ -16,13 +16,22 @@
             $iniciado=true;
 
             // Preparar consulta segura con PDO
-            $sql = "SELECT * FROM usuarios WHERE email = :email";
+            if(!isset($_SESSION["partner"])){
+                $sql = "SELECT * FROM usuarios WHERE email = :email";
+            }else{
+                $sql = "SELECT * FROM comercios WHERE email = :email";
+            }
+            
             $stmt = $_conexion->prepare($sql);
             $stmt->bindParam(':email', $_SESSION["usuario"]);
             $stmt->execute();
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $sql2 = "SELECT * FROM suscripcion_usuarios";
+            if(!isset($_SESSION["partner"])){
+                $sql2 = "SELECT * FROM suscripcion_usuarios";
+            }else{
+                $sql2 = "SELECT * FROM suscripcion_comercios";
+            }
             $stmt = $_conexion->prepare($sql2);
             $stmt->execute();
             $suscripciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -32,27 +41,56 @@
             
             $payment_method = $_POST["payment_method"];
 
-     
-            $stmt = $_conexion->prepare("
+            if(!isset($_SESSION["partner"])){
+                $stmt = $_conexion->prepare("
                     UPDATE usuarios SET 
                     metodo_pago = :metodo_pago
                     WHERE email = :email
                  ");
                  
-            $stmt->execute([
-                    "email" => $resultado["email"],
-                    "metodo_pago" => $payment_method
-                 ]);
-     
-            session_start();
+                $stmt->execute([
+                        "email" => $resultado["email"],
+                        "metodo_pago" => $payment_method
+                    ]);
+            }else{
+                $stmt = $_conexion->prepare("
+                    UPDATE comercios SET 
+                    metodo_pago = :metodo_pago
+                    WHERE email = :email
+                 ");
                  
-            $_SESSION["usuario"] = $resultado["email"];
+                $stmt->execute([
+                        "email" => $resultado["email"],
+                        "metodo_pago" => $payment_method
+                    ]);
+            }
+            
+
+            if(!isset($_SESSION["partner"])){
+                session_start();
+                 
+                $_SESSION["usuario"] = $resultado["email"];
                      
-            $_SESSION["nombre_usuario"] = $resultado["nombre"];
+                $_SESSION["nombre_usuario"] = $resultado["nombre"];
+
+                // Redireccionar
+                header("Location: ../usuarios/perfil-usuario.php");
+                exit();
+            }else{
+                session_start();
+                 
+                $_SESSION["usuario"] = $resultado["email"];
                      
-            // Redireccionar
-            header("Location: ../usuarios/perfil-usuario.php");
-            exit();
+                $_SESSION["nombre_usuario"] = $resultado["nombre"];
+
+                $_SESSION["partner"]=true;
+
+                // Redireccionar
+                header("Location: ../comercios/perfil-partner.php");
+                exit();
+            }
+       
+            
             
         }
     ?>
@@ -163,7 +201,6 @@
                 <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i></i>TRADY
             </a>
             <div class="d-flex align-items-center">
-                <span class="me-3">Puntos: <strong><?php echo $resultado["puntos"]?></strong></span>
                 <img src="https://via.placeholder.com/40" alt=": )" class="rounded-circle">
             </div>
         </div>

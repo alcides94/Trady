@@ -1,3 +1,130 @@
+<?php
+  error_reporting(E_ALL);
+  ini_set("display_errors", 1);
+  require('../util/conexion.php');
+
+    $sql2 = "SELECT * FROM suscripcion_comercios";
+    $stmt = $_conexion->prepare($sql2);
+    $stmt->execute();
+    $suscripciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $nombre = $_POST["name"];
+      $correo = $_POST["email"];
+      $telefono = $_POST["phone"];
+      $contrasena = $_POST["password"];
+      $confir_contra = $_POST["confirm_password"];
+      $id_suscripcion = $_POST["subscription_plan"];
+      $business_type = $_POST["business_type"];
+      $business_address = $_POST["business_address"];
+      $business_cif = $_POST["business_cif"];
+      $metodo_pago = $_POST["payment_method"];
+
+
+      $cont = 0; // Contador de validaciones
+      $errores = [];
+
+
+      // Validación del nombre
+      if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
+          $errores[] = "Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).";
+      } else {
+          $cont++;
+      }
+
+
+      // Validación de la contraseña
+      if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
+          $errores[] = "La contraseña debe tener entre 8 y 15 caracteres con letras y números";
+      } else {
+          $cont++;
+      }
+
+
+      // Confirmación de la contraseña
+      if ($contrasena !== $confir_contra) {
+          $errores[] = "Las contraseñas no coinciden";
+      } else {
+          $cont++;
+      }
+
+
+      // Validación del teléfono
+      if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
+          $errores[] = "Teléfono inválido. Debe tener entre 7 y 15 dígitos.";
+      } else {
+          $cont++;
+      }
+
+
+      // Validación de datos del negocio
+      if (empty($business_type) || empty($business_address) || empty($business_cif)) {
+          $errores[] = "Todos los campos del negocio son obligatorios";
+      } else {
+          $cont++;
+      }
+
+
+      // Si todas las validaciones pasaron
+      if ($cont == 5) {
+          $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
+
+
+          try {
+              $stmt = $_conexion->prepare("
+                  INSERT INTO comercios (email, nombre, password, telefono, id_suscripcion,
+                                   tipo, direccion, cif, metodo_pago)
+                  VALUES (:email, :nombre, :password, :telefono, :id_suscripcion,
+                           :business_type, :business_address, :business_cif, :payment_method)
+              ");
+             
+              $resultado = $stmt->execute([
+                  "email" => $correo,
+                  "nombre" => $nombre,
+                  "password" => $contrasena_cifrada,
+                  "telefono" => $telefono,
+                  "id_suscripcion" => $id_suscripcion,
+                  "business_type" => $business_type,
+                  "business_address" => $business_address,
+                  "business_cif" => $business_cif,
+                  "payment_method" => $metodo_pago
+              ]);
+
+
+              if($resultado) {
+                echo '<div class="alert alert-success">Registro exitoso! Redirigiendo...</div>';
+                session_start();
+            
+                $_SESSION["usuario"] = $correo;
+                
+                $_SESSION["nombre_usuario"] = $nombre;
+
+                $_SESSION["partner"] = true;
+                
+                // Redireccionar
+                header("Location: perfil-partner.php");
+                exit();
+              } else {
+                  $errores[] = "Error al registrar: " . $stmt->errorInfo()[2];
+              }
+          } catch(PDOException $e) {
+              $errores[] = "Error de base de datos: " . $e->getMessage();
+          }
+      }
+
+
+      // Mostrar errores si existen
+      if (!empty($errores)) {
+          echo '<div class="container"><div class="row justify-content-center"><div class="col-lg-8">';
+          foreach ($errores as $error) {
+              echo '<div class="alert alert-danger mb-2">'.$error.'</div>';
+          }
+          echo '</div></div></div>';
+      }
+  }
+  ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -224,118 +351,7 @@
   </style>
 </head>
 <body>
-  <?php
-  error_reporting(E_ALL);
-  ini_set("display_errors", 1);
-  require('../util/conexion.php');
-
-
-  if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $nombre = $_POST["name"];
-      $correo = $_POST["email"];
-      $telefono = $_POST["phone"];
-      $contrasena = $_POST["password"];
-      $confir_contra = $_POST["confirm_password"];
-      $id_suscripcion = $_POST["subscription_plan"];
-      $business_type = $_POST["business_type"];
-      $business_address = $_POST["business_address"];
-      $business_cif = $_POST["business_cif"];
-      $metodo_pago = $_POST["payment_method"];
-
-
-      $cont = 0; // Contador de validaciones
-      $errores = [];
-
-
-      // Validación del nombre
-      if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
-          $errores[] = "Nombre inválido. Debe contener solo letras y espacios (3-16 caracteres).";
-      } else {
-          $cont++;
-      }
-
-
-      // Validación de la contraseña
-      if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/', $contrasena)) {
-          $errores[] = "La contraseña debe tener entre 8 y 15 caracteres con letras y números";
-      } else {
-          $cont++;
-      }
-
-
-      // Confirmación de la contraseña
-      if ($contrasena !== $confir_contra) {
-          $errores[] = "Las contraseñas no coinciden";
-      } else {
-          $cont++;
-      }
-
-
-      // Validación del teléfono
-      if (!preg_match('/^[0-9]{7,15}$/', $telefono)) {
-          $errores[] = "Teléfono inválido. Debe tener entre 7 y 15 dígitos.";
-      } else {
-          $cont++;
-      }
-
-
-      // Validación de datos del negocio
-      if (empty($business_type) || empty($business_address) || empty($business_cif)) {
-          $errores[] = "Todos los campos del negocio son obligatorios";
-      } else {
-          $cont++;
-      }
-
-
-      // Si todas las validaciones pasaron
-      if ($cont == 5) {
-          $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-
-
-          try {
-              $stmt = $_conexion->prepare("
-                  INSERT INTO comercios (email, nombre, password, telefono, id_suscripcion,
-                                   tipo, direccion, cif, metodo_pago)
-                  VALUES (:email, :nombre, :password, :telefono, :id_suscripcion,
-                           :business_type, :business_address, :business_cif, :payment_method)
-              ");
-             
-              $resultado = $stmt->execute([
-                  "email" => $correo,
-                  "nombre" => $nombre,
-                  "password" => $contrasena_cifrada,
-                  "telefono" => $telefono,
-                  "id_suscripcion" => $id_suscripcion,
-                  "business_type" => $business_type,
-                  "business_address" => $business_address,
-                  "business_cif" => $business_cif,
-                  "payment_method" => $metodo_pago
-              ]);
-
-
-              if($resultado) {
-                  echo '<div class="alert alert-success">Registro exitoso! Redirigiendo...</div>';
-                  echo '<script>setTimeout(function(){ window.location.href = "perfil-partner.php"; }, 2000);</script>';
-                  exit();
-              } else {
-                  $errores[] = "Error al registrar: " . $stmt->errorInfo()[2];
-              }
-          } catch(PDOException $e) {
-              $errores[] = "Error de base de datos: " . $e->getMessage();
-          }
-      }
-
-
-      // Mostrar errores si existen
-      if (!empty($errores)) {
-          echo '<div class="container"><div class="row justify-content-center"><div class="col-lg-8">';
-          foreach ($errores as $error) {
-              echo '<div class="alert alert-danger mb-2">'.$error.'</div>';
-          }
-          echo '</div></div></div>';
-      }
-  }
-  ?>
+  
 
 
   <div class="container py-5">
@@ -344,7 +360,7 @@
               <div class="registration-card p-4 p-md-5">
                   <!-- Logo -->
                   <div class="logo-container">
-                      <img src="trady_sinFondo.png" alt="TRADY Logo">
+                      <img src="../util/img/trady_sinFondo.png" alt="TRADY Logo">
                       <h1 class="fw-bold mt-3">Registro de Partner</h1>
                       <p class="mb-4">Completa los datos de tu negocio</p>
                   </div>
@@ -452,10 +468,10 @@
                           <div class="row">
                               <div class="col-md-4 mb-4">
                                   <div class="plan-card" data-plan="partner-starter">
-                                      <h5>Partner Starter</h5>
-                                      <h3 class="my-3">€9.99/mes</h3>
+                                      <h5>Partner <?php echo $suscripciones[0]["nombre"]?></h5>
+                                      <h3 class="my-3">€<?php echo $suscripciones[0]["precio"]?>/mes</h3>
                                       <ul class="list-unstyled">
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> 2 códigos QR activos</li>
+                                          <li class="mb-2"><i class="fas fa-check me-2"></i> 1 código QR cada dos meses</li>
                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas básicas</li>
                                           <li class="mb-2"><i class="fas fa-times me-2 text-muted"></i> Sin campañas promocionales</li>
                                       </ul>
@@ -465,12 +481,11 @@
                               <div class="col-md-4 mb-4">
                                   <div class="plan-card featured active" data-plan="partner-premium">
                                       <span class="featured-badge">Popular</span>
-                                      <h5>Partner Premium</h5>
-                                      <h3 class="my-3">€29.99/mes</h3>
+                                      <h5>Partner <?php echo $suscripciones[1]["nombre"]?></h5>
+                                      <h3 class="my-3">€<?php echo $suscripciones[1]["precio"]?>/mes</h3>
                                       <ul class="list-unstyled">
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> 5 códigos QR activos</li>
+                                          <li class="mb-2"><i class="fas fa-check me-2"></i> 1 código QR al mes</li>
                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Estadísticas avanzadas</li>
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> 2 campañas activas</li>
                                           <li class="mb-2"><i class="fas fa-check me-2"></i> Posicionamiento destacado</li>
                                       </ul>
                                       <input type="radio" class="d-none" name="subscription_plan" value="2" checked>
@@ -478,13 +493,13 @@
                               </div>
                               <div class="col-md-4 mb-4">
                                   <div class="plan-card" data-plan="partner-business">
-                                      <h5>Partner Business</h5>
-                                      <h3 class="my-3">€99.99/mes</h3>
+                                      <h5>Partner <?php echo $suscripciones[2]["nombre"]?></h5>
+                                      <h3 class="my-3">€<?php echo $suscripciones[2]["precio"]?>/mes</h3>
                                       <ul class="list-unstyled">
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> QR ilimitados</li>
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> Analíticas completas</li>
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> Campañas ilimitadas</li>
-                                          <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario 24/7</li>
+                                        <li class="mb-2"><i class="fas fa-check me-2"></i> 1 código QR cada semana</li>
+                                        <li class="mb-2"><i class="fas fa-check me-2"></i> Analíticas completas</li>
+                                        <li class="mb-2"><i class="fas fa-check me-2"></i> Posicionamiento muy destacado</li>
+                                        <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario 24/7</li>
                                       </ul>
                                       <input type="radio" class="d-none" name="subscription_plan" value="3">
                                   </div>

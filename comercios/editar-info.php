@@ -16,7 +16,6 @@
    else{
        $iniciado=true;
 
-
        // Preparar consulta segura con PDO
        $sql = "SELECT * FROM comercios WHERE email = :email";
        $stmt = $_conexion->prepare($sql);
@@ -25,12 +24,12 @@
        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
    }
 
-
    if ($_SERVER["REQUEST_METHOD"] == "POST") {
        $nombre = $_POST["name"];
        $correo = $_POST["email"];
        $telefono = $_POST["phone"];
        $direccion = $_POST["direccion"];
+       $tipo = $_POST["business_type"];
        $cont = 0; // Contador de validaciones
        // Validación del nombre
        if (!preg_match("/^[a-zA-Z0-9 ]{3,16}$/", $nombre)) {
@@ -51,7 +50,8 @@
                 UPDATE comercios SET
                nombre = :nombre,
                telefono = :telefono,
-               direccion = :direccion
+               direccion = :direccion,
+               tipo = :tipo
                WHERE email = :email
             ");
            
@@ -59,7 +59,8 @@
                 "email" => $correo,
                 "nombre" => $nombre,
                 "direccion" => $direccion,
-                "telefono" => $telefono
+                "telefono" => $telefono,
+                "tipo" => $tipo
             ]);
             session_start();
            
@@ -74,16 +75,8 @@
    }
 ?>
 
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="es">
-
 
 <head>
    <meta charset="UTF-8">
@@ -288,11 +281,11 @@
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75">
        <div class="container">
            <a class="navbar-brand fw-bold" href="#">
-               <i class="qr-icon"><img src="trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
+               <i class="qr-icon"><img src="../util/img/trady_sinFondo.png" alt="logo trady" width="70" height="70"></i>TRADY PARTNERS
            </a>
            <div class="d-flex align-items-center">
                <span class="me-3">Nivel: <strong>Partner Oro</strong></span>
-               <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-circle">
+               <img src="https://via.placeholder.com/40" alt=": )" class="rounded-circle">
            </div>
        </div>
    </nav>
@@ -304,7 +297,7 @@
            <div class="col-lg-8">
                <div class="partner-card p-4">
                    <!-- Botón de volver atrás -->
-                   <a href="perfil-partner.html" class="btn btn-sm btn-outline-light mb-4">
+                   <a href="perfil-partner.php" class="btn btn-sm btn-outline-light mb-4">
                        <i class="fas fa-arrow-left me-1"></i> Volver
                    </a>
 
@@ -314,12 +307,12 @@
 
                    <!-- Formulario de edición -->
                    <form id="businessInfoForm" method="POST" action="">
-                       <!-- Logo del negocio -->
+                       <!-- Logo del negocio 
                        <div class="text-center mb-4">
                            <div class="logo-upload">
                                <img src="../util/img/trady_sinFondo.png" id="businessLogo">
                            </div>
-                       </div>
+                       </div> -->
 
 
                        <!-- Información básica -->
@@ -333,22 +326,20 @@
                           
                            <div class="mb-3">
                                <label for="businessCategory" class="form-label">Categorías*</label>
-                               <div class="mb-2" id="categoryTags">
-                                   <span class="category-tag">
-                                       Restaurante
-                                       <span class="remove-tag"><i class="fas fa-times"></i></span>
-                                   </span>
-                                   <span class="category-tag">
-                                       Comida Mediterránea
-                                       <span class="remove-tag"><i class="fas fa-times"></i></span>
-                                   </span>
-                               </div>
-                               <div class="input-group">
-                                   <input type="text" class="form-control" id="newCategory" placeholder="Añadir categoría">
-                                   <button class="btn btn-outline-light" type="button" id="addCategory">
-                                       <i class="fas fa-plus"></i>
-                                   </button>
-                               </div>
+                               <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="business_type" class="form-label required-field">Tipo de negocio</label>
+                                        <select class="form-select" id="business_type" name="business_type" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option value="restaurant" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'restaurant') ? 'selected' : ''; ?>>Restaurante/Cafetería</option>
+                                            <option value="bar" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'bar') ? 'selected' : ''; ?>>Bar/Pub</option>
+                                            <option value="shop" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'shop') ? 'selected' : ''; ?>>Tienda/Comercio</option>
+                                            <option value="hotel" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'hotel') ? 'selected' : ''; ?>>Hotel/Alojamiento</option>
+                                            <option value="attraction" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'attraction') ? 'selected' : ''; ?>>Atracción turística</option>
+                                            <option value="other" <?php echo (isset($_POST['business_type']) && $_POST['business_type'] == 'other') ? 'selected' : ''; ?>>Otro</option>
+                                        </select>
+                                    </div>
+                                </div>
                            </div>
                        </div>
 
@@ -380,6 +371,7 @@
                            <button type="button" class="btn btn-outline-light" onclick="history.back()">
                                <i class="fas fa-times me-1"></i> Cancelar
                            </button>
+                           <a class="btn btn-danger" href="eliminar_partner.php">ELIMINAR ESTA CUENTA</a>
                            <button type="submit" class="btn btn-save">
                                <i class="fas fa-save me-1"></i> Guardar Cambios
                            </button>

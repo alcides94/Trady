@@ -4,7 +4,10 @@
    ini_set("display_errors", 1);
    require('../util/conexion.php');
 
-   
+   $sql2 = "SELECT * FROM suscripcion_usuarios";
+   $stmt = $_conexion->prepare($sql2);
+   $stmt->execute();
+   $suscripciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
    if ($_SERVER["REQUEST_METHOD"] == "POST") {
        $nombre = $_POST["name"];
@@ -384,8 +387,8 @@
                            <div class="row">
                                <div class="col-md-4 mb-4">
                                    <div class="plan-card active" data-plan="free">
-                                       <h5>Cobre</h5>
-                                       <h3 class="my-3">Gratis</h3>
+                                       <h5><?php echo $suscripciones[0]["nombre"]?></h5>
+                                       <h3 class="my-3">€<?php echo $suscripciones[0]["precio"]?></h3>
                                        <ul class="list-unstyled">
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> Acceso a rutas básicas</li>
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> 5 escaneos diarios</li>
@@ -398,8 +401,8 @@
                                <div class="col-md-4 mb-4">
                                    <div class="plan-card featured" data-plan="premium">
                                        <span class="featured-badge">Recomendado</span>
-                                       <h5>Plata</h5>
-                                       <h3 class="my-3">€4.99/mes</h3>
+                                       <h5><?php echo $suscripciones[1]["nombre"]?></h5>
+                                       <h3 class="my-3">€<?php echo $suscripciones[1]["precio"]?>/mes</h3>
                                        <ul class="list-unstyled">
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las rutas premium</li>
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> Escaneos ilimitados</li>
@@ -411,8 +414,8 @@
                                </div>
                                <div class="col-md-4 mb-4">
                                    <div class="plan-card" data-plan="annual">
-                                       <h5>Oro</h5>
-                                       <h3 class="my-3">€14.99/año</h3>
+                                       <h5><?php echo $suscripciones[2]["nombre"]?></h5>
+                                       <h3 class="my-3">€<?php echo $suscripciones[2]["precio"]?>/mes</h3>
                                        <ul class="list-unstyled">
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> Todas las ventajas Premium</li>
                                            <li class="mb-2"><i class="fas fa-check me-2"></i> Soporte prioritario</li>
