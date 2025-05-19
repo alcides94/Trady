@@ -277,7 +277,31 @@
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            
+
+            $('#formNuevoUsuario').on('submit', function (e) {
+                // Obtener valores
+                let password = $('#password').val();
+                let confirmPassword = $('#confirm_password').val();
+
+                // Eliminar clases previas
+                $('#password, #confirm_password').removeClass('is-invalid');
+
+                // Validar coincidencia
+                if (password !== confirmPassword) {
+                    e.preventDefault(); // Evita el envío
+                    $('#confirm_password').addClass('is-invalid');
+
+                    // Si querés, podés mostrar un mensaje adicional:
+                    if ($('#errorPassMsg').length === 0) {
+                        $('<div id="errorPassMsg" class="invalid-feedback d-block mt-2">Las contraseñas no coinciden.</div>')
+                            .insertAfter('#confirm_password');
+                    }
+                } else {
+                    // Si todo está bien, asegurate de quitar mensajes viejos
+                    $('#errorPassMsg').remove();
+                }
+            });
+
             // Configurar botones de edición en la tabla
             $(document).ready(function () {
                 $('.btn-editar').on('click', async function () {

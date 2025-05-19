@@ -13,6 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_suscripcion = $_POST["id_suscripcion"];
     $telefono = $_POST["telefono"];
 
+    $contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
+
+
     $sql = "INSERT INTO usuarios (email, nombre, fecha_nac, password, id_suscripcion, telefono) 
             VALUES(:email, :nombre, :fecha_nac, :password, :id_suscripcion, :telefono)";
     

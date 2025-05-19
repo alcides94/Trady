@@ -1,4 +1,5 @@
 <?php 
+
 session_start();
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
@@ -14,12 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $latitud = isset($_POST["latitud"]) ? floatval($_POST["latitud"]) : null;
     $longitud = isset($_POST["longitud"]) ? floatval($_POST["longitud"]) : null;
-    $id_qr = $_POST["id_qr"]; 
 
     $sql = "INSERT INTO sitiosInteres (
-                nombre, descripcion, tipo, direccion, telefono, email, latitud, longitud, id_qr
+                nombre, descripcion, tipo, direccion, telefono, email, latitud, longitud
             ) VALUES (
-                :nombre, :descripcion, :tipo, :direccion, :telefono, :email, :latitud, :longitud, :id_qr
+                :nombre, :descripcion, :tipo, :direccion, :telefono, :email, :latitud, :longitud
             )";
 
     $stmt = $_conexion->prepare($sql);
@@ -32,8 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "telefono" => $telefono,
         "email" => $email,
         "latitud" => $latitud !== '' ? $latitud : null,
-        "longitud" => $longitud !== '' ? $longitud : null,
-        "id_qr" => $id_qr !== '' ? $id_qr : null
+        "longitud" => $longitud !== '' ? $longitud : null
     ]);
 
     // Opcional: redirigir o mostrar mensaje

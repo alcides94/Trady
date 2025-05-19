@@ -22,6 +22,8 @@
 
 <body>
         <?php
+
+        
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $usuario = $_POST["usuario"];
             $contrasena = $_POST["contrasena"];
@@ -36,18 +38,17 @@
             if (!$resultado) {
                 echo "El usuario no existe";
             } else {
-                //por ahora utilizamos de esta forma sin hash para realizar pruebas
-                //$acceso_conseguido = password_verify($contrasena, $resultado["password"]);
-                if ($contrasena != $resultado["password"]) {
-                    echo "Contraseña errónea";
-                } else {
+                if (password_verify($contrasena, $resultado["password"])) {
                     session_start();
                     $_SESSION["usuario"] = $usuario;
                     header("location: ./panel-admin.php");
                     exit;
+                } else {
+                    echo "Contraseña errónea";
                 }
             }
         }
+
         ?>
 
     <div class="login-container">

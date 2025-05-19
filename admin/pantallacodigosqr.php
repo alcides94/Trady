@@ -12,15 +12,15 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <?php 
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
-    require('../util/conexion.php');
-    
-    session_start();
-        if (!isset($_SESSION["usuario"])){
-            header("location: ./index.php");
-            exit;
-        }
+        error_reporting(E_ALL);
+        ini_set("display_errors", 1);
+        require('../util/conexion.php');
+        
+        session_start();
+            if (!isset($_SESSION["usuario"])){
+                header("location: ./index.php");
+                exit;
+            }
     ?>
     <link rel="stylesheet" href="../util/css/style-panel-admin.css">
     <style>
@@ -177,11 +177,8 @@
                                 <label for="tipo" class="form-label">Tipo de QR</label>
                                 <select class="form-select" id="tipo" name="tipo"required>
                                     <option value="" selected disabled>Seleccione tipo</option>
-                                    <option value="Partner">Partner</option>
-                                    <option value="Ruta">Ruta</option>
-                                    <option value="Sitio de Interés">Sitio de Interés</option>
-                                    <option value="Evento">Evento</option>
-                                    <option value="Otro">Otro</option>
+                                    <option value="comercio">Comercio</option>
+                                    <option value="sitioInteres">Sitio de Interes</option>
                                 </select>
                             </div>
                           

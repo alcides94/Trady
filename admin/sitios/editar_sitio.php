@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['edit_email'] ?? '';
     $latitud = $_POST['edit_latitud'] ?? '';
     $longitud = $_POST['edit_longitud'] ?? '';
-    $id_qr = isset($_POST['edit_id_qr']) && $_POST['edit_id_qr'] !== '' ? (int)$_POST['edit_id_qr'] : 1;
     $descripcion = $_POST['edit_descripcion'] ?? '';
     $estado = isset($_POST['edit_estado']) ? 1 : 0;
 
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             email = :email,
             latitud = :latitud,
             longitud = :longitud,
-            id_qr = :id_qr,
             descripcion = :descripcion,
             estado = :estado
         WHERE id_sitio = :id_sitio
@@ -44,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email' => $email,
         'latitud' => $latitud,
         'longitud' => $longitud,
-        'id_qr' => $id_qr,
         'descripcion' => $descripcion,
         'estado' => $estado,
         'id_sitio' => $id_sitio

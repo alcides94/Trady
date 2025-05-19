@@ -201,7 +201,7 @@
                                     <option value="Cultural">Cultural</option>
                                     <option value="Restaurante">Restaurante</option>
                                     <option value="Tienda">Tienda</option>
-                                    <option value="other">Otro</option>
+                                    <option value="Otro">Otro</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -225,21 +225,11 @@
                                 <label for="longitud" class="form-label">Longitud (-180 a 180)</label>
                                 <input type="number" class="form-control" id="longitud" name="longitud">
                             </div>
-                            
-                            <div class="col-md-6">
-                                <label for="tipo" class="form-label">QR Asignado</label>
-                                <select class="form-select" id="id_qr" name="id_qr" required>
-                                    <option value="" selected disabled>Seleccione categoría</option>
-                                    <option value="">Hola</option>
-                                  
-                                </select>
-                            </div>
 
                             <div class="col-12">
                                 <label for="siteDescription" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                             </div>
-
                           
                         </div>
                             <div class="col-12">
@@ -441,7 +431,6 @@
                     $('#edit_email').val(data.email);
                     $('#edit_latitud').val(data.latitud);
                     $('#edit_longitud').val(data.longitud);
-                    $('#edit_id_qr').val(data.id_qr);
                     $('#edit_descripcion').val(data.descripcion);
                     $('#edit_estado').prop('checked', data.estado === 'activo');
 
