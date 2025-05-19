@@ -11,7 +11,7 @@ if (isset($_GET['id_suscripcion_usuario'])) {
 
     echo json_encode($sus_usuario);
 }else{
-    $id = $_GET['id_sus_comercio'];
+    $id = $_GET['id_suscripcion_comercio'];
 
     $stmt = $_conexion->prepare("SELECT * FROM suscripcion_comercios WHERE id_suscripcion = :id_suscripcion");
     $stmt->execute(['id_suscripcion' => $id]);

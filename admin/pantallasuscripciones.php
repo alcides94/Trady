@@ -103,6 +103,7 @@
                                         <th>Nombre</th>
                                         <th>Precio</th>
                                         <th>Acciones</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -124,13 +125,24 @@
                                         <td><span class="badge bg-success"><?php echo $sus_usuario["precio"]?></span></td>
                                         <td>
                                             <button class="btn btn-sm btn-info btn-editar-usuario" title="Editar" data-bs-toggle="modal" 
-                                            data-bs-target="#editSuscripcionModal">
+                                            data-id="<?php echo $sus_usuario["id_suscripcion"]?>" data-bs-target="#editSuscripcionModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" title="Cancelar">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
+                                        
                                         </td>
+                                   
+                                        <td>
+                                            <form action="suscripcion/eliminar_sus_user.php" method="post">
+                                            <input type="hidden" name="id_suscripcion" id="id_suscripcion" value="<?php echo $sus_usuario['id_suscripcion'] ?>">
+    
+                                            <button class="btn btn-sm btn-danger" title="Eliminar" type="submit">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        
+                                        </td>
+                                   
+                                   
                                     </tr>
                                     <?php } ?>
                                 </tbody>
@@ -153,6 +165,7 @@
                                         <th>ID</th>
                                         <th>Plan</th>
                                         <th>Precio</th>
+                                        <th>Acciones</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -177,9 +190,17 @@
                                             data-bs-target="#editSuscripcionModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-danger" title="Cancelar">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
+                                            
+                                        </td>
+                                        <td>
+                                            <form action="suscripcion/eliminar_sus_comer.php" method="post">
+                                            <input type="hidden" name="id_suscripcion" id="id_suscripcion" value="<?php echo $sus_comercio['id_suscripcion'] ?>">
+    
+                                            <button class="btn btn-sm btn-danger" title="Eliminar" type="submit">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        
                                         </td>
                                     </tr>
                                     <?php } ?>
@@ -253,7 +274,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="tipo" class="form-label">Tipo de Suscripción</label>
-                                <select class="form-select" id="tipo" name="tipo" required>
+                                <select class="form-select" id="edit_tipo" name="edit_tipo" required>
                                     <option value="" selected disabled>Seleccione tipo</option>
                                     <option value="user">Usuario</option>
                                     <option value="partner">Partner</option>
@@ -321,6 +342,7 @@
             fetch(`suscripcion/obtener_sus.php?id_suscripcion_usuario=${id}`)
                 .then(res => res.json())
                 .then(data => {
+                    $('#edit_tipo').val("user");
                     $('#edit_id_suscripcion').val(data.id_suscripcion);
                     $('#edit_nombre').val(data.nombre);
                     $('#edit_precio').val(data.precio);
@@ -342,6 +364,7 @@
             fetch(`suscripcion/obtener_sus.php?id_suscripcion_comercio=${id}`)
                 .then(res => res.json())
                 .then(data => {
+                    $('#edit_tipo').val("partner");
                     $('#edit_id_suscripcion').val(data.id_suscripcion);
                     $('#edit_nombre').val(data.nombre);
                     $('#edit_precio').val(data.precio);
