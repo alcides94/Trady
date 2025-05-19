@@ -2,8 +2,8 @@
 -- Base de datos: trady_bd
 -- --------------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS trady_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE trady_bd;
+CREATE DATABASE IF NOT EXISTS trady_bdd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE trady_bdd;
 
 -- --------------------------------------------------
 -- 1. Tabla suscripcion_comercios
@@ -32,11 +32,11 @@ CREATE TABLE usuarios (
   nombre VARCHAR(50) NOT NULL,
   fecha_nac DATE,
   password VARCHAR(255) NOT NULL,
-  fecha_registro DATE DEFAULT CURRENT_DATE,
+  fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   id_suscripcion INT,
   puntos INT DEFAULT 0,
   estado INT DEFAULT 1,
-  telefono VARCHAR(255),
+  telefono VARCHAR(20),
   metodoPago VARCHAR(255),
   qrs_escaneados INT DEFAULT 0,
   CONSTRAINT fk_usuario_suscripcion
@@ -56,10 +56,10 @@ CREATE TABLE comercios (
   telefono VARCHAR(100),
   email VARCHAR(100),
   id_suscripcion INT,
-  fecha_alta DATE DEFAULT CURRENT_DATE,
-  latitud FLOAT,
-  longitud FLOAT,
-  estado INT DEFAULT 1,
+  fecha_alta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  latitud DECIMAL(10,7),
+  longitud DECIMAL(10,7),
+  estado INT DEFAULT 0,
   metodoPago VARCHAR(255),
   CONSTRAINT fk_comercio_suscripcion
     FOREIGN KEY (id_suscripcion) REFERENCES suscripcion_comercios(id_suscripcion)
@@ -75,10 +75,10 @@ CREATE TABLE sitiosInteres (
   tipo VARCHAR(50),
   direccion VARCHAR(100),
   telefono VARCHAR(100),
-  email VARCHAR(100),
-  fecha_alta DATE DEFAULT CURRENT_DATE,
-  latitud FLOAT,
-  longitud FLOAT,
+  email VARCHAR(255),
+  fecha_alta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  latitud DECIMAL(10,7),
+  longitud DECIMAL(10,7),
   estado INT DEFAULT 1
 ) ENGINE=InnoDB;
 
@@ -101,18 +101,20 @@ CREATE TABLE recompensas (
   id_recompensas INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(255) NOT NULL,
   puntos INT NOT NULL,
-  fecha_alta DATE DEFAULT CURRENT_DATE,
-  estado INT DEFAULT 1,
-  qrs_escanear INT DEFAULT 0
+  fecha_alta  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  estado INT DEFAULT 0,
+  qrs_escanear INT NOT NULL
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------
 -- 8. Tabla qr_codigos_comercios
 -- --------------------------------------------------
-CREATE TABLE qr_codigos_comercios (
+CREATE TABLE qr_codigos (
   id_qr INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(255),
   tipo VARCHAR(50),
   qr VARCHAR(50),
+  fecha_alta  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   identificador_qr VARCHAR(255),
   id_comercio INT,
   puntos INT DEFAULT 0,
@@ -131,7 +133,7 @@ CREATE TABLE usuario_actividad (
   id_usuario INT,
   id_sitio INT,
   id_comercio INT,
-  fecha_act DATETIME DEFAULT CURRENT_TIMESTAMP,
+  fecha_actividad DATETIME DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_act_usuario
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
   CONSTRAINT fk_act_sitio
