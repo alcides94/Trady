@@ -2,8 +2,8 @@
 -- Base de datos: trady_bd
 -- --------------------------------------------------
 
-CREATE DATABASE IF NOT EXISTS trady_bdd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE trady_bdd;
+CREATE DATABASE IF NOT EXISTS trady_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE trady_bd;
 
 -- --------------------------------------------------
 -- 1. Tabla suscripcion_comercios
