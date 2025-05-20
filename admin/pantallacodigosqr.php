@@ -101,6 +101,8 @@
                                         <th>Nombre</th>
                                         <th>Tipo</th>
                                         <th>Identificador</th>
+                                        <th>Puntos</th>
+                                        <th>Asociado</th>
                                         <th>Acciones</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -109,7 +111,14 @@
                                     <!-- Ejemplo de datos estáticos -->
 
                                     <?php 
-                                        $sql = "SELECT * FROM qr_codigos";
+                                        $sql = "SELECT 
+                                            q.*,
+                                            c.nombre AS nombre_comercio,
+                                            s.nombre AS nombre_sitio
+                                        FROM qr_codigos q
+                                        LEFT JOIN comercios c ON q.id_comercio = c.id_comercios
+                                        LEFT JOIN sitiosInteres s ON q.id_sitio = s.id_sitio
+                                        ";
                                         $stmt = $_conexion->prepare($sql);
                                         $stmt->execute();
                                         $codigos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -123,7 +132,19 @@
                                         <td><?php echo $codigo["nombre"]?> </td>
                                     
                                         <td><span class="badge bg-success qr-badge"><?php echo $codigo["tipo"]?> </span></td>
-                                        <td><span class="badge bg-success">TRADY-<?php echo $codigo["identificador_qr"]?> </span></td>
+                                        <td><span class="badge bg-success"><?php echo $codigo["identificador_qr"]?> </span></td>
+                                        <td><?php echo $codigo["puntos"]?> </td>
+                                        <td>
+                                            <?php 
+                                                if (!empty($codigo["nombre_comercio"])) {
+                                                    echo $codigo["nombre_comercio"];
+                                                } else if (!empty($codigo["nombre_sitio"])) {
+                                                    echo $codigo["nombre_sitio"];
+                                                } else {
+                                                    echo "<span class='text-muted'>No asignado</span>";
+                                                }
+                                            ?>
+                                        </td>
                                         <td>
                                             <button 
                                                 class="btn btn-sm btn-info btn-editar" 
@@ -158,6 +179,9 @@
         </div>
     </div>
 
+
+
+    
     <!-- Modal para generar nuevo QR -->
     <div class="modal fade" id="newQRModal" tabindex="-1" aria-labelledby="newQRModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -177,8 +201,8 @@
                                 <label for="tipo" class="form-label">Tipo de QR</label>
                                 <select class="form-select" id="tipo" name="tipo"required>
                                     <option value="" selected disabled>Seleccione tipo</option>
-                                    <option value="comercio">Comercio</option>
-                                    <option value="sitioInteres">Sitio de Interes</option>
+                                    <option value="Comercio">Comercio</option>
+                                    <option value="SitioInteres">Sitio de Interes</option>
                                 </select>
                             </div>
                           
@@ -190,7 +214,40 @@
                                 </div>
                             </div>
                             
-                            
+                            <div class="col-md-6">
+                                <label for="id_comercio" class="form-label">Asignar a Comercio</label>
+                                <select class="form-select" id="id_comercio" name="id_comercio" required>
+                                    <option value="" selected disabled>Seleccione un comercio</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM comercios";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $comercios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($comercios as $comercio) {
+                                    ?>    
+                                        <option value="<?php echo $comercio["id_comercio"] ?>"><?php echo $comercio["nombre"] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_sitio" class="form-label">Asignar a Sitio de Interés</label>
+                                <select class="form-select" id="id_sitio" name="id_sitio" required>
+                                    <option value="" selected disabled>Seleccione un sitio</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM sitiosInteres";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $sitios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($sitios as $sitio) {
+                                    ?>    
+                                        <option value="<?php echo $sitio["id_sitio"] ?>"><?php echo $sitio["nombre"] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="puntos" class="form-label">Puntos</label>
+                                <input type="number" class="form-control" id="puntos" name="puntos" required>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -208,7 +265,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editQrModalLabel"><i class="fas fa-qrcode me-2"></i>Generar Nuevo Código QR</h5>
+                    <h5 class="modal-title" id="editQrModalLabel"><i class="fas fa-qrcode me-2"></i>Modificar Código QR</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -219,25 +276,57 @@
                                 <input type="text" class="form-control" id="edit_nombre" name="edit_nombre" >
                             </div>
                             <div class="col-md-6">
-                                <label for="tipo" class="form-label">Tipo de QR</label>
-                                <select class="form-select" id="edit_tipo" name="edit_tipo">
+                                <label for="edit_tipo" class="form-label">Tipo de QR</label>
+                                <select class="form-select" id="edit_tipo" name="edit_tipo"required>
                                     <option value="" selected disabled>Seleccione tipo</option>
-                                    <option value="Partner">Partner</option>
-                                    <option value="Ruta">Ruta</option>
-                                    <option value="Sitio de Interés">Sitio de Interés</option>
-                                    <option value="Evento">Evento</option>
-                                    <option value="Otro">Otro</option>
+                                    <option value="Comercio">Comercio</option>
+                                    <option value="SitioInteres">Sitio de Interes</option>
                                 </select>
                             </div>
                           
                             <div class="col-md-6">
                                 <label for="identificador_qr" class="form-label">Identificador</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">TRADY-</span>
                                     <input type="text" class="form-control" id="edit_identificador_qr" name ="edit_identificador_qr" >
                                 </div>
                             </div>
-                            
+                            <div class="col-md-6">
+                                <label for="id_comercio" class="form-label">Asignar a Comercio</label>
+                                <select class="form-select" id="edit_id_comercio" name="edit_id_comercio" required>
+                                    <option value="" selected disabled>Seleccione un comercio</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM comercios";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $comercios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        
+                                        foreach ($comercios as $comercio) {
+                                    ?>    
+                                      
+                                        <option value="<?= $comercio['id_comercios'] ?>"><?= $comercio['nombre'] ?></option>
+   
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_sitio" class="form-label">Asignar a Sitio de Interés</label>
+                                <select class="form-select" id="edit_id_sitio" name="edit_id_sitio" required>
+                                    <option value="" selected disabled>Seleccione un sitio</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM sitiosInteres";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $sitios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($sitios as $sitio) {
+                                    ?>    
+                                        <option value="<?php echo $sitio["id_sitio"] ?>"><?php echo $sitio["nombre"] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_puntos" class="form-label">Puntos</label>
+                                <input type="number" class="form-control" id="edit_puntos" name="edit_puntos" required>
+                            </div>
                             
                         </div>
                         <div class="modal-footer">
@@ -270,6 +359,21 @@
                 }
             });
 
+            $('#tipo').on('change', function () {
+                const valor = $(this).val();
+
+                if (valor === "Comercio") {
+                    $('#id_comercio').prop('disabled', false);
+                    $('#id_sitio').prop('disabled', true).val('');
+                } else if (valor === "SitioInteres") {
+                    $('#id_sitio').prop('disabled', false);
+                    $('#id_comercio').prop('disabled', true).val('');
+                } else {
+                    // Si es "" o cualquier otro caso inesperado
+                    $('#id_comercio').prop('disabled', true).val('');
+                    $('#id_sitio').prop('disabled', true).val('');
+                }
+            });
 
             // Configurar botones de edición 
             
@@ -288,9 +392,19 @@
                         $('#edit_nombre').val(data.nombre);
                         $('#edit_tipo').val(data.tipo);
                         $('#edit_identificador_qr').val(data.identificador_qr);
-
-                        // Mostrar el modal
+                        $('#edit_puntos').val(data.puntos);
+                        
+                        $('#edit_id_comercio').prop('disabled', true).val('');
+                        $('#edit_id_sitio').prop('disabled', true).val('');
                        
+                        if (data.tipo === 'Comercio') {
+                            $('#edit_id_comercio').prop('disabled', false);
+                            $('#edit_id_comercio').val(data.id_comercio);
+                        } else if (data.tipo === 'SitioInteres') {
+                            $('#edit_id_sitio').prop('disabled', false);
+                            $('#edit_id_sitio').val(data.id_sitio);
+                        }
+
 
                     })
                     .catch(err => {
@@ -299,6 +413,21 @@
                     });
             });
 
+            $('#edit_tipo').on('change', function () {
+                const valor = $(this).val();
+
+                if (valor === "Comercio") {
+                    $('#edit_id_comercio').prop('disabled', false);
+                    $('#edit_id_sitio').prop('disabled', true).val('');
+                } else if (valor === "SitioInteres") {
+                    $('#edit_id_sitio').prop('disabled', false);
+                    $('#edit_id_comercio').prop('disabled', true).val('');
+                } else {
+                    // Si es "" o cualquier otro caso inesperado
+                    $('#edit_id_comercio').prop('disabled', true).val('');
+                    $('#edit_id_sitio').prop('disabled', true).val('');
+                }
+            });
         
             // Manejar descarga de QR
            

@@ -9,17 +9,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tipo = $_POST['tipo'];
         $identificador = $_POST['identificador_qr'];
         $nombre = $_POST['nombre']; // Asegúrate de enviarlo desde JS
-        $url = $_POST['url']; // Si necesitas guardar también la URL
-
+        $puntos = $_POST['puntos'];
         $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="."TRADY-" . $identificador;
+        $id_comercio = $_POST["id_comercio"] ?? null;
+        $id_sitio =$_POST["id_sitio"] ?? null;
 
-        $stmt = $_conexion->prepare("INSERT INTO qr_codigos (tipo, qr, nombre, identificador_qr) VALUES (:tipo, :qr, :nombre, :identificador_qr)");
+        $stmt = $_conexion->prepare("INSERT INTO qr_codigos (tipo, qr, nombre, identificador_qr, puntos, id_comercio, id_sitio) VALUES (:tipo, :qr, :nombre, :identificador_qr, :puntos, :id_comercio, :id_sitio)");
         
         $stmt->execute([
             "tipo" => $tipo,
             "qr" => $qr_url,
             "nombre" => $nombre,
-            "identificador_qr" => $identificador
+            "identificador_qr" => "TRADY". $identificador,
+            "puntos" => $puntos,
+            "id_comercio" => $id_comercio,
+            "id_sitio" => $id_sitio
         ]);
 
         echo json_encode(['status' => 'ok']);

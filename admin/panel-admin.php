@@ -121,7 +121,17 @@
                 </a>
                 </div>
             </div>
-
+            <!-- Tarjeta: Códigos QR -->
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card text-center shadow h-100">
+                <a href="pantallarecompensas.php">
+                    <div class="card-body">
+                        <i class="fas fa-coins fa-3x text-dark mb-3"></i>
+                        <h5 class="card-title">Recompensas</h5>
+                    </div>
+                </a>
+                </div>
+            </div>
             <!-- Tarjeta: Configuración -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">

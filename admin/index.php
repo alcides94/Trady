@@ -22,9 +22,8 @@
 
 <body>
         <?php
-
         
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $usuario = $_POST["usuario"];
             $contrasena = $_POST["contrasena"];
 
@@ -113,39 +112,6 @@
                 icon.classList.add('fa-eye');
             }
         });
-
-      /*  // Validación del formulario
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const usernameError = document.getElementById('usernameError');
-            const passwordError = document.getElementById('passwordError');
-            
-            // Resetear mensajes de error
-            usernameError.textContent = '';
-            passwordError.textContent = '';
-            
-            let isValid = true;
-            
-            if (username.trim() === '') {
-                usernameError.textContent = 'Por favor ingresa tu nombre de usuario';
-                isValid = false;
-            }
-            
-            if (password.trim() === '') {
-                passwordError.textContent = 'Por favor ingresa tu contraseña';
-                isValid = false;
-            }
-            
-            if (isValid) {
-                // Aquí iría la lógica de autenticación
-                alert('Inicio de sesión exitoso (simulado)');
-                // Redireccionar al panel de administración
-                window.location.href = 'admin.html';
-            }
-        });*/
     </script>
 </body>
 
