@@ -107,22 +107,22 @@ CREATE TABLE recompensas (
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------
--- 8. Tabla qr_codigos_comercios
+-- 8. Tabla qr_codigos
 -- --------------------------------------------------
 CREATE TABLE qr_codigos (
   id_qr INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(255),
   tipo VARCHAR(50),
-  qr VARCHAR(50),
+  qr VARCHAR(200),
   fecha_alta  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   identificador_qr VARCHAR(255),
   id_comercio INT,
   puntos INT DEFAULT 0,
-  id_sitios INT,
+  id_sitio INT,
   CONSTRAINT fk_qr_comercio
     FOREIGN KEY (id_comercio) REFERENCES comercios(id_comercios),
   CONSTRAINT fk_qr_sitio
-    FOREIGN KEY (id_sitios) REFERENCES sitiosInteres(id_sitio)
+    FOREIGN KEY (id_sitio) REFERENCES sitiosInteres(id_sitio)
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------
