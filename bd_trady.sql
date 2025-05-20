@@ -78,7 +78,7 @@ CREATE TABLE sitiosInteres (
   direccion VARCHAR(100),
   telefono VARCHAR(100),
   email VARCHAR(255),
-  ruta varcar (100),
+  ruta varchar (100),
   imagen VARCHAR(200),
   fecha_alta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   latitud DECIMAL(10,7),
