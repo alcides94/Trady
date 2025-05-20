@@ -121,7 +121,7 @@
                                         <td><?php echo $recompensa["nombre"]?></td>
                                         <td><?php echo $recompensa["puntos"]?></td>
                                         <td><?php echo $recompensa["qrs_escanear"]?></td>
-                                        <td><?php echo date('d/m/Y', strtotime($recompensa["fecha_alta"]))?></td>
+                                        <td><?php echo $recompensa["fecha_alta"]?></td>
                                         <td>
                                             <?php if($recompensa["estado"] == 1): ?>
                                                 <span class="status-active"><i class="fas fa-check-circle"></i> Activa</span>
@@ -146,13 +146,7 @@
                                                 </button>
                                             </form>
                                             
-                                            <form action="recompensas/cambiar_estado.php" method="post" style="display: inline;">
-                                                <input type="hidden" name="id_recompensa" value="<?php echo $recompensa['id_recompensas']; ?>">
-                                                <input type="hidden" name="nuevo_estado" value="<?php echo $recompensa['estado'] == 1 ? 0 : 1; ?>">
-                                                <button class="btn btn-sm <?php echo $recompensa['estado'] == 1 ? 'btn-warning' : 'btn-success'; ?>" title="<?php echo $recompensa['estado'] == 1 ? 'Desactivar' : 'Activar'; ?>" type="submit">
-                                                    <i class="fas <?php echo $recompensa['estado'] == 1 ? 'fa-eye-slash' : 'fa-eye'; ?>"></i>
-                                                </button>
-                                            </form>
+                                            
                                         </td>
                                     </tr>
                                     <?php } ?>
@@ -181,7 +175,7 @@
                                 <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="puntos" class="form-label">Puntos requeridos</label>
+                                <label for="puntos" class="form-label">Puntos a otorgar</label>
                                 <input type="number" class="form-control" id="puntos" name="puntos" min="1" required>
                             </div>
                             <div class="col-md-6">
