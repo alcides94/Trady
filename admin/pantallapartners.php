@@ -88,20 +88,40 @@
                                         <th>Categoría</th>
                                         <th>Ubicación</th>
                                         <th>Teléfono</th>
+                                        <th>Suscripcion</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Ejemplo de datos estáticos (en producción vendrían de la BD) -->
+
+                                 
+                                    <?php 
+                                        $sql = "SELECT 
+                                            c.*,
+                                            c.nombre AS nombre_comercio,
+                                            sc.nombre AS nombre_suscripcion
+                                        FROM comercios c
+                                        LEFT JOIN suscripcion_comercios sc ON c.id_suscripcion = sc.id_suscripcion
+                                        ";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $comercios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($comercios as $comercio) {
+                                    ?>
+
                                     <tr>
-                                        <td>1</td>
-                                        <td><img src="https://via.placeholder.com/60" alt="Logo Partner" class="partner-img"></td>
-                                        <td>Restaurante La Parrilla</td>
-                                        <td>Restaurante</td>
-                                        <td>Calle Principal 123</td>
-                                        <td>+34 600 123 456</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
+                                        <td><?php echo $comercio["id_comercios"]?></td>
+                                        <td><img src="<?php $comercio["imagen"]?>" alt="Logo Partner" class="partner-img"></td>
+                                        <td><?php  echo $comercio["nombre"]?></td>
+                                        <td><?php echo  $comercio["tipo"]?></td>
+                                        <td><?php echo  $comercio["direccion"]?></td>
+                                        <td><?php echo  $comercio["telefono"]?></td>
+                                        <td>
+                                            <?php echo  $comercio["nombre_suscripcion"]?>
+                                        </td>
+                                        <td><span class="badge bg-success"><?php  echo $comercio["estado"]?></span></td>
                                         <td class="action-btns">
                                             <button class="btn btn-sm btn-info" title="Editar">
                                                 <i class="fas fa-edit"></i>
@@ -111,40 +131,8 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td><img src="https://via.placeholder.com/60" alt="Logo Partner" class="partner-img"></td>
-                                        <td>Hotel Playa</td>
-                                        <td>Alojamiento</td>
-                                        <td>Avenida del Mar 45</td>
-                                        <td>+34 600 789 012</td>
-                                        <td><span class="badge bg-warning text-dark">Pendiente</span></td>
-                                        <td class="action-btns">
-                                            <button class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td><img src="https://via.placeholder.com/60" alt="Logo Partner" class="partner-img"></td>
-                                        <td>Tienda de Regalos</td>
-                                        <td>Comercio</td>
-                                        <td>Plaza Central 7</td>
-                                        <td>+34 600 345 678</td>
-                                        <td><span class="badge bg-success">Activo</span></td>
-                                        <td class="action-btns">
-                                            <button class="btn btn-sm btn-info" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                  <?php } ?>
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -163,15 +151,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="partnerForm">
+                    <form id="partnerForm" action="comercios/nuevo_comercio.php" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="partnerName" class="form-label">Nombre del Partner</label>
-                                <input type="text" class="form-control" id="partnerName" required>
+                                <label for="nombre" class="form-label">Nombre del Partner</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="partnerCategory" class="form-label">Categoría</label>
-                                <select class="form-select" id="partnerCategory" required>
+                                <label for="cif" class="form-label">CIF</label>
+                                <input type="text" class="form-control" id="cif" name="cif" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tipo" class="form-label">Tipo</label>
+                                <select class="form-select" id="tipo" name="tipo" required>
                                     <option value="" selected disabled>Seleccione una categoría</option>
                                     <option value="restaurante">Restaurante</option>
                                     <option value="alojamiento">Alojamiento</option>
@@ -181,40 +173,59 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="partnerEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="partnerEmail" required>
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"required>
                             </div>
                             <div class="col-md-6">
-                                <label for="partnerPhone" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="partnerPhone" required>
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono" required>
                             </div>
                             <div class="col-12">
-                                <label for="partnerAddress" class="form-label">Dirección</label>
-                                <input type="text" class="form-control" id="partnerAddress" required>
+                                <label for="direccion" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="partnerLogo" class="form-label">Logo</label>
-                                <input type="file" class="form-control" id="partnerLogo" accept="image/*">
+                                <label for="latitud" class="form-label">Latitud (-90 a 90)</label>
+                                <input type="number" class="form-control" id="latitud" name="latitud">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="longitud" class="form-label">Longitud (-180 a 180)</label>
+                                <input type="number" class="form-control" id="longitud" name="longitud">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="imagen" class="form-label">Logo</label>
+                                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_suscripcion" class="form-label">Suscripcion</label>
+                                <select class="form-select" id="id_suscripcion" name="id_suscripcion" required>
+                                    <option value="" selected disabled>Seleccione una Suscripcion</option>
+                                    <option value="1">Bronce</option>
+                                    <option value="2">Plata</option>
+                                    <option value="3">Oro</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="partnerStatus" class="form-label">Estado</label>
-                                <select class="form-select" id="partnerStatus" required>
-                                    <option value="active" selected>Activo</option>
-                                    <option value="pending">Pendiente</option>
-                                    <option value="inactive">Inactivo</option>
+                                <select class="form-select" id="estado" name="estado" required>
+                                    <option value="1" selected>Activo</option>
+                                    <option value="2">Pendiente</option>
+                                    <option value="3">Inactivo</option>
                                 </select>
                             </div>
                             <div class="col-12">
                                 <label for="partnerDescription" class="form-label">Descripción</label>
-                                <textarea class="form-control" id="partnerDescription" rows="3"></textarea>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="guardar">Guardar Partner</button>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="savePartnerBtn">Guardar Partner</button>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -236,13 +247,7 @@
                 }
             });
 
-            // Manejar el botón de guardar partner
-            $('#savePartnerBtn').click(function() {
-                // Aquí iría la lógica para guardar el partner
-                alert('Partner guardado correctamente (simulación)');
-                $('#addPartnerModal').modal('hide');
-                $('#partnerForm')[0].reset();
-            });
+          
         });
     </script>
 </body>
