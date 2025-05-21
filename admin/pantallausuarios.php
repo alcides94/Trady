@@ -47,15 +47,14 @@
     <div class="container-fluid mt-4">
         <div class="row mb-4">
             <div class="col-12">
-                <h2><i class="fas fa-users me-2"></i> Gestión de Usuarios</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="panel-admin.html">Inicio</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
-                    </ol>
-                </nav>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="fas fa-map-marker-alt me-2"></i> Gestión de Usuarios</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoUsuarioModal">
+                        <i class="fas fa-plus me-1"></i> Nuevo Usuario
+                    </button>
+                </div>
                 <a href="panel-admin.php">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoUsuarioModal">
+                <button class="btn btn-primary">
                             VOLVER
                 </button>
                 </a>
@@ -65,12 +64,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Listado de Usuarios</h5>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoUsuarioModal">
-                            <i class="fas fa-plus me-1"></i> Nuevo Usuario
-                        </button>
-                    </div>
+                    
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="tablaUsuarios" class="table table-striped table-hover">
@@ -88,7 +82,7 @@
                                 </thead>
                                 <tbody>
                                 <?php 
-                                    $sql = "SELECT id_usuario, nombre, email, telefono, fecha_registro, puntos,estado FROM usuarios";
+                                    $sql = "SELECT * FROM usuarios";
                                     $stmt = $_conexion->prepare($sql);
                                     $stmt->execute();
                                     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,13 +96,22 @@
                                         <td><?php echo $usuario['telefono'] ?></td>
                                         <td><?php echo $usuario['puntos'] ?></td>
                                         <td><?php echo $usuario['fecha_registro'] ?></td>
-                                        <td><span class="badge bg-success"><?php echo $usuario['estado'] ?></span></td>
+                                        
+                                        <td>
+                                            <?php if($usuario['estado'] == 1){ ?>
+                                                <span class="status-active"><i class="fas fa-check-circle"></i> Activo</span>
+                                            <?php }else{ ?>
+                                                <span class="status-inactive"><i class="fas fa-times-circle"></i> Inactiva</span>
+                                            <?php } ?>
+                                        </td>    
+                                        
+                                   
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary btn-editar" data-id="<?php echo $usuario['id_usuario']; ?>" data-bs-toggle="tooltip" title="Editar">
                                                 <input type="hidden" name="id_usuario" id="id_usuario">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <form action="conexiones/eliminar_usuario.php" method="post">
+                                            <form action="conexiones/eliminar_usuario.php" method="post" style="display: inline;">
                                                 <input type="hidden" name="id_usuario" id="id_usuario" value="<?php echo $usuario['id_usuario'] ?>">
                                                 <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="tooltip" title="Eliminar" type="submit">     
                                                     <i class="fas fa-trash-alt"></i>
@@ -151,18 +154,34 @@
                                 <input type="tel" class="form-control" id="telefono" name="telefono">
                             </div>
                             <div class="col-md-6">
+                                <label for="metodoPago" class="form-label">Metodo de Pago</label>
+                                <select class="form-select" id="metodoPago" name="metodoPago" required>
+                                    <option value="" selected disabled>Seleccione un Metodo de Pago</option>   
+                                        <option value="Transferencia">Transferencia</option>
+                                        <option value="PayPal">PayPal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="fecha_nac" class="form-label">Fecha Nacimiento</label>
                                 <input type="date" class="form-control" id="fecha_nac" name="fecha_nac">
                             </div>
                             
                             <div class="col-md-6">
                                 <label for="rol" class="form-label">Suscripcion</label>
-                                <select class="form-select" id="rol" name="id_suscripcion" required>
-                                    <option value="1">Bronce</option>
-                                    <option value="2">Plata</option>
-                                    <option value="3">Oro</option>
+                                <select class="form-select" id="id_suscripcion" name="id_suscripcion" required>
+                                    <option value="" selected disabled>Seleccione una Suscripcion</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM suscripcion_usuarios";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $sus_usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($sus_usuarios as $sus_usuario) {
+                                    ?>    
+                                        <option value="<?php echo $sus_usuario["id_suscripcion"] ?>"><?php echo $sus_usuario["nombre"] ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="password" class="form-label">Contraseña</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
@@ -214,10 +233,25 @@
                                 <input type="tel" class="form-control" id="e_telefono" name="e_telefono">
                             </div>
                             <div class="col-md-6">
+                                <label for="metodoPago" class="form-label">Metodo de Pago</label>
+                                <select class="form-select" id="e_metodoPago" name="e_metodoPago" required>
+                                    <option value="" selected disabled>Seleccione un Metodo de Pago</option>   
+                                        <option value="Transferencia">Transferencia</option>
+                                        <option value="PayPal">PayPal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="fecha_nac" class="form-label">Fecha Nacimiento</label>
                                 <input type="date" class="form-control" id="e_fecha_nac" name="e_fecha_nac">
                             </div>
-                            
+                            <div class="col-md-6">
+                                <label for="e_qrs_escaneados" class="form-label">Qrs Escaneados</label>
+                                <input type="number" class="form-control" id="e_qrs_escaneados" name="e_qrs_escaneados">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="e_puntos" class="form-label">Puntos</label>
+                                <input type="number" class="form-control" id="e_puntos" name="e_puntos">
+                            </div>
                             <div class="col-md-6">
                                 <label for="id_suscripcion" class="form-label">Suscripcion</label>
                                 <select class="form-select" id="e_id_suscripcion" name="e_id_suscripcion" required>
@@ -227,11 +261,11 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="password" class="form-label">Contraseña</label>
+                                <label for="password" class="form-label">Nueva Contraseña</label>
                                 <input type="password" class="form-control" id="e_password" name="e_password" >
                             </div>
                             <div class="col-md-6">
-                                <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
+                                <label for="confirm_password" class="form-label">Repetir Contraseña</label>
                                 <input type="password" class="form-control" id="e_confirm_password" name="e_confirm_password" >
                             </div>
                             <div class="col-12">
@@ -302,6 +336,29 @@
                 }
             });
 
+            $('#editarUsuarioModal').on('submit', function (e) {
+                let password = $('#e_password').val();
+                let confirmPassword = $('#e_confirm_password').val();
+
+                // Eliminar clases previas
+                $('#e_password, #e_confirm_password').removeClass('is-invalid');
+
+                // Validar coincidencia
+                if (password !== confirmPassword) {
+                    e.preventDefault(); // Evita el envío
+                    $('#e_confirm_password').addClass('is-invalid');
+
+                    // Si querés, podés mostrar un mensaje adicional:
+                    if ($('#errorPassMsg').length === 0) {
+                        $('<div id="errorPassMsg" class="invalid-feedback d-block mt-2">Las contraseñas no coinciden.</div>')
+                            .insertAfter('#e_confirm_password');
+                    }
+                } else {
+                    // Si todo está bien, asegurate de quitar mensajes viejos
+                    $('#errorPassMsg').remove();
+                }
+            });
+
             // Configurar botones de edición en la tabla
             $(document).ready(function () {
                 $('.btn-editar').on('click', async function () {
@@ -316,6 +373,9 @@
                         $('#e_email').val(usuario.email);
                         $('#e_telefono').val(usuario.telefono);
                         $('#e_fecha_nac').val(usuario.fecha_nac);
+                        $('#e_qrs_escaneados').val(usuario.qrs_escaneados);
+                        $('#e_puntos').val(usuario.puntos);
+                        $('#e_metodoPago').val(usuario.metodoPago);
                         $('#e_id_suscripcion').val(usuario.id_suscripcion);
                         $('#e_estado').prop('checked', usuario.estado === 1);
 

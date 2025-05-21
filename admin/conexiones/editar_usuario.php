@@ -12,7 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['e_nombre'] ?? '';
     $email = $_POST['e_email'] ?? '';
     $telefono = $_POST['e_telefono'] ?? '';
-    $fecha_nac = $_POST['e_fecha_nac'] ?? null;
+    $fecha_nac = $_POST['e_fecha_nac'];
+    $puntos =$_POST['e_puntos'];
+    $metodoPago =$_POST['e_metodoPago'];
+    $qrs_escaneados =$_POST['e_qrs_escaneados'];
     $id_suscripcion = $_POST['e_id_suscripcion'] ?? 1;
     $password = $_POST['e_password'] ?? '';
     $confirm_password = $_POST['e_confirm_password'] ?? '';
@@ -26,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($confirm_password, PASSWORD_DEFAULT);
 
         $stmt = $_conexion->prepare("
             UPDATE usuarios 
@@ -34,6 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 email = :email,
                 telefono = :telefono,
                 fecha_nac = :fecha_nac,
+                puntos = :puntos,
+                metodoPago = :metodoPago,
+                qrs_escaneados = :qrs_escaneados,
                 id_suscripcion = :id_suscripcion,
                 password = :password,
                 estado = :estado
@@ -45,6 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email' => $email,
             'telefono' => $telefono,
             'fecha_nac' => $fecha_nac,
+            'puntos' => $puntos,
+            'metodoPago' => $metodoPago,
+            'qrs_escaneados' => $qrs_escaneados,
             'id_suscripcion' => $id_suscripcion,
             'password' => $passwordHash,
             'estado' => $estado,
@@ -59,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 email = :email,
                 telefono = :telefono,
                 fecha_nac = :fecha_nac,
+                puntos = :puntos,
+                metodoPago = :metodoPago,
+                qrs_escaneados = :qrs_escaneados,
                 id_suscripcion = :id_suscripcion,
                 estado = :estado
             WHERE id_usuario = :id_usuario
@@ -69,6 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email' => $email,
             'telefono' => $telefono,
             'fecha_nac' => $fecha_nac,
+            'puntos' => $puntos,
+            'metodoPago' => $metodoPago,
+            'qrs_escaneados' => $qrs_escaneados,
             'id_suscripcion' => $id_suscripcion,
             'estado' => $estado,
             'id_usuario' => $id_usuario

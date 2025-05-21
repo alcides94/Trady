@@ -45,6 +45,12 @@
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
         }
+        .sitio-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -99,19 +105,19 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Logo</th>
                                         <th>Nombre</th>
                                         <th>Categoría</th>
-                                        <th>Ubicación</th>
+                                        <th>Dirección</th>
                                         <th>Telefono</th>
                                         <th>Estado</th>
-                                        <th>Acciones</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Ejemplo de datos estáticos -->
                                 <?php 
-                                    $sql = "SELECT  id_sitio, nombre, tipo, telefono, direccion,estado FROM sitiosInteres";
+                                    $sql = "SELECT * FROM sitiosInteres";
                                     $stmt = $_conexion->prepare($sql);
                                     $stmt->execute();
                                     $sitios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -120,11 +126,19 @@
                                 ?>
                                     <tr>
                                         <td><?php echo $sitio["id_sitio"]?></td>
+                                        <td><img src="<?php echo $sitio["imagen"]?>" alt="Logo Partner" class="sitio-img"></td>
                                         <td><?php echo $sitio["nombre"]?></td>
                                         <td><span class="badge bg-warning text-dark badge-category"><?php echo $sitio["tipo"]?></span></td>
                                         <td><?php echo $sitio["direccion"]?></td>
                                         <td><?php echo $sitio["telefono"]?></td>
-                                        <td><span class="badge bg-success"><?php echo $sitio["estado"]?></span></td>
+                                        <td>
+                                            <?php if($sitio['estado'] == 1){ ?>
+                                                <span class="status-active"><i class="fas fa-check-circle"></i> Activo</span>
+                                            <?php } else { ?>
+                                                <span class="status-inactive"><i class="fas fa-times-circle"></i> Inactivo</span>
+                                            <?php } ?>
+
+                                        </td>
                                         <td class="action-btns">
                                             <button 
                                                 class="btn btn-sm btn-info btn-editar" 
@@ -137,15 +151,14 @@
                                             <button class="btn btn-sm btn-secondary" title="Ver en Mapa">
                                                 <i class="fas fa-map-marked-alt"></i>
                                             </button>
-                                        </td>
-                                        <td class="action-btns">
-                                            <form action="sitios/eliminar_sitio.php" method="post">
+                                            <form action="sitios/eliminar_sitio.php" method="post" style="display: inline;">
                                                 <input type="hidden" name="id_sitio" id="id_sitio" value="<?php echo $sitio['id_sitio'] ?>">
                                                 <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Eliminar" type="submit">     
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
+                                       
                                             
                                        
                                     </tr>
@@ -158,24 +171,7 @@
             </div>
         </div>
 
-        <!-- Mapa de Visualización -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <i class="fas fa-map-marked-alt me-2"></i> Mapa de Sitios de Interés
-                    </div>
-                    <div class="card-body">
-                        <div id="map"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
-
-   
 
     <!-- Modal para añadir nuevo sitio -->
     <div class="modal fade" id="addSiteModal" tabindex="-1" aria-labelledby="addSiteModalLabel" aria-hidden="true">
@@ -217,6 +213,18 @@
                                 <input type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md-6">
+                                <label for="ruta" class="form-label">Ruta</label>
+                                <select class="form-select" id="ruta" name="ruta" required>
+                                    <option value="" selected disabled>Seleccione una Ruta</option>
+                                    <option value="Ruta Tapeo">Ruta Tapeo</option>
+                                    <option value="Ruta de los Miradores">Ruta de los Miradores</option>
+                                    <option value="Ruta de los Pueblos">Ruta de los Pueblos</option>
+                                    <option value="Ruta de Ocio">Ruta de Ocio</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>          
+
+                            <div class="col-md-6">
                                 <label for="latitud" class="form-label">Latitud (-90 a 90)</label>
                                 <input type="number" class="form-control" id="latitud" name="latitud">
                             </div>
@@ -225,7 +233,10 @@
                                 <label for="longitud" class="form-label">Longitud (-180 a 180)</label>
                                 <input type="number" class="form-control" id="longitud" name="longitud">
                             </div>
-
+                            <div class="col-md-6">
+                                <label for="imagen" class="form-label">Logo</label>
+                                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                            </div>
                             <div class="col-12">
                                 <label for="siteDescription" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
@@ -236,7 +247,7 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="activo" name="estado" checked>
                                     <label class="form-check-label" for="activo">
-                                        Usuario activo
+                                        Sitio Activo
                                     </label>
                                 </div>
                             </div>
@@ -291,6 +302,17 @@
                         <input type="email" class="form-control" id="edit_email" name="edit_email">
                     </div>
                     <div class="col-md-6">
+                                <label for="edit_ruta" class="form-label">Ruta</label>
+                                <select class="form-select" id="edit_ruta" name="edit_ruta" required>
+                                    <option value="" selected disabled>Seleccione una Ruta</option>
+                                    <option value="Ruta Tapeo">Ruta Tapeo</option>
+                                    <option value="Ruta de los Miradores">Ruta de los Miradores</option>
+                                    <option value="Ruta de los Pueblos">Ruta de los Pueblos</option>
+                                    <option value="Ruta de Ocio">Ruta de Ocio</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                    <div class="col-md-6">
                         <label for="edit_latitud" class="form-label">Latitud</label>
                         <input type="number" class="form-control" id="edit_latitud" name="edit_latitud" step="any">
                     </div>
@@ -300,11 +322,15 @@
                     </div>
                     <div class="col-md-6">
                     <label for="edit_id_qr" class="form-label">QR Asignado</label>
-                    <select class="form-select" id="edit_id_qr" name="edit_id_qr">
-                        <option value="">Seleccione QR</option>
-                        <!-- Agregá dinámicamente los QRs disponibles -->
-                    </select>
+                        <select class="form-select" id="edit_id_qr" name="edit_id_qr">
+                            <option value="">Seleccione QR</option>
+                            <!-- Agregá dinámicamente los QRs disponibles -->
+                        </select>
                     </div>
+                    <div class="col-md-6">
+                                <label for="edit_imagen" class="form-label">Logo</label>
+                                <input type="file" class="form-control" id="edit_imagen" name="edit_imagen" accept="image/*">
+                            </div>
                     <div class="col-12">
                         <label for="edit_descripcion" class="form-label">Descripción</label>
                         <textarea class="form-control" id="edit_descripcion" name="edit_descripcion" rows="3"></textarea>
@@ -348,72 +374,7 @@
                 }
             });
 
-            // Inicializar mapa principal centrado en Málaga
-            const map = L.map('map').setView([36.7213, -4.4214], 14);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Marcadores de ejemplo en Málaga
-            const sites = [
-                
-                {
-                    id: 2,
-                    name: "Playa de la Malagueta",
-                    lat: 36.7166,
-                    lng: -4.4258,
-                    category: "beach",
-                    address: "P.º Marítimo Pablo Ruiz Picasso"
-                },
-                {
-                    id: 3,
-                    name: "Museo Picasso",
-                    lat: 36.7196,
-                    lng: -4.4238,
-                    category: "cultural",
-                    address: "C. San Agustín, 8"
-                }
-            ];
-
-            // Iconos personalizados por categoría
-            const categoryIcons = {
-                historical: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                }),
-                beach: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                }),
-                cultural: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                }),
-                default: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                })
-            };
-
-            // Añadir marcadores al mapa
-            sites.forEach(site => {
-                const icon = categoryIcons[site.category] || categoryIcons.default;
-                
-                L.marker([site.lat, site.lng], {icon: icon})
-                    .addTo(map)
-                    .bindPopup(`<b>${site.name}</b><br>${site.address}`);
-            });
-
-            /*---------------*/
-
+           
              // Configurar botones de edición en la tabla
         $(document).ready(function () {
             $('.btn-editar').on('click', function () {
@@ -429,10 +390,11 @@
                     $('#edit_direccion').val(data.direccion);
                     $('#edit_telefono').val(data.telefono);
                     $('#edit_email').val(data.email);
+                    $('#edit_ruta').val(data.ruta);
                     $('#edit_latitud').val(data.latitud);
                     $('#edit_longitud').val(data.longitud);
                     $('#edit_descripcion').val(data.descripcion);
-                    $('#edit_estado').prop('checked', data.estado === 'activo');
+                    $('#edit_estado').prop('checked', data.estado === 1);
 
                     // Mostrar el modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editSitioModal'));

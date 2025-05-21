@@ -71,19 +71,16 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2><i class="fas fa-id-card me-2"></i> Gestión de Suscripciones</h2>
-                    <div>
-                        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#newSubscriptionModal">
-                            <i class="fas fa-plus me-1"></i> Nueva Suscripción
-                        </button>
-                        
-                        <a href="panel-admin.php">
-                            <button class="btn btn-primary" >
-                                VOLVER
-                            </button>
-                        </a>
-                    </div>
+                    <h2><i class="fas fa-map-marker-alt me-2"></i> Gestión de Suscripciones</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newSubscriptionModal">
+                        <i class="fas fa-plus me-1"></i> Nueva Suscripcion
+                    </button>
                 </div>
+                <a href="panel-admin.php">
+                <button class="btn btn-primary">
+                            VOLVER
+                </button>
+                </a>
             </div>
         </div>
 
@@ -103,11 +100,9 @@
                                         <th>Nombre</th>
                                         <th>Precio</th>
                                         <th>Acciones</th>
-                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Ejemplo de datos estáticos para usuarios -->
 
                                     <?php 
                                     $sql = "SELECT  id_suscripcion, nombre, precio FROM suscripcion_usuarios";
@@ -128,11 +123,7 @@
                                             data-id="<?php echo $sus_usuario["id_suscripcion"]?>" data-bs-target="#editSuscripcionModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                        
-                                        </td>
-                                   
-                                        <td>
-                                            <form action="suscripcion/eliminar_sus_user.php" method="post">
+                                            <form action="suscripcion/eliminar_sus_user.php" method="post" style="display: inline;">
                                             <input type="hidden" name="id_suscripcion" id="id_suscripcion" value="<?php echo $sus_usuario['id_suscripcion'] ?>">
     
                                             <button class="btn btn-sm btn-danger" title="Eliminar" type="submit">
@@ -152,7 +143,7 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12  mb-6 mb-md-0">
                 <div class="card h-100">
                     <div class="card-header bg-success text-white">
                         <i class="fas fa-store me-2"></i> Suscripciones de Partners / Comercios
@@ -166,11 +157,9 @@
                                         <th>Plan</th>
                                         <th>Precio</th>
                                         <th>Acciones</th>
-                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Ejemplo de datos estáticos para partners -->
                                      <?php 
                                     $sql = "SELECT  id_suscripcion, nombre, precio FROM suscripcion_comercios";
                                     $stmt = $_conexion->prepare($sql);
@@ -190,10 +179,7 @@
                                             data-bs-target="#editSuscripcionModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            
-                                        </td>
-                                        <td>
-                                            <form action="suscripcion/eliminar_sus_comer.php" method="post">
+                                            <form action="suscripcion/eliminar_sus_comer.php" method="post" style="display: inline;">
                                             <input type="hidden" name="id_suscripcion" id="id_suscripcion" value="<?php echo $sus_comercio['id_suscripcion'] ?>">
     
                                             <button class="btn btn-sm btn-danger" title="Eliminar" type="submit">
@@ -205,7 +191,7 @@
                                     </tr>
                                     <?php } ?>
                                 </tbody>
-                                </tbody>
+                                
                             </table>
                         </div>
                     </div>

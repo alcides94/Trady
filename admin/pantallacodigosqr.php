@@ -225,7 +225,7 @@
                                         $comercios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         foreach ($comercios as $comercio) {
                                     ?>    
-                                        <option value="<?php echo $comercio["id_comercio"] ?>"><?php echo $comercio["nombre"] ?></option>
+                                        <option value="<?php echo $comercio["id_comercios"] ?>"><?php echo $comercio["nombre"] ?></option>
                                     <?php } ?>
                                 </select>
                             </div>

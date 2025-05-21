@@ -13,13 +13,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST["direccion"];
     $telefono = $_POST["telefono"];
     $email = $_POST["email"];
+    $imagen = $_POST["imagen"] ?? '';
+    $ruta = $_POST["ruta"] ?? '';
+    $estado = isset($_POST["estado"]) ? 1 : 0;
     $latitud = isset($_POST["latitud"]) ? floatval($_POST["latitud"]) : null;
     $longitud = isset($_POST["longitud"]) ? floatval($_POST["longitud"]) : null;
 
     $sql = "INSERT INTO sitiosInteres (
-                nombre, descripcion, tipo, direccion, telefono, email, latitud, longitud
+                nombre, descripcion, tipo, direccion, estado, ruta, imagen, telefono, email, latitud, longitud
             ) VALUES (
-                :nombre, :descripcion, :tipo, :direccion, :telefono, :email, :latitud, :longitud
+                :nombre, :descripcion, :tipo, :direccion, :estado, :ruta, :imagen, :telefono, :email, :latitud, :longitud
             )";
 
     $stmt = $_conexion->prepare($sql);
@@ -29,6 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "descripcion" => $descripcion,
         "tipo" => $tipo,
         "direccion" => $direccion,
+        "imagen" => $imagen,
+        "ruta" => $ruta,
+        "estado" => $estado,
         "telefono" => $telefono,
         "email" => $email,
         "latitud" => $latitud !== '' ? $latitud : null,

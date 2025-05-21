@@ -66,7 +66,7 @@
                     </button>
                 </div>
                 <a href="panel-admin.php">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoUsuarioModal">
+                <button class="btn btn-primary">
                             VOLVER
                 </button>
                 </a>
@@ -121,7 +121,16 @@
                                         <td>
                                             <?php echo  $comercio["nombre_suscripcion"]?>
                                         </td>
-                                        <td><span class="badge bg-success"><?php  echo $comercio["estado"]?></span></td>
+                                        <td>
+                                            <?php if($comercio['estado'] == 1){ ?>
+                                                <span class="status-pending"><i class="fas fa-clock"></i> Pendiente</span>
+                                            <?php } else if ($comercio['estado'] == 2){ ?>
+                                                <span class="status-active"><i class="fas fa-check-circle"></i> Activo</span>
+                                            <?php } else { ?>
+                                                <span class="status-inactive"><i class="fas fa-times-circle"></i> Inactivo</span>
+                                            <?php } ?>
+
+                                        </td> 
                                         <td class="action-btns">
                                             <button class="btn btn-sm btn-info btn-editar" 
                                                 data-bs-toggle="modal" 
@@ -175,11 +184,12 @@
                                 <label for="tipo" class="form-label">Tipo</label>
                                 <select class="form-select" id="tipo" name="tipo" required>
                                     <option value="" selected disabled>Seleccione una categoría</option>
-                                    <option value="restaurante">Restaurante</option>
-                                    <option value="alojamiento">Alojamiento</option>
-                                    <option value="comercio">Comercio</option>
-                                    <option value="ocio">Ocio</option>
-                                    <option value="otro">Otro</option>
+                                    <option value="Restaurante">Restaurante</option>
+                                    <option value="Alojamiento">Alojamiento</option>
+                                    <option value="Comercio">Comercio</option>
+                                    <option value="Ocio">Ocio</option>
+                                    <option value="Bar">Bar</option>
+                                    <option value="Otro">Otro</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -195,6 +205,25 @@
                                 <input type="text" class="form-control" id="direccion" name="direccion" required>
                             </div>
                             <div class="col-md-6">
+                                <label for="metodoPago" class="form-label">Metodo de Pago</label>
+                                <select class="form-select" id="metodoPago" name="metodoPago" required>
+                                    <option value="" selected disabled>Seleccione un Metodo de Pago</option>   
+                                        <option value="Transferencia">Transferencia</option>
+                                        <option value="PayPal">PayPal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ruta" class="form-label">Ruta</label>
+                                <select class="form-select" id="ruta" name="ruta" required>
+                                    <option value="" selected disabled>Seleccione una Ruta</option>
+                                    <option value="Ruta Tapeo">Ruta Tapeo</option>
+                                    <option value="Ruta de los Miradores">Ruta de los Miradores</option>
+                                    <option value="Ruta de los Pueblos">Ruta de los Pueblos</option>
+                                    <option value="Ruta de Ocio">Ruta de Ocio</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="latitud" class="form-label">Latitud (-90 a 90)</label>
                                 <input type="number" class="form-control" id="latitud" name="latitud">
                             </div>
@@ -207,25 +236,33 @@
                                 <label for="imagen" class="form-label">Logo</label>
                                 <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                             </div>
+
                             <div class="col-md-6">
                                 <label for="id_suscripcion" class="form-label">Suscripcion</label>
                                 <select class="form-select" id="id_suscripcion" name="id_suscripcion" required>
                                     <option value="" selected disabled>Seleccione una Suscripcion</option>
-                                    <option value="1">Bronce</option>
-                                    <option value="2">Plata</option>
-                                    <option value="3">Oro</option>
+                                    <?php 
+                                        $sql = "SELECT * FROM suscripcion_comercios";
+                                        $stmt = $_conexion->prepare($sql);
+                                        $stmt->execute();
+                                        $sus_comercios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($sus_comercios as $sus_comercio) {
+                                    ?>    
+                                        <option value="<?php echo $sus_comercio["id_suscripcion"] ?>"><?php echo $sus_comercio["nombre"] ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
+
                             <div class="col-md-6">
-                                <label for="partnerStatus" class="form-label">Estado</label>
+                                <label for="estado" class="form-label">Estado</label>
                                 <select class="form-select" id="estado" name="estado" required>
-                                    <option value="1" selected>Activo</option>
-                                    <option value="2">Pendiente</option>
+                                    <option value="1" selected>Pendiente</option>
+                                    <option value="2">Activo</option>
                                     <option value="3">Inactivo</option>
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label for="partnerDescription" class="form-label">Descripción</label>
+                                <label for="descripcion" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                             </div>
                         </div>
@@ -263,11 +300,12 @@
                                 <label for="edit_tipo" class="form-label">Tipo</label>
                                 <select class="form-select" id="edit_tipo" name="edit_tipo" required>
                                     <option value="" selected disabled>Seleccione una categoría</option>
-                                    <option value="restaurante">Restaurante</option>
-                                    <option value="alojamiento">Alojamiento</option>
-                                    <option value="comercio">Comercio</option>
-                                    <option value="ocio">Ocio</option>
-                                    <option value="otro">Otro</option>
+                                    <option value="Restaurante">Restaurante</option>
+                                    <option value="Alojamiento">Alojamiento</option>
+                                    <option value="Comercio">Comercio</option>
+                                    <option value="Ocio">Ocio</option>
+                                    <option value="Bar">Bar</option>
+                                    <option value="Otro">Otro</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -281,6 +319,25 @@
                             <div class="col-12">
                                 <label for="edit_direccion" class="form-label">Dirección</label>
                                 <input type="text" class="form-control" id="edit_direccion" name="edit_direccion" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_metodoPago" class="form-label">Metodo de Pago</label>
+                                <select class="form-select" id="edit_metodoPago" name="edit_metodoPago" required>
+                                    <option value="" selected disabled>Seleccione un Metodo de Pago</option>   
+                                        <option value="Transferencia">Transferencia</option>
+                                        <option value="PayPal">PayPal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_ruta" class="form-label">Ruta</label>
+                                <select class="form-select" id="edit_ruta" name="edit_ruta" required>
+                                    <option value="" selected disabled>Seleccione una Ruta</option>
+                                    <option value="Ruta Tapeo">Ruta Tapeo</option>
+                                    <option value="Ruta de los Miradores">Ruta de los Miradores</option>
+                                    <option value="Ruta de los Pueblos">Ruta de los Pueblos</option>
+                                    <option value="Ruta de Ocio">Ruta de Ocio</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="edit_latitud" class="form-label">Latitud (-90 a 90)</label>
@@ -306,9 +363,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="edit_estado" class="form-label">Estado</label>
-                                <select class="form-select" id="edit_estado" name="edit_estado" required>
-                                    <option value="1" selected>Activo</option>
-                                    <option value="2">Pendiente</option>
+                                <select class="form-select" id="edit_estado" name="edit_estado">
+                                    <option value="1">Pendiente</option>
+                                    <option value="2">Activo</option>
                                     <option value="3">Inactivo</option>
                                 </select>
                             </div>
@@ -360,23 +417,21 @@
                     $('#edit_nombre').val(data.nombre);
                     $('#edit_tipo').val(data.tipo);
                     $('#edit_direccion').val(data.direccion);
+                    $('#edit_metodoPago').val(data.metodoPago);
+                    $('#edit_ruta').val(data.ruta);
                     $('#edit_telefono').val(data.telefono);
                     $('#edit_email').val(data.email);
                     $('#edit_latitud').val(data.latitud);
                     $('#edit_longitud').val(data.longitud);
                     $('#edit_descripcion').val(data.descripcion);
                     $('#edit_id_suscripcion').val(data.id_suscripcion);
-                    $('#edit_estado').prop('checked', data.estado === 'activo');
-
+                    $('#edit_estado').val(data.estado);
                     // Mostrar el modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editSitioModal'));
                     modal.hide();
 
                 })
-               /* .catch(err => {
-                    console.error('Error al obtener datos del sitio:', err);
-                    alert('No se pudo cargar la información del sitio');
-                });*/
+               
             });
             
 

@@ -74,18 +74,6 @@
                 </div>
             </div>
 
-            <!-- Tarjeta: Rutas -->
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card text-center shadow h-100">
-                <a href="pantallarutas.php">
-                    <div class="card-body">
-                        <i class="fas fa-route fa-3x text-warning mb-3"></i>
-                        <h5 class="card-title">Rutas</h5>
-                    </div>
-                </a>
-                </div>
-            </div>
-
             <!-- Tarjeta: Sitios de Interés -->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card text-center shadow h-100">

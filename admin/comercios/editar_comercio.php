@@ -11,14 +11,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_comercios = $_POST['edit_id_comercios'];
     $nombre = $_POST['edit_nombre'] ?? '';
     $tipo = $_POST['edit_tipo'] ?? '';
+    $cif = $_POST['edit_cif'] ?? '';
     $direccion = $_POST['edit_direccion'] ?? '';
+    $metodoPago = $_POST['edit_metodoPago'] ?? '';
+    $ruta = $_POST['edit_ruta'] ?? '';
     $telefono = $_POST['edit_telefono'] ?? '';
     $email = $_POST['edit_email'] ?? '';
     $id_suscripcion = $_POST['edit_id_suscripcion'] ?? '';
     $latitud = $_POST['edit_latitud'] ?? '';
     $longitud = $_POST['edit_longitud'] ?? '';
     $descripcion = $_POST['edit_descripcion'] ?? '';
-    $estado = isset($_POST['edit_estado']) ? 1 : 0;
+    $estado = $_POST['edit_estado'];
 
     // Consulta para actualizar el sitio de interés
     $stmt = $_conexion->prepare("
@@ -26,7 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         SET nombre = :nombre,
             tipo = :tipo,
             direccion = :direccion,
+            ruta = :ruta,
+            metodoPago = :metodoPago,
             telefono = :telefono,
+            cif = :cif,
             email = :email,
             id_suscripcion = :id_suscripcion,
             latitud = :latitud,
@@ -41,6 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'tipo' => $tipo,
         'direccion' => $direccion,
         'telefono' => $telefono,
+        'metodoPago' => $metodoPago,
+        'ruta' => $ruta,
+        'cif' => $cif,
         'email' => $email,
         'id_suscripcion' => $id_suscripcion,
         'latitud' => $latitud,
