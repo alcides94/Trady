@@ -182,8 +182,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="siteForm" action="sitios/nuevo_sitio.php" method="post">
-                        <div class="row g-3">
+                <form id="siteForm" action="sitios/nuevo_sitio.php" method="post" enctype="multipart/form-data">                        
+                    <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="nombre" class="form-label">Nombre del Sitio</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -236,6 +236,7 @@
                             <div class="col-md-6">
                                 <label for="imagen" class="form-label">Logo</label>
                                 <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                                <input type="hidden" name="imagenUrl" id="imagenUrl">
                             </div>
                             <div class="col-12">
                                 <label for="siteDescription" class="form-label">Descripción</label>
@@ -266,7 +267,7 @@
     <div class="modal fade" id="editSitioModal" tabindex="-1" aria-labelledby="editSiteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-        <form id="editar_sitio" action="sitios/editar_sitio.php" method="post">
+        <form id="editar_sitio" action="sitios/editar_sitio.php" method="post" enctype="multipart/form-data">
             <div class="modal-header">
                 <h5 class="modal-title" id="editSiteModalLabel"><i class="fas fa-edit me-2"></i>Editar Sitio de Interés</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -327,10 +328,11 @@
                             <!-- Agregá dinámicamente los QRs disponibles -->
                         </select>
                     </div>
-                    <div class="col-md-6">
-                                <label for="edit_imagen" class="form-label">Logo</label>
-                                <input type="file" class="form-control" id="edit_imagen" name="edit_imagen" accept="image/*">
-                            </div>
+                        <div class="col-md-6">
+                            <label for="edit_imagen" class="form-label">Logo</label>
+                            <input type="file" class="form-control" id="edit_imagen" name="edit_imagen" accept="image/*">
+                            <input type="hidden" name="edit_imagenUrl" id="edit_imagenUrl">
+                        </div>
                     <div class="col-12">
                         <label for="edit_descripcion" class="form-label">Descripción</label>
                         <textarea class="form-control" id="edit_descripcion" name="edit_descripcion" rows="3"></textarea>
@@ -374,8 +376,87 @@
                 }
             });
 
-           
-             // Configurar botones de edición en la tabla
+            //SUBIR LA IMAGEN A LA API Y TRAERME LA URL 
+
+            const imgbbApiKey = '2a005bfb265d236c9ea4993e01934b48';
+
+            $('#siteForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const imgArchivo = $('#imagen')[0];
+                if (!imgArchivo.files.length) {
+                    // Si no hay imagen, enviar el formulario directamente
+                    this.submit();
+                    return;
+                }
+
+                const file = imgArchivo.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Subir imagen a ImgBB
+                $.ajax({
+                    url: `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#imagenUrl').val(data.data.url);
+                            // Enviar el formulario original
+                            $('#siteForm').off('submit').submit();
+                        } else {
+                            alert('Error al subir la imagen a ImgBB');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al conectar con el servicio de imágenes');
+                    }
+                });
+            });
+
+            /* PARA EDITAR LA IAMGEN */
+            
+            $('#editar_sitio').on('submit', function(e) {
+                e.preventDefault();
+                
+                const imgArchivo = $('#edit_imagen')[0];
+                if (!imgArchivo.files.length) {
+                    // Si no hay imagen, enviar el formulario directamente
+                    this.submit();
+                    return;
+                }
+
+                const file = imgArchivo.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Subir imagen a ImgBB
+                $.ajax({
+                    url: `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#edit_imagenUrl').val(data.data.url);
+                            // Enviar el formulario original
+                            $('#editar_sitio').off('submit').submit();
+                        } else {
+                            alert('Error al subir la imagen a ImgBB');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al conectar con el servicio de imágenes');
+                    }
+                });
+            });
+
+
+
+    // Configurar botones de edición en la tabla
         $(document).ready(function () {
             $('.btn-editar').on('click', function () {
                 const id = $(this).data('id');

@@ -13,6 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipo = $_POST['edit_tipo'] ?? '';
     $direccion = $_POST['edit_direccion'] ?? '';
     $telefono = $_POST['edit_telefono'] ?? '';
+    $imagen = $_POST['edit_imagenUrl'] ?? '';
+    $ruta = $_POST['edit_ruta'] ?? '';
     $email = $_POST['edit_email'] ?? '';
     $latitud = $_POST['edit_latitud'] ?? '';
     $longitud = $_POST['edit_longitud'] ?? '';
@@ -26,6 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             tipo = :tipo,
             direccion = :direccion,
             telefono = :telefono,
+            imagen = :imagen,
+            ruta = :ruta,
             email = :email,
             latitud = :latitud,
             longitud = :longitud,
@@ -39,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'tipo' => $tipo,
         'direccion' => $direccion,
         'telefono' => $telefono,
+        'imagen' => $imagen,
+        'ruta' => $ruta,
         'email' => $email,
         'latitud' => $latitud,
         'longitud' => $longitud,

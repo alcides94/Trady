@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST["direccion"];
     $telefono = $_POST["telefono"];
     $email = $_POST["email"];
-    $imagen = $_POST["imagen"] ?? '';
+    $imagen = $_POST["imagenUrl"] ?? '';
     $ruta = $_POST["ruta"] ?? '';
     $estado = isset($_POST["estado"]) ? 1 : 0;
     $latitud = isset($_POST["latitud"]) ? floatval($_POST["latitud"]) : null;
