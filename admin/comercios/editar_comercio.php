@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipo = $_POST['edit_tipo'] ?? '';
     $cif = $_POST['edit_cif'] ?? '';
     $direccion = $_POST['edit_direccion'] ?? '';
+    $imagen = !empty($_POST["edit_imagenUrl"]) ? $_POST["edit_imagenUrl"] : ''; 
     $metodoPago = $_POST['edit_metodoPago'] ?? '';
     $ruta = $_POST['edit_ruta'] ?? '';
     $telefono = $_POST['edit_telefono'] ?? '';
@@ -32,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ruta = :ruta,
             metodoPago = :metodoPago,
             telefono = :telefono,
+            imagen = :imagen,
             cif = :cif,
             email = :email,
             id_suscripcion = :id_suscripcion,
@@ -49,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'telefono' => $telefono,
         'metodoPago' => $metodoPago,
         'ruta' => $ruta,
+        'imagen' => $imagen,
         'cif' => $cif,
         'email' => $email,
         'id_suscripcion' => $id_suscripcion,

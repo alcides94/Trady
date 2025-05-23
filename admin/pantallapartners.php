@@ -113,7 +113,7 @@
 
                                     <tr>
                                         <td><?php echo $comercio["id_comercios"]?></td>
-                                        <td><img src="<?php $comercio["imagen"]?>" alt="Logo Partner" class="partner-img"></td>
+                                        <td><img src="<?php echo $comercio["imagen"]?>" alt="Logo Partner" class="partner-img"></td>
                                         <td><?php  echo $comercio["nombre"]?></td>
                                         <td><?php echo  $comercio["tipo"]?></td>
                                         <td><?php echo  $comercio["direccion"]?></td>
@@ -170,7 +170,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="partnerForm" action="comercios/nuevo_comercio.php" method="post">
+                    <form id="partnerForm" action="comercios/nuevo_comercio.php" method="post" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="nombre" class="form-label">Nombre del Partner</label>
@@ -235,6 +235,7 @@
                             <div class="col-md-6">
                                 <label for="imagen" class="form-label">Logo</label>
                                 <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                                <input type="hidden" name="imagenUrl" id="imagenUrl">
                             </div>
 
                             <div class="col-md-6">
@@ -286,7 +287,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="partnerForm" action="comercios/editar_comercio.php" method="post">
+                    <form id="Edit_partnerForm" action="comercios/editar_comercio.php" method="post" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="edit_nombre" class="form-label">Nombre del Partner</label>
@@ -351,6 +352,7 @@
                             <div class="col-md-6">
                                 <label for="edit_imagen" class="form-label">Logo</label>
                                 <input type="file" class="form-control" id="edit_imagen" name="edit_imagen" accept="image/*">
+                                <input type="hidden" name="edit_imagenUrl" id="edit_imagenUrl">
                             </div>
                             <div class="col-md-6">
                                 <label for="edit_id_suscripcion" class="form-label">Suscripcion</label>
@@ -403,6 +405,86 @@
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                 }
+            });
+
+
+
+                //SUBIR LA IMAGEN A LA API Y TRAERME LA URL 
+
+            const imgbbApiKey = '2a005bfb265d236c9ea4993e01934b48';
+
+            $('#partnerForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const imgArchivo = $('#imagen')[0];
+                if (!imgArchivo.files.length) {
+                    // Si no hay imagen, enviar el formulario directamente
+                    this.submit();
+                    return;
+                }
+
+                const file = imgArchivo.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Subir imagen a ImgBB
+                $.ajax({
+                    url: `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#imagenUrl').val(data.data.url);
+                            // Enviar el formulario original
+                            $('#partnerForm').off('submit').submit();
+                        } else {
+                            alert('Error al subir la imagen a ImgBB');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al conectar con el servicio de imágenes');
+                    }
+                });
+            });
+
+            /* PARA EDITAR LA IAMGEN */
+
+            $('#Edit_partnerForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const imgArchivo = $('#edit_imagen')[0];
+                if (!imgArchivo.files.length) {
+                    // Si no hay imagen, enviar el formulario directamente
+                    this.submit();
+                    return;
+                }
+
+                const file = imgArchivo.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Subir imagen a ImgBB
+                $.ajax({
+                    url: `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.success) {
+                            $('#edit_imagenUrl').val(data.data.url);
+                            // Enviar el formulario original
+                            $('#Edit_partnerForm').off('submit').submit();
+                        } else {
+                            alert('Error al subir la imagen a ImgBB');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al conectar con el servicio de imágenes');
+                    }
+                });
             });
 
             $('.btn-editar').on('click', function () {

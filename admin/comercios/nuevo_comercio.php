@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST["direccion"];
     $telefono = $_POST["telefono"];
     $email = $_POST["email"];
-    $imagen = !empty($_POST["imagen"]) ? $_POST["imagen"] : ''; // Validación que pediste
+    $imagen = $_POST["imagenUrl"] ?? '';
     $ruta = $_POST["ruta"] ?? '';
     $estado = $_POST["estado"];
     $id_suscripcion = $_POST["id_suscripcion"];
