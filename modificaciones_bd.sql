@@ -4,3 +4,6 @@ MODIFY COLUMN estado INT DEFAULT 1;
 
 ALTER TABLE comercios 
 ADD COLUMN password VARCHAR(255);
+
+ALTER TABLE comercios
+ADD COLUMN transaction_id VARCHAR(100) DEFAULT NULL;
