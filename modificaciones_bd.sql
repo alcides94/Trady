@@ -1,2 +1,6 @@
 ALTER TABLE comercios 
 MODIFY COLUMN estado INT DEFAULT 1;
+
+
+ALTER TABLE comercios 
+ADD COLUMN password VARCHAR(255);
