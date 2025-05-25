@@ -1,0 +1,2 @@
+ALTER TABLE comercios 
+MODIFY COLUMN estado INT DEFAULT 1;
